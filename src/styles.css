@@ -143,15 +143,25 @@
 
 html {
   scroll-behavior: smooth;
+  overscroll-behavior: none;
+  overflow-x: hidden;
+  min-height: 100%;
 }
 
 body {
   margin: 0;
   min-width: 320px;
+  min-height: 100vh;
   background: var(--page-background);
   color: var(--text);
   font-family: 'Inter', system-ui, sans-serif;
   overflow-x: hidden;
+  overscroll-behavior: none;
+}
+
+#root {
+  min-height: 100vh;
+  overscroll-behavior: none;
 }
 
 body::before {
