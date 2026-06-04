@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Samuel Studio | Custom Websites Built to Convert</title>
+    <meta
+      name="description"
+      content="Premium custom website design and development for creators, brands, models, businesses, and projects that need to stand out and convert visitors into inquiries."
+    />
+    <meta property="og:title" content="Samuel Studio | Custom Websites Built to Convert" />
+    <meta
+      property="og:description"
+      content="Premium custom website design and development for creators, brands, models, businesses, and projects that need to stand out and convert visitors into inquiries."
+    />
+    <meta property="og:image" content="%BASE_URL%assets/HeroBanner.png" />
+    <meta name="theme-color" content="#050509" />
+    <script>
+      (() => {
+        try {
+          const storageKey = 'nova-studio-theme';
+          const savedTheme = localStorage.getItem(storageKey);
+          const theme =
+            savedTheme === 'light' || savedTheme === 'dark'
+              ? savedTheme
+              : 'dark';
+
+          document.documentElement.dataset.theme = theme;
+          document.documentElement.style.colorScheme = theme;
+
+          const meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) {
+            meta.content = theme === 'light' ? '#f4f0ff' : '#050509';
+          }
+        } catch (error) {
+          document.documentElement.dataset.theme = 'dark';
+          document.documentElement.style.colorScheme = 'dark';
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
