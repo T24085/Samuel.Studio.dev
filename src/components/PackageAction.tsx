@@ -1,12 +1,27 @@
 import { ArrowUpRight } from 'lucide-react';
 import { type Package } from '../data/pricing';
 import { intakeFormUrl } from '../data/site';
+import { PayPalCartButtons } from './PayPalCartButtons';
 
 type PackageActionProps = {
   pkg: Package;
+  context?: 'pricing' | 'modal';
 };
 
-export function PackageAction({ pkg }: PackageActionProps) {
+export function PackageAction({ pkg, context = 'pricing' }: PackageActionProps) {
+  if (pkg.cartAddToCartId) {
+    if (context === 'modal') {
+      return (
+        <a className="button button--secondary button--full" href="#pricing">
+          Purchase in pricing section
+          <ArrowUpRight size={16} />
+        </a>
+      );
+    }
+
+    return <PayPalCartButtons addToCartId={pkg.cartAddToCartId} showViewCartButton />;
+  }
+
   if (pkg.checkoutUrl) {
     return (
       <form className="purchase-form" action={pkg.checkoutUrl} method="post" target="_blank">

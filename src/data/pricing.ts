@@ -5,6 +5,7 @@ export type Package = {
   includes: string[];
   cta: string;
   checkoutUrl?: string;
+  cartAddToCartId?: string;
   featured?: boolean;
 };
 
@@ -19,8 +20,8 @@ export const packages: Package[] = [
     price: '$300 - $500',
     description: 'A focused single-page site that makes a strong first impression and drives inquiries.',
     includes: ['Hero-driven design', 'About + contact section', 'Mobile optimized', 'Fast load, clean structure', 'Launch-ready deployment'],
-    cta: 'Buy Now',
-    checkoutUrl: 'https://www.paypal.com/ncp/payment/N7WNFPBA5GSLS',
+    cta: 'Add to Cart',
+    cartAddToCartId: 'TS4B6ND3JD9RQ',
   },
   {
     title: 'Portfolio Website',

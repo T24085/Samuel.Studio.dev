@@ -1365,6 +1365,18 @@ img {
   gap: 0.55rem;
 }
 
+.paypal-cart-actions {
+  display: grid;
+  gap: 0.65rem;
+  align-items: start;
+}
+
+.paypal-cart-actions paypal-add-to-cart-button,
+.paypal-cart-actions paypal-cart-button {
+  display: block;
+  width: 100%;
+}
+
 .purchase-form__button {
   width: 100%;
 }

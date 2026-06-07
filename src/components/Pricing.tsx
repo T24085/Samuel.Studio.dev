@@ -30,7 +30,7 @@ export function Pricing() {
                     </li>
                   ))}
                 </ul>
-                <PackageAction pkg={pkg} />
+                <PackageAction pkg={pkg} context="pricing" />
               </article>
             ))}
           </div>

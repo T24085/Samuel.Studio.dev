@@ -47,7 +47,7 @@ export function PricingModal({ open, onClose }: PricingModalProps) {
                   </li>
                 ))}
               </ul>
-              <PackageAction pkg={pkg} />
+              <PackageAction pkg={pkg} context="modal" />
             </article>
           ))}
         </div>
