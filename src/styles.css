@@ -143,9 +143,9 @@
 
 html {
   scroll-behavior: smooth;
-  overscroll-behavior: none;
   overflow-x: hidden;
   min-height: 100%;
+  overflow-y: auto;
 }
 
 body {
@@ -156,12 +156,16 @@ body {
   color: var(--text);
   font-family: 'Inter', system-ui, sans-serif;
   overflow-x: hidden;
-  overscroll-behavior: none;
+  overflow-y: auto;
 }
 
 #root {
   min-height: 100vh;
-  overscroll-behavior: none;
+}
+
+html.scroll-locked,
+html.scroll-locked body {
+  overflow: hidden;
 }
 
 body::before {

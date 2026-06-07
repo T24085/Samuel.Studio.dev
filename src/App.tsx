@@ -91,9 +91,13 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = pricingOpen || mobileOpen || styleImageItem ? 'hidden' : '';
+    const locked = pricingOpen || mobileOpen || styleImageItem;
+    const root = document.documentElement;
+
+    root.classList.toggle('scroll-locked', Boolean(locked));
+
     return () => {
-      document.body.style.overflow = '';
+      root.classList.remove('scroll-locked');
     };
   }, [mobileOpen, pricingOpen, styleImageItem]);
 
