@@ -28,8 +28,8 @@ export const packages: Package[] = [
     price: '$600 - $1,000',
     description: 'A polished multi-page presence built to showcase your work and guide clients toward booking.',
     includes: ['Multi-page layout', 'Image galleries / portfolio system', 'Services or booking section', 'Brand styling + motion', 'Contact / inquiry integration'],
-    cta: 'Buy Now',
-    checkoutUrl: 'https://www.paypal.com/ncp/payment/MVEQMSVCGDFQL',
+    cta: 'Add to Cart',
+    cartAddToCartId: 'XWNT5W4DVYANU',
     featured: true,
   },
   {
@@ -37,8 +37,8 @@ export const packages: Package[] = [
     price: 'Starting at $1,000+',
     description: 'A high-impact launch experience for brands that want scale and presence.',
     includes: ['Custom creative direction', 'Advanced layouts & transitions', 'Campaign storytelling structure', 'High-end visual presentation', 'Built to stand out and scale'],
-    cta: 'Buy Now',
-    checkoutUrl: 'https://www.paypal.com/ncp/payment/776NMJ97LJZ2Q',
+    cta: 'Add to Cart',
+    cartAddToCartId: 'WJQGNAXVCD9T6',
   },
 ];
 
