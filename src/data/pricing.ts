@@ -36,7 +36,8 @@ export const packages: Package[] = [
     price: 'Starting at $1,000+',
     description: 'A high-impact launch experience for brands that want scale and presence.',
     includes: ['Custom creative direction', 'Advanced layouts & transitions', 'Campaign storytelling structure', 'High-end visual presentation', 'Built to stand out and scale'],
-    cta: 'Book Now',
+    cta: 'Buy Now',
+    checkoutUrl: 'https://www.paypal.com/ncp/payment/776NMJ97LJZ2Q',
   },
 ];
 
