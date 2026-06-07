@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react';
 import { ArrowUpRight, Check } from 'lucide-react';
 import { addOns, packages } from '../data/pricing';
+import { PackageAction } from './PackageAction';
 import { intakeFormUrl } from '../data/site';
 
 export function Pricing() {
@@ -29,10 +30,7 @@ export function Pricing() {
                     </li>
                   ))}
                 </ul>
-                <a className={pkg.featured ? 'button button--primary button--full' : 'button button--ghost button--full'} href={intakeFormUrl} target="_blank" rel="noreferrer">
-                  {pkg.cta}
-                  <ArrowUpRight size={16} />
-                </a>
+                <PackageAction pkg={pkg} />
               </article>
             ))}
           </div>

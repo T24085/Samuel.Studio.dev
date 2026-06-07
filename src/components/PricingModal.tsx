@@ -1,6 +1,7 @@
 import { ArrowUpRight, Check, X } from 'lucide-react';
 import { addOns, packages } from '../data/pricing';
 import { intakeFormUrl } from '../data/site';
+import { PackageAction } from './PackageAction';
 
 type PricingModalProps = {
   open: boolean;
@@ -46,6 +47,7 @@ export function PricingModal({ open, onClose }: PricingModalProps) {
                   </li>
                 ))}
               </ul>
+              <PackageAction pkg={pkg} />
             </article>
           ))}
         </div>
