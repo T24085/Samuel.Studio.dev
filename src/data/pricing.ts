@@ -27,7 +27,8 @@ export const packages: Package[] = [
     price: '$600 - $1,000',
     description: 'A polished multi-page presence built to showcase your work and guide clients toward booking.',
     includes: ['Multi-page layout', 'Image galleries / portfolio system', 'Services or booking section', 'Brand styling + motion', 'Contact / inquiry integration'],
-    cta: 'Book Now',
+    cta: 'Buy Now',
+    checkoutUrl: 'https://www.paypal.com/ncp/payment/MVEQMSVCGDFQL',
     featured: true,
   },
   {
