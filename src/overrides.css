@@ -703,6 +703,216 @@
   text-transform: uppercase;
 }
 
+.dna-scroll-gallery {
+  position: relative;
+  overflow: hidden;
+  padding-bottom: clamp(4rem, 7vh, 6rem);
+  background:
+    radial-gradient(circle at 50% 12%, rgba(243, 226, 196, 0.14), transparent 28%),
+    radial-gradient(circle at 50% 54%, rgba(167, 139, 250, 0.16), transparent 40%),
+    linear-gradient(180deg, #09090d 0%, #050509 100%);
+}
+
+.dna-scroll-gallery::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 22%, rgba(255, 255, 255, 0.05), transparent 24%),
+    radial-gradient(circle at 50% 62%, rgba(243, 226, 196, 0.06), transparent 30%);
+  opacity: 0.8;
+}
+
+.dna-scroll-gallery__intro {
+  position: relative;
+  z-index: 1;
+  max-width: 44rem;
+  margin-bottom: 1.5rem;
+}
+
+.dna-scroll-gallery__intro h2 {
+  margin: 0.85rem 0 0;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(2.8rem, 5vw, 4.8rem);
+  line-height: 0.92;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+
+.dna-scroll-gallery__intro p:last-child {
+  max-width: 38rem;
+  margin: 1rem 0 0;
+  color: rgba(248, 250, 252, 0.68);
+  line-height: 1.7;
+}
+
+.dna-scroll-gallery__shell {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 1600px);
+  margin: 0 auto;
+  padding-inline: clamp(0.75rem, 2vw, 1.5rem);
+}
+
+.dna-scroll-gallery__toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 0.8rem;
+  color: rgba(245, 240, 230, 0.58);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
+.dna-scroll-gallery__rail {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  overflow-y: visible;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding: 0.35rem 0 1rem;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.dna-scroll-gallery__rail::-webkit-scrollbar {
+  display: none;
+}
+
+.dna-scroll-gallery__card {
+  flex: 0 0 min(84vw, 72rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(18rem, 0.75fr);
+  min-height: clamp(26rem, 58vh, 42rem);
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 28px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 32%),
+    rgba(255, 255, 255, 0.04);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.32);
+  cursor: pointer;
+  text-align: left;
+  backdrop-filter: blur(10px);
+  scroll-snap-align: center;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    filter 180ms ease;
+}
+
+.dna-scroll-gallery__card:hover,
+.dna-scroll-gallery__card:focus-visible {
+  border-color: rgba(243, 226, 196, 0.28);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.38);
+  filter: brightness(1.03);
+}
+
+.dna-scroll-gallery__card:focus-visible {
+  outline: 2px solid rgba(243, 226, 196, 0.5);
+  outline-offset: 4px;
+}
+
+.dna-scroll-gallery__imageShell {
+  min-height: 100%;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(243, 226, 196, 0.12), transparent 42%),
+    #050505;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dna-scroll-gallery__image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+.dna-scroll-gallery__copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: clamp(1.2rem, 2vw, 2rem);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0)),
+    rgba(8, 8, 12, 0.72);
+}
+
+.dna-scroll-gallery__copy p {
+  margin: 0;
+  color: var(--purple-neon);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.dna-scroll-gallery__copy h3 {
+  margin: 0;
+  color: #f5f0e6;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(2.2rem, 2.6vw, 3.7rem);
+  line-height: 0.92;
+  letter-spacing: -0.05em;
+}
+
+.dna-scroll-gallery__copy span {
+  color: rgba(248, 250, 252, 0.72);
+  line-height: 1.7;
+  font-size: 0.96rem;
+}
+
+.dna-scroll-gallery__nav {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  background: rgba(10, 10, 12, 0.72);
+  color: #f8fafc;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.dna-scroll-gallery__nav:hover,
+.dna-scroll-gallery__nav:focus-visible {
+  transform: translateY(-50%) scale(1.03);
+  border-color: rgba(243, 226, 196, 0.28);
+  color: #f3e2c4;
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.34);
+}
+
+.dna-scroll-gallery__nav:focus-visible {
+  outline: 2px solid rgba(243, 226, 196, 0.5);
+  outline-offset: 4px;
+}
+
+.dna-scroll-gallery__nav--prev {
+  left: 0.1rem;
+}
+
+.dna-scroll-gallery__nav--next {
+  right: 0.1rem;
+}
+
 @keyframes cart-button-flash {
   0%,
   100% {
@@ -816,29 +1026,21 @@
     grid-template-columns: 1fr;
   }
 
-  .dna-gallery__track {
-    min-height: 148vh;
+  .dna-scroll-gallery__card {
+    flex-basis: 88vw;
+    grid-template-columns: 1fr;
+    min-height: auto;
   }
 
-  .dna-gallery__stage {
-    width: 100%;
-    height: min(1020px, 100vh);
+  .dna-scroll-gallery__imageShell {
+    min-height: 26rem;
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  .dna-card {
-    width: clamp(10rem, 30vw, 16rem);
-  }
-
-  .dna-gallery__strand--left {
-    transform: translate3d(-72px, -50%, 0) rotate(10deg);
-  }
-
-  .dna-gallery__strand--right {
-    transform: translate3d(72px, -50%, 0) rotate(-10deg);
-  }
-
-  .dna-gallery__cross {
-    width: 280px;
+  .dna-scroll-gallery__nav {
+    width: 2.6rem;
+    height: 2.6rem;
   }
 
   .dna-modal__grid {
@@ -876,16 +1078,29 @@
     font-size: 0.74rem;
   }
 
-  .dna-gallery {
+  .dna-scroll-gallery {
     padding-bottom: clamp(3rem, 6vh, 4.5rem);
   }
 
-  .dna-gallery__intro h2 {
+  .dna-scroll-gallery__intro h2 {
     font-size: clamp(2.5rem, 10vw, 3.8rem);
   }
 
-  .dna-gallery__intro p:last-child {
+  .dna-scroll-gallery__intro p:last-child {
     font-size: 0.95rem;
+  }
+
+  .dna-scroll-gallery__toolbar {
+    gap: 0.75rem;
+    font-size: 0.62rem;
+  }
+
+  .dna-scroll-gallery__copy {
+    padding: 1rem;
+  }
+
+  .dna-scroll-gallery__nav {
+    display: none;
   }
 
   .dna-modal {
