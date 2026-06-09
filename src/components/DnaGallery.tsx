@@ -97,7 +97,7 @@ function DnaCard({
       <div className="dna-card__fade" aria-hidden="true" />
       <div className="dna-card__number">{card.number}</div>
       <div className="dna-card__copy">
-        <p>Samuel Studio / Preview</p>
+        <p>Nova Studio / Preview</p>
         <h3>{card.title}</h3>
         <span>Tap to inspect</span>
       </div>
@@ -200,7 +200,7 @@ function DnaPreviewModal({
                   <span>
                     {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
                   </span>
-                  <span>Samuel Studio</span>
+                  <span>Nova Studio</span>
                 </div>
 
                 <div>
@@ -264,7 +264,7 @@ export function DnaGallery() {
           <p className="section-label">DNA gallery</p>
           <h2>Scroll through the helix.</h2>
           <p>
-            A continuous chain of 15 reference screenshots arranged as a double-helix.
+            A continuous chain of 15 wheel mockups arranged as a double-helix.
             Scroll to move through the strand and tap any frame to preview it larger.
           </p>
         </div>

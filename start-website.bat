@@ -3,6 +3,13 @@ setlocal
 
 cd /d "%~dp0"
 
+echo Updating from GitHub...
+git pull --ff-only
+if errorlevel 1 (
+  echo Failed to update from GitHub.
+  exit /b 1
+)
+
 if not exist node_modules (
   echo Installing dependencies...
   call npm install
