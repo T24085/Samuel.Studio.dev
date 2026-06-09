@@ -5,6 +5,7 @@ export const emailAddress = 'hello@samuel.studio';
 
 export const navItems = [
   { label: 'Home', href: '#home' },
+  { label: 'Gallery', href: '#gallery' },
   { label: 'Work', href: '#work' },
   { label: 'Styles', href: '#styles' },
   { label: 'Process', href: '#process' },

@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { FeaturedWork } from './components/FeaturedWork';
 import { Footer } from './components/Footer';
+import { FloatingCartButton } from './components/FloatingCartButton';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
+import { DnaGallery } from './components/DnaGallery';
 import { IntakeCTA } from './components/IntakeCTA';
-import { FloatingCartButton } from './components/FloatingCartButton';
 import { Pricing } from './components/Pricing';
 import { PricingModal } from './components/PricingModal';
 import { Process } from './components/Process';
@@ -13,7 +14,7 @@ import { WebsiteStyles } from './components/WebsiteStyles';
 import { type StyleItem } from './data/styles';
 import { intakeFormUrl } from './data/site';
 
-const observedSections = ['home', 'work', 'styles', 'pricing', 'process', 'contact'] as const;
+const observedSections = ['home', 'gallery', 'work', 'styles', 'pricing', 'process', 'contact'] as const;
 const themeStorageKey = 'nova-studio-theme';
 type Theme = 'dark' | 'light';
 
@@ -142,6 +143,7 @@ export default function App() {
       />
       <main>
         <Hero onOpenPricingModal={() => setPricingOpen(true)} intakeFormUrl={intakeFormUrl} />
+        <DnaGallery />
         <FeaturedWork />
         <WebsiteStyles onOpenStyle={setStyleImageItem} />
         <Pricing />

@@ -3,13 +3,18 @@ setlocal
 
 cd /d "%~dp0"
 
-echo Starting Samuel Studio development server...
-if exist node_modules (
-  npm run dev -- --host 127.0.0.1 --port 5173
-) else (
-  echo.
-  echo Dependencies are missing. Run npm install first.
-  pause
+if not exist node_modules (
+  echo Installing dependencies...
+  call npm install
+  if errorlevel 1 (
+    echo Failed to install dependencies.
+    exit /b 1
+  )
 )
+
+echo Starting Nova Studio development server...
+start "Nova Studio" cmd /k "npm run dev -- --host 127.0.0.1 --port 5173"
+timeout /t 3 /nobreak >nul
+start "" http://127.0.0.1:5173/Nova.Studio/
 
 endlocal

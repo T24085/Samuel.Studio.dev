@@ -22,12 +22,6 @@ export function FeaturedWork() {
                       <span />
                       <span />
                     </div>
-                    <img
-                      className="project-card__preview-image"
-                      src={project.previewImage}
-                      alt={`${project.title} homepage preview`}
-                      loading="lazy"
-                    />
                     <iframe
                       title={`${project.title} live preview`}
                       src={project.url}

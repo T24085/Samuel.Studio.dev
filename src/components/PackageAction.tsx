@@ -36,10 +36,7 @@ export function PackageAction({ pkg, context = 'pricing' }: PackageActionProps) 
         />
         <section className="purchase-form__powered-by" aria-label="Powered by PayPal">
           Powered by
-          <img
-            src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg"
-            alt="PayPal"
-          />
+          <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="PayPal" />
         </section>
       </form>
     );

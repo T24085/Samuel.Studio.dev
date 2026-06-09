@@ -41,6 +41,7 @@ export function FloatingCartButton() {
 
   return (
     <div className="paypal-floating-cart" aria-label="Floating cart">
+      <div className="paypal-floating-cart__spark" aria-hidden="true" />
       <paypal-cart-button data-id={floatingCartButtonId} />
     </div>
   );

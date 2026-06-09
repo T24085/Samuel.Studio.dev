@@ -6,11 +6,11 @@ import { intakeFormUrl } from '../data/site';
 export function Pricing() {
   return (
     <section className="section" id="pricing">
-      <div className="container pricing-grid">
-        <div className="pricing-grid__packages">
-          <div className="section-heading section-heading--compact" data-reveal>
-            <p className="section-label">Websites & packages</p>
-            <h2>Simple Packages. Premium Results.</h2>
+        <div className="container pricing-grid">
+          <div className="pricing-grid__packages">
+            <div className="section-heading section-heading--compact" data-reveal>
+              <p className="section-label">Websites & packages</p>
+              <h2>Simple Packages. Premium Results.</h2>
             <p>Transparent pricing for custom direction that is built to convert.</p>
           </div>
 
