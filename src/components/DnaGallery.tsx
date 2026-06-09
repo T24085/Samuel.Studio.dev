@@ -128,20 +128,6 @@ export function DnaGallery() {
 
   const activeItem = activeIndex !== null ? dnaGalleryItems[activeIndex] : null;
 
-  const scrollRail = (direction: number) => {
-    const rail = railRef.current;
-
-    if (!rail) {
-      return;
-    }
-
-    const distance = Math.max(rail.clientWidth * 0.82, 320);
-    rail.scrollBy({
-      left: direction * distance,
-      behavior: reducedMotion ? 'auto' : 'smooth',
-    });
-  };
-
   const nextCard = () => {
     if (!dnaGalleryItems.length) {
       return;
@@ -172,27 +158,9 @@ export function DnaGallery() {
 
       <div className="dna-scroll-gallery__shell">
         <div className="dna-scroll-gallery__toolbar" aria-hidden="true">
-          <span>Drag or scroll sideways</span>
+          <span>Scroll sideways</span>
           <span>{String(dnaGalleryItems.length).padStart(2, '0')} mockups</span>
         </div>
-
-        <button
-          type="button"
-          className="dna-scroll-gallery__nav dna-scroll-gallery__nav--prev"
-          onClick={() => scrollRail(-1)}
-          aria-label="Scroll gallery left"
-        >
-          <ChevronLeft size={20} />
-        </button>
-
-        <button
-          type="button"
-          className="dna-scroll-gallery__nav dna-scroll-gallery__nav--next"
-          onClick={() => scrollRail(1)}
-          aria-label="Scroll gallery right"
-        >
-          <ChevronRight size={20} />
-        </button>
 
         <div className="dna-scroll-gallery__rail" ref={railRef}>
           {dnaGalleryItems.map((item, index) => (
