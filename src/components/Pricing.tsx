@@ -1,4 +1,3 @@
-import type { CSSProperties } from 'react';
 import { ArrowUpRight, Check } from 'lucide-react';
 import { addOns, packages } from '../data/pricing';
 import { PackageAction } from './PackageAction';
@@ -38,21 +37,40 @@ export function Pricing() {
 
         <aside className="addons-panel" data-reveal>
           <div className="addons-panel__inner">
-            <p className="section-label">Add-ons</p>
+            <p className="section-label">Custom features</p>
+            <div className="addons-panel__pitch">
+              <h3>Customize Your Website</h3>
+              <p>
+                Every business is different. Add powerful features like online booking, e-commerce, AI assistants,
+                SEO optimization, and ongoing support to create a website tailored to your goals and your customers.
+              </p>
+            </div>
+
             <div className="addons-panel__list">
-              {addOns.map((addon, index) => (
-                <div className="addon-row" key={addon.name} tabIndex={0} style={{ '--addon-offset': `${index * -0.9}s` } as CSSProperties}>
-                  <div className="addon-row__flip">
-                    <div className="addon-row__face addon-row__face--front">
-                      <span>{addon.name}</span>
-                      <strong>{addon.price}</strong>
+              {addOns.map((addon) => (
+                <article className="addon-row addon-row--expanded" key={addon.name}>
+                  <div className="addon-row__top">
+                    <div>
+                      <h3>{addon.name}</h3>
+                      <p className="addon-row__summary">{addon.description}</p>
                     </div>
-                    <div className="addon-row__face addon-row__face--back" aria-hidden="true">
-                      <span>{addon.name}</span>
-                      <strong>{addon.price}</strong>
-                    </div>
+                    <strong>{addon.price}</strong>
                   </div>
-                </div>
+
+                  <div className="addon-row__section">
+                    <span className="addon-row__label">Includes</span>
+                    <ul className="addon-row__chips" aria-label={`${addon.name} includes`}>
+                      {addon.includes.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="addon-row__section addon-row__section--bestfor">
+                    <span className="addon-row__label">Best For</span>
+                    <p>{addon.bestFor}</p>
+                  </div>
+                </article>
               ))}
             </div>
 

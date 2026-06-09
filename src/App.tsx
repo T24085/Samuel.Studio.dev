@@ -4,6 +4,7 @@ import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { IntakeCTA } from './components/IntakeCTA';
+import { FloatingCartButton } from './components/FloatingCartButton';
 import { Pricing } from './components/Pricing';
 import { PricingModal } from './components/PricingModal';
 import { Process } from './components/Process';
@@ -148,6 +149,7 @@ export default function App() {
         <IntakeCTA />
       </main>
       <Footer />
+      <FloatingCartButton />
       <PricingModal open={pricingOpen} onClose={() => setPricingOpen(false)} />
       <StyleImageModal item={styleImageItem} onClose={() => setStyleImageItem(null)} />
     </div>

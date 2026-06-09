@@ -1248,9 +1248,14 @@ img {
 
 .pricing-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(300px, 0.9fr);
-  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
   align-items: start;
+}
+
+.pricing-grid__packages {
+  display: grid;
+  gap: 1rem;
 }
 
 .packages-grid {
@@ -1319,6 +1324,10 @@ img {
   margin-top: auto;
 }
 
+.package-card > .paypal-cart-actions {
+  margin-top: auto;
+}
+
 .package-card:hover,
 .package-card:focus-within {
   transform: translateY(-4px);
@@ -1377,6 +1386,90 @@ img {
   width: 100%;
 }
 
+.paypal-cart-actions paypal-add-to-cart-button .item-header,
+.paypal-cart-actions paypal-add-to-cart-button .item-description {
+  display: none !important;
+}
+
+.paypal-cart-actions paypal-add-to-cart-button #form-container-TS4B6ND3JD9RQ,
+.paypal-cart-actions paypal-add-to-cart-button #form-container-XWNT5W4DVYANU,
+.paypal-cart-actions paypal-add-to-cart-button #form-container-WJQGNAXVCD9T6 {
+  max-width: none !important;
+}
+
+.paypal-cart-actions paypal-add-to-cart-button .addToCartButtonContainer.buttonColorStyle,
+.paypal-floating-cart paypal-cart-button .viewCartButtonContainer.buttonColorStyle {
+  min-height: 2.875rem !important;
+  border-radius: 999px !important;
+  padding: 0.75rem 1.15rem !important;
+  background: linear-gradient(180deg, rgba(168, 85, 247, 0.98), rgba(107, 33, 168, 0.98)) !important;
+  color: var(--text) !important;
+  border: 1px solid rgba(192, 132, 252, 0.28) !important;
+  box-shadow: 0 16px 36px rgba(91, 33, 182, 0.22) !important;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    filter 180ms ease,
+    background 180ms ease !important;
+}
+
+.paypal-cart-actions paypal-add-to-cart-button .addToCartButtonContainer.buttonColorStyle:hover:enabled,
+.paypal-floating-cart paypal-cart-button .viewCartButtonContainer.buttonColorStyle:hover:enabled {
+  background: linear-gradient(180deg, rgba(180, 90, 255, 1), rgba(121, 52, 201, 1)) !important;
+  filter: brightness(1.04);
+  box-shadow: 0 18px 42px rgba(91, 33, 182, 0.28) !important;
+}
+
+.paypal-cart-actions paypal-add-to-cart-button .addToCartButtonContainer.buttonColorStyle:active:enabled,
+.paypal-floating-cart paypal-cart-button .viewCartButtonContainer.buttonColorStyle:active:enabled {
+  transform: translateY(1px);
+  background: linear-gradient(180deg, rgba(107, 33, 168, 1), rgba(88, 28, 135, 1)) !important;
+}
+
+.paypal-cart-actions paypal-add-to-cart-button .addToCartButtonContainer.buttonColorStyle,
+.paypal-cart-actions paypal-add-to-cart-button .addToCartButtonContainer.buttonColorStyle span,
+.paypal-cart-actions paypal-add-to-cart-button .addToCartButtonContainer.buttonColorStyle svg,
+.paypal-floating-cart paypal-cart-button .viewCartButtonContainer.buttonColorStyle,
+.paypal-floating-cart paypal-cart-button .viewCartButtonContainer.buttonColorStyle span,
+.paypal-floating-cart paypal-cart-button .viewCartButtonContainer.buttonColorStyle svg {
+  color: inherit !important;
+}
+
+.paypal-cart-actions paypal-add-to-cart-button .addToCartButtonContainer.buttonColorStyle svg path,
+.paypal-cart-actions paypal-add-to-cart-button .addToCartButtonContainer.buttonColorStyle svg *,
+.paypal-floating-cart paypal-cart-button .viewCartButtonContainer.buttonColorStyle svg path,
+.paypal-floating-cart paypal-cart-button .viewCartButtonContainer.buttonColorStyle svg * {
+  fill: currentColor !important;
+}
+
+.paypal-cart-actions paypal-add-to-cart-button .addToCartButtonContainer.buttonColorStyle #btn-text_add,
+.paypal-cart-actions paypal-add-to-cart-button .addToCartButtonContainer.buttonColorStyle #btn-text_added,
+.paypal-cart-actions paypal-add-to-cart-button .addToCartButtonContainer.buttonColorStyle #btn-text_adding,
+.paypal-floating-cart paypal-cart-button .viewCartButtonContainer.buttonColorStyle #cart-btn_count,
+.paypal-floating-cart paypal-cart-button .viewCartButtonContainer.buttonColorStyle #cart-btn_count_reader,
+.paypal-floating-cart paypal-cart-button .viewCartButtonContainer.buttonColorStyle #cart-label,
+.paypal-floating-cart paypal-cart-button .viewCartButtonContainer.buttonColorStyle #cart-plural,
+.paypal-floating-cart paypal-cart-button .viewCartButtonContainer.buttonColorStyle #cart-singular {
+  color: inherit !important;
+}
+
+.paypal-cart-actions paypal-add-to-cart-button .addToCartButtonContainer.buttonColorStyle .addToCartSpinner {
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  border-top-color: rgba(255, 255, 255, 0.88) !important;
+}
+
+.paypal-floating-cart {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 70;
+}
+
+.paypal-floating-cart paypal-cart-button {
+  display: block;
+  width: auto;
+}
+
 .purchase-form__button {
   width: 100%;
 }
@@ -1410,6 +1503,7 @@ img {
   padding: 1px;
   background: linear-gradient(180deg, rgba(192, 132, 252, 0.32), rgba(255, 255, 255, 0.05));
   box-shadow: 0 0 0 1px rgba(192, 132, 252, 0.12), 0 24px 72px var(--shadow-soft);
+  margin-top: 0.25rem;
   transition:
     transform 180ms ease,
     box-shadow 180ms ease,
@@ -1427,7 +1521,7 @@ img {
 
 .addons-panel__inner {
   height: 100%;
-  padding: 1.25rem;
+  padding: 1.4rem;
   border-radius: 25px;
   background:
     radial-gradient(circle at top right, rgba(168, 85, 247, 0.14), transparent 28%),
@@ -1436,26 +1530,34 @@ img {
 
 .addons-panel__list {
   display: grid;
-  gap: 0.55rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
   margin-top: 1rem;
 }
 
 .addon-row {
   position: relative;
-  perspective: 1200px;
-  height: 3.9rem;
-  border-radius: 16px;
+  perspective: none;
+  height: auto;
+  min-height: 100%;
+  border-radius: 18px;
   border: 1px solid var(--border-soft);
   background:
     linear-gradient(180deg, rgba(192, 132, 252, 0.08), transparent 60%),
     var(--surface-card-soft);
-  overflow: hidden;
+  overflow: visible;
   color: var(--text);
   outline: none;
   transition:
     transform 180ms ease,
     box-shadow 180ms ease,
     border-color 180ms ease;
+}
+
+.addon-row--expanded {
+  padding: 1.05rem;
+  display: grid;
+  gap: 0.95rem;
 }
 
 .addon-row:hover,
@@ -1465,67 +1567,86 @@ img {
   box-shadow:
     0 0 0 1px rgba(192, 132, 252, 0.16),
     0 18px 40px rgba(0, 0, 0, 0.18),
-    0 0 24px rgba(139, 92, 246, 0.12);
+  0 0 24px rgba(139, 92, 246, 0.12);
 }
 
-.addon-row__flip {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-  will-change: transform;
-  animation: addon-board-flip 8.8s infinite;
-  animation-delay: var(--addon-offset, 0s);
+.addon-row--expanded:hover,
+.addon-row--expanded:focus-visible {
+  transform: translateY(-2px);
 }
 
-.addon-row__face {
-  position: absolute;
-  inset: 0;
+.addons-panel__pitch {
+  margin-top: 1rem;
+  padding: 1rem 1rem 1.05rem;
+  border-radius: 18px;
+  border: 1px solid rgba(192, 132, 252, 0.16);
+  background:
+    linear-gradient(180deg, rgba(168, 85, 247, 0.1), rgba(255, 255, 255, 0.03)),
+    rgba(10, 10, 16, 0.55);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.addons-panel__pitch h3 {
+  margin: 0 0 0.45rem;
+  font-size: 1.1rem;
+}
+
+.addons-panel__pitch p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.addon-row__top {
   display: flex;
-  align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0 1rem;
-  backface-visibility: hidden;
-  border-radius: inherit;
+  align-items: flex-start;
+  padding-bottom: 0.15rem;
 }
 
-.addon-row__face--front {
+.addon-row__summary {
+  margin: 0.4rem 0 0;
   color: var(--muted);
+  line-height: 1.55;
 }
 
-.addon-row__face--back {
-  transform: rotateX(180deg);
-  background:
-    linear-gradient(180deg, rgba(192, 132, 252, 0.18), rgba(255, 255, 255, 0.04)),
-    var(--surface-card);
-  color: var(--text);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+.addon-row__section {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.addon-row__label {
+  color: var(--purple-neon);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
-.addon-row__face span {
-  min-width: 0;
-  flex: 1;
-  padding-right: 0.75rem;
+.addon-row__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.addon-row__chips li {
+  padding: 0.42rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(192, 132, 252, 0.18);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  font-size: 0.79rem;
   line-height: 1.2;
 }
 
-.addon-row__face strong {
-  flex: none;
-  font-size: 0.98rem;
-  color: var(--text);
-  white-space: nowrap;
-}
-
-.addon-row__face--back span {
-  font-size: 0.84rem;
-  color: var(--text);
-}
-
-.addon-row__face--back strong {
-  text-shadow: 0 0 14px rgba(192, 132, 252, 0.18);
+.addon-row__section--bestfor p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
 }
 
 @keyframes addon-board-flip {
@@ -2092,10 +2213,20 @@ img {
     margin-top: 1rem;
   }
 
+  .paypal-floating-cart {
+    right: 1rem;
+    bottom: 1rem;
+    max-width: calc(100vw - 2rem);
+  }
+
   .projects-grid,
   .styles-grid,
   .packages-grid,
   .process {
+    grid-template-columns: 1fr;
+  }
+
+  .addons-panel__list {
     grid-template-columns: 1fr;
   }
 

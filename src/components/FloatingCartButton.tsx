@@ -1,27 +1,26 @@
 import { useEffect } from 'react';
 
-type PayPalCartButtonsProps = {
-  addToCartId: string;
-};
+const floatingCartButtonId = 'pp-floating-cart';
 
-function initializePayPalCartButton(buttonId: string, action: 'AddToCart' | 'Cart') {
+function initializeFloatingCartButton(buttonId: string) {
   const cart = window.cartPaypal;
 
   if (!cart) {
     return false;
   }
 
-  cart[action]({ id: buttonId });
+  cart.Cart({ id: buttonId });
   return true;
 }
 
-export function PayPalCartButtons({ addToCartId }: PayPalCartButtonsProps) {
+export function FloatingCartButton() {
   useEffect(() => {
     let timer: number | null = null;
 
     const tryInitialize = () => {
-      const addReady = initializePayPalCartButton(addToCartId, 'AddToCart');
-      if (addReady && timer !== null) {
+      const ready = initializeFloatingCartButton(floatingCartButtonId);
+
+      if (ready && timer !== null) {
         window.clearInterval(timer);
         timer = null;
       }
@@ -38,11 +37,11 @@ export function PayPalCartButtons({ addToCartId }: PayPalCartButtonsProps) {
         window.clearInterval(timer);
       }
     };
-  }, [addToCartId]);
+  }, []);
 
   return (
-    <div className="paypal-cart-actions">
-      <paypal-add-to-cart-button data-id={addToCartId} />
+    <div className="paypal-floating-cart" aria-label="Floating cart">
+      <paypal-cart-button data-id={floatingCartButtonId} />
     </div>
   );
 }

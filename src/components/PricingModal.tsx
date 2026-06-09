@@ -35,7 +35,6 @@ export function PricingModal({ open, onClose }: PricingModalProps) {
               <div className="modal-card__top">
                 <div>
                   <h3>{pkg.title}</h3>
-                  <p>{pkg.description}</p>
                 </div>
                 <strong>{pkg.price}</strong>
               </div>

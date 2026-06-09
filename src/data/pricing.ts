@@ -12,6 +12,9 @@ export type Package = {
 export type AddOn = {
   name: string;
   price: string;
+  description: string;
+  includes: string[];
+  bestFor: string;
 };
 
 export const packages: Package[] = [
@@ -43,10 +46,51 @@ export const packages: Package[] = [
 ];
 
 export const addOns: AddOn[] = [
-  { name: 'Logo & brand identity', price: '$150 - $600' },
-  { name: 'Photo editing / retouching', price: '$50 - $300' },
-  { name: 'Instagram content packages', price: '$150 - $400' },
-  { name: 'Booking + inquiry systems', price: '$150 - $400' },
-  { name: 'Gallery / CMS integrations', price: '$100 - $250' },
-  { name: 'Ongoing updates / support', price: '$99 / mo' },
+  {
+    name: 'AI Lead Assistant',
+    price: 'Starting at $299',
+    description:
+      'Never miss a potential customer. An AI-powered assistant works around the clock to answer questions, collect contact information, and help visitors find exactly what they are looking for.',
+    includes: ['24/7 AI chat assistant', 'Business-specific training', 'Lead capture forms', 'FAQ automation', 'Contact form integration', 'Mobile-friendly experience'],
+    bestFor: 'Service businesses, contractors, consultants, churches, and local businesses.',
+  },
+  {
+    name: 'Search Engine Optimization (SEO)',
+    price: 'Starting at $299',
+    description:
+      'Help your business appear higher in Google search results and attract more customers searching for your services online.',
+    includes: ['Keyword optimization', 'Google indexing setup', 'Meta titles & descriptions', 'Performance improvements', 'Local SEO enhancements', 'Google Search Console setup'],
+    bestFor: 'Any business looking to increase website traffic and generate more leads.',
+  },
+  {
+    name: 'Online Booking & Scheduling',
+    price: 'Starting at $249',
+    description:
+      'Allow customers to schedule appointments, consultations, and services directly from your website without phone calls or email exchanges.',
+    includes: ['Online booking calendar', 'Automated confirmations', 'Appointment reminders', 'Availability management', 'Calendar integration', 'Mobile booking support'],
+    bestFor: 'Salons, photographers, churches, consultants, coaches, medical offices, and service providers.',
+  },
+  {
+    name: 'Online Store (E-Commerce)',
+    price: 'Starting at $499',
+    description:
+      'Sell products online with a secure and professional shopping experience designed to turn visitors into customers.',
+    includes: ['Product catalog', 'Shopping cart', 'Secure checkout', 'Payment processing setup', 'Inventory management', 'Order notifications', 'Mobile-friendly storefront'],
+    bestFor: 'Retail stores, apparel brands, churches, creators, and businesses selling physical or digital products.',
+  },
+  {
+    name: 'Content Creation Package',
+    price: 'Starting at $299',
+    description:
+      'Professional website content written to clearly communicate your services, build trust, and encourage visitors to take action.',
+    includes: ['Homepage copywriting', 'Service page content', 'About page writing', 'Call-to-action optimization', 'SEO-friendly formatting', 'Brand messaging assistance'],
+    bestFor: 'Businesses that need help explaining what they do or want stronger website messaging.',
+  },
+  {
+    name: 'Website Care Plan',
+    price: '$49 / month',
+    description: 'Keep your website secure, updated, and running smoothly while you focus on your business.',
+    includes: ['Website monitoring', 'Security checks', 'Backup management', 'Performance reviews', 'Minor content updates', 'Priority support'],
+    bestFor: 'Businesses that want ongoing support and peace of mind.',
+  },
 ];
