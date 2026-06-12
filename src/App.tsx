@@ -142,7 +142,7 @@ export default function App() {
         onStartClick={() => window.open(intakeFormUrl, '_blank', 'noreferrer')}
       />
       <main>
-        <Hero onOpenPricingModal={() => setPricingOpen(true)} intakeFormUrl={intakeFormUrl} />
+        <Hero intakeFormUrl={intakeFormUrl} />
         <DnaGallery />
         <FeaturedWork />
         <WebsiteStyles onOpenStyle={setStyleImageItem} />

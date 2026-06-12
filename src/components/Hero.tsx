@@ -2,11 +2,10 @@ import { ArrowUpRight, Eye, Headphones, Sparkles, TimerReset } from 'lucide-reac
 import { assets } from '../data/assets';
 
 type HeroProps = {
-  onOpenPricingModal: () => void;
   intakeFormUrl: string;
 };
 
-export function Hero({ onOpenPricingModal, intakeFormUrl }: HeroProps) {
+export function Hero({ intakeFormUrl }: HeroProps) {
   return (
     <section className="section hero" id="home">
       <div className="hero__backdrop" aria-hidden="true">
@@ -70,45 +69,7 @@ export function Hero({ onOpenPricingModal, intakeFormUrl }: HeroProps) {
             </div>
           </div>
         </div>
-
-        <div className="hero__visual" data-reveal>
-          <button className="hero-panel" type="button" onClick={onOpenPricingModal} aria-label="Open pricing modal">
-            <div className="hero-panel__top">
-              <span className="hero-panel__eyebrow">Website packages</span>
-              <span className="hero-panel__chip">Open pricing</span>
-            </div>
-            <div className="hero-panel__headline">
-              <h3>Clear scope. Premium execution.</h3>
-              <p>
-                Custom websites with a sharper edge for brands that need presence, trust, and a cleaner path to inquiry.
-              </p>
-            </div>
-            <div className="hero-panel__packages">
-              <div className="hero-panel__package">
-                <span>Starter Landing Page</span>
-                <strong>$300 - $500</strong>
-              </div>
-              <div className="hero-panel__package">
-                <span>Portfolio Website</span>
-                <strong>$600 - $1,000</strong>
-              </div>
-              <div className="hero-panel__package">
-                <span>Brand / Campaign Website</span>
-                <strong>Starting at $1,000+</strong>
-              </div>
-            </div>
-            <div className="hero-panel__footer">
-              <div className="hero-panel__footer-copy">
-                <span>Included</span>
-                <p>Custom design, responsive build, basic SEO, and contact setup.</p>
-              </div>
-              <span className="button button--primary button--full">
-                View Pricing
-                <ArrowUpRight size={16} />
-              </span>
-            </div>
-          </button>
-        </div>
+        <div className="hero__visual" data-reveal aria-hidden="true" />
       </div>
     </section>
   );
