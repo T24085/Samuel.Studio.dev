@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type WheelEvent } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { dnaGalleryItems } from '../data/dnaGallery';
@@ -128,6 +128,21 @@ export function DnaGallery() {
 
   const activeItem = activeIndex !== null ? dnaGalleryItems[activeIndex] : null;
 
+  const handleRailWheel = (event: WheelEvent<HTMLDivElement>) => {
+    const rail = railRef.current;
+
+    if (!rail) {
+      return;
+    }
+
+    if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) {
+      return;
+    }
+
+    event.preventDefault();
+    rail.scrollLeft += event.deltaY;
+  };
+
   const nextCard = () => {
     if (!dnaGalleryItems.length) {
       return;
@@ -148,10 +163,10 @@ export function DnaGallery() {
     <section className="section dna-scroll-gallery" id="gallery">
       <div className="container">
         <div className="dna-scroll-gallery__intro" data-reveal>
-          <p className="section-label">DNA gallery</p>
-          <h2>Side-scroll the mockups.</h2>
+          <p className="section-label">Mockup gallery</p>
+          <h2>Scroll through the mockups.</h2>
           <p>
-            A horizontal rail of 15 wheel mockups. Drag, scroll, or use the arrows to move through the set, then tap any card to open it larger.
+            A horizontal rail of 15 mockups. Scroll sideways with your mouse wheel or trackpad, then tap any card to open it larger.
           </p>
         </div>
       </div>
@@ -162,7 +177,7 @@ export function DnaGallery() {
           <span>{String(dnaGalleryItems.length).padStart(2, '0')} mockups</span>
         </div>
 
-        <div className="dna-scroll-gallery__rail" ref={railRef}>
+        <div className="dna-scroll-gallery__rail" ref={railRef} onWheel={handleRailWheel}>
           {dnaGalleryItems.map((item, index) => (
             <motion.button
               key={item.id}
