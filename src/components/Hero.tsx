@@ -10,7 +10,9 @@ export function Hero({ onOpenPricingModal, intakeFormUrl }: HeroProps) {
   return (
     <section className="section hero" id="home">
       <div className="hero__backdrop" aria-hidden="true">
-        <img className="hero__backdrop-image" src={assets.heroBanner} alt="" />
+        <video className="hero__backdrop-media" autoPlay loop muted playsInline preload="metadata" poster={assets.heroBanner}>
+          <source src={assets.heroVideo} type="video/mp4" />
+        </video>
         <div className="hero__backdrop-fade" />
       </div>
       <div className="container hero__grid">

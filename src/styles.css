@@ -108,7 +108,7 @@
     linear-gradient(180deg, rgba(6, 6, 11, 0.98) 0%, rgba(10, 10, 18, 0.98) 100%);
 }
 
-:root[data-theme='light'] .hero__backdrop-image {
+:root[data-theme='light'] .hero__backdrop-media {
   opacity: 0.84;
   filter: saturate(0.98) contrast(1.01);
 }
@@ -536,7 +536,7 @@ img {
   pointer-events: none;
 }
 
-.hero__backdrop-image {
+.hero__backdrop-media {
   position: absolute;
   inset: -1rem -9vw -2rem 34vw;
   width: auto;
@@ -2196,7 +2196,7 @@ img {
     padding-top: 0;
   }
 
-  .hero__backdrop-image {
+  .hero__backdrop-media {
     inset: 6rem -20vw 10rem 42vw;
     width: auto;
     height: calc(100% - 6rem);
@@ -2478,7 +2478,7 @@ img {
     filter: none;
   }
 
-  .hero__backdrop-image {
-    animation: none;
-  }
+    .hero__backdrop-media {
+      animation: none;
+    }
 }
