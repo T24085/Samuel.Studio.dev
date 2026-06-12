@@ -174,8 +174,41 @@ export function DnaGallery() {
       <div className="dna-scroll-gallery__shell">
         <div className="dna-scroll-gallery__toolbar" aria-hidden="true">
           <span>Scroll sideways</span>
+          <span className="dna-scroll-gallery__toolbarHint">
+            <motion.span
+              className="dna-scroll-gallery__toolbarCue"
+              animate={
+                reducedMotion
+                  ? undefined
+                  : {
+                      x: [0, 6, 0],
+                      opacity: [0.55, 1, 0.55],
+                    }
+              }
+              transition={reducedMotion ? undefined : { duration: 1.6, ease: 'easeInOut', repeat: Infinity }}
+            >
+              <ChevronRight size={14} />
+            </motion.span>
+            Drag, wheel, or swipe
+            <motion.span
+              className="dna-scroll-gallery__toolbarCue"
+              animate={
+                reducedMotion
+                  ? undefined
+                  : {
+                      x: [0, -6, 0],
+                      opacity: [0.55, 1, 0.55],
+                    }
+              }
+              transition={reducedMotion ? undefined : { duration: 1.6, ease: 'easeInOut', repeat: Infinity, delay: 0.2 }}
+            >
+              <ChevronRight size={14} />
+            </motion.span>
+          </span>
           <span>{String(dnaGalleryItems.length).padStart(2, '0')} mockups</span>
         </div>
+
+        <p className="dna-scroll-gallery__hint">Use the horizontal bar below if your trackpad gesture is not moving the rail.</p>
 
         <div className="dna-scroll-gallery__rail" ref={railRef} onWheel={handleRailWheel}>
           {dnaGalleryItems.map((item, index) => (
