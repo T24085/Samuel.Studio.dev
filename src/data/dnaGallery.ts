@@ -7,6 +7,20 @@ export type DnaGalleryItem = {
 };
 
 const baseUrl = import.meta.env.BASE_URL;
+const mockupImages = import.meta.glob('../../Mockups/*.png', {
+  eager: true,
+  import: 'default',
+}) as Record<string, string>;
+
+const mockupAsset = (fileName: string) => {
+  const image = mockupImages[`../../Mockups/${fileName}`];
+
+  if (!image) {
+    throw new Error(`Missing mockup asset: ${fileName}`);
+  }
+
+  return image;
+};
 
 const wheelGallerySource = [
   {
@@ -57,27 +71,6 @@ const wheelGallerySource = [
     title: 'Faith Family',
     description: 'Faith-centered storefront with clean white space and devotional product framing.',
     image: `${baseUrl}dna-gallery/07.png`,
-  },
-  {
-    id: 'dna-08',
-    number: '08',
-    title: 'Split Layout',
-    description: 'Split-screen business homepage with dashboard and lifestyle sections.',
-    image: `${baseUrl}dna-gallery/08.png`,
-  },
-  {
-    id: 'dna-09',
-    number: '09',
-    title: 'Church Landing',
-    description: 'Dark ministry homepage with a centered message and warm content blocks.',
-    image: `${baseUrl}dna-gallery/09.png`,
-  },
-  {
-    id: 'dna-10',
-    number: '10',
-    title: 'Dessert Campaign',
-    description: 'Dessert campaign with multiple product shots and cheerful pastel branding.',
-    image: `${baseUrl}dna-gallery/10.png`,
   },
   {
     id: 'dna-11',
