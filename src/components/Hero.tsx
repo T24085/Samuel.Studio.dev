@@ -18,10 +18,10 @@ export function Hero({ intakeFormUrl }: HeroProps) {
         <div className="hero__copy" data-reveal>
           <p className="section-label">Premium web design & development</p>
           <h1>
-            Luxury websites{' '}
-            <span>built to</span>{' '}
-            convert attention{' '}
-            <span>into bookings.</span>
+            Luxury Websites{' '}
+            <span>Built to</span>{' '}
+            Convert Attention{' '}
+            <span>Into Bookings.</span>
           </h1>
           <p className="hero__lede">
             Custom websites for creators, models, brands, and businesses that need a sharper presence online. Designed to look refined, load fast, and bring in the right inquiries.
