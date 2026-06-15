@@ -375,6 +375,7 @@ export function ChatAssistant() {
   const [draft, setDraft] = useState('');
   const [open, setOpen] = useState(false);
   const [sending, setSending] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [intakeError, setIntakeError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
@@ -591,6 +592,7 @@ export function ChatAssistant() {
     setDraft('');
     setError(null);
     setIntakeError(null);
+    setShowSuggestions(false);
     setOpen(false);
     saveChatState(nextState);
   };
@@ -731,13 +733,36 @@ export function ChatAssistant() {
                 ) : null}
               </div>
 
-              <div className="chat-assistant__suggestions" aria-label="Suggested questions">
-                {starterPrompts.map((prompt) => (
-                  <button key={prompt} type="button" className="chat-assistant__chip" onClick={() => handlePrompt(prompt)} disabled={sending}>
-                    <Sparkles size={13} />
-                    <span>{prompt}</span>
-                  </button>
-                ))}
+              <div className="chat-assistant__suggestions">
+                <button
+                  type="button"
+                  className="chat-assistant__suggestionsToggle"
+                  aria-expanded={showSuggestions}
+                  aria-controls="nova-suggested-prompts"
+                  onClick={() => setShowSuggestions((value) => !value)}
+                  disabled={sending}
+                >
+                  <span>Suggested questions</span>
+                  <span>{showSuggestions ? 'Hide' : 'Show'}</span>
+                </button>
+
+                {showSuggestions ? (
+                  <div className="chat-assistant__suggestionsList" id="nova-suggested-prompts" aria-label="Suggested questions">
+                    {starterPrompts.map((prompt, index) => (
+                      <button
+                        key={prompt}
+                        type="button"
+                        className="chat-assistant__chip"
+                        onClick={() => handlePrompt(prompt)}
+                        disabled={sending}
+                        data-priority={index < 2 ? 'high' : 'low'}
+                      >
+                        <Sparkles size={13} />
+                        <span>{prompt}</span>
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
               </div>
 
               <form className="chat-assistant__composer" onSubmit={handleSubmit}>

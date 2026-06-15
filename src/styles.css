@@ -2340,22 +2340,50 @@ img {
 
 .chat-assistant__suggestions {
   flex: none;
+  display: grid;
+  gap: 0.5rem;
+  padding: 0 1rem 0.7rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.chat-assistant__suggestionsToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.62rem 0.8rem;
+  border: 1px solid var(--border-default);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.chat-assistant__suggestionsToggle span:last-child {
+  color: var(--purple-neon);
+  letter-spacing: 0.16em;
+}
+
+.chat-assistant__suggestionsList {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.45rem;
-  padding: 0 1rem 0.85rem;
+  gap: 0.4rem;
 }
 
 .chat-assistant__chip {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  padding: 0.5rem 0.7rem;
+  padding: 0.45rem 0.65rem;
   border-radius: 999px;
   border: 1px solid var(--border-default);
   background: var(--surface-chip);
   color: var(--text);
-  font-size: 0.76rem;
+  font-size: 0.73rem;
   line-height: 1.15;
   text-align: left;
 }
@@ -2367,7 +2395,7 @@ img {
 
 .chat-assistant__chip span {
   display: inline-block;
-  max-width: 13rem;
+  max-width: 11.5rem;
 }
 
 .chat-assistant__typing {
@@ -2929,6 +2957,10 @@ img {
 
   .chat-assistant__messages {
     min-height: 0;
+  }
+
+  .chat-assistant__suggestionsList {
+    gap: 0.35rem;
   }
 
   .chat-assistant__bubble {
