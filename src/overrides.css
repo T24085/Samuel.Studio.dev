@@ -1,0 +1,1236 @@
+.pricing-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.pricing-grid__packages {
+  display: grid;
+  gap: 1rem;
+}
+
+.package-card > .paypal-cart-actions {
+  margin-top: auto;
+}
+
+.paypal-cart-actions {
+  display: grid;
+  gap: 0.65rem;
+  align-items: start;
+}
+
+.paypal-cart-actions paypal-add-to-cart-button,
+.paypal-cart-actions paypal-cart-button {
+  display: block;
+  width: 100%;
+}
+
+.paypal-cart-actions paypal-add-to-cart-button .item-header,
+.paypal-cart-actions paypal-add-to-cart-button .item-description {
+  display: none !important;
+}
+
+.paypal-cart-actions paypal-add-to-cart-button #form-container-TS4B6ND3JD9RQ,
+.paypal-cart-actions paypal-add-to-cart-button #form-container-XWNT5W4DVYANU,
+.paypal-cart-actions paypal-add-to-cart-button #form-container-WJQGNAXVCD9T6 {
+  max-width: none !important;
+}
+
+.paypal-cart-actions paypal-add-to-cart-button .addToCartButtonContainer.buttonColorStyle,
+.paypal-floating-cart paypal-cart-button .viewCartButtonContainer.buttonColorStyle {
+  min-height: 2.875rem !important;
+  border-radius: 999px !important;
+  padding: 0.75rem 1.15rem !important;
+  background: linear-gradient(180deg, rgba(168, 85, 247, 0.98), rgba(107, 33, 168, 0.98)) !important;
+  color: var(--text) !important;
+  border: 1px solid rgba(192, 132, 252, 0.28) !important;
+  box-shadow: 0 16px 36px rgba(91, 33, 182, 0.22) !important;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    filter 180ms ease,
+    background 180ms ease !important;
+  animation: cart-button-core-flash 3.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+.paypal-cart-actions paypal-add-to-cart-button .addToCartButtonContainer.buttonColorStyle:hover:enabled,
+.paypal-floating-cart paypal-cart-button .viewCartButtonContainer.buttonColorStyle:hover:enabled {
+  background: linear-gradient(180deg, rgba(180, 90, 255, 1), rgba(121, 52, 201, 1)) !important;
+  filter: brightness(1.04);
+  box-shadow: 0 18px 42px rgba(91, 33, 182, 0.28) !important;
+}
+
+.paypal-cart-actions paypal-add-to-cart-button .addToCartButtonContainer.buttonColorStyle:active:enabled,
+.paypal-floating-cart paypal-cart-button .viewCartButtonContainer.buttonColorStyle:active:enabled {
+  transform: translateY(1px);
+  background: linear-gradient(180deg, rgba(107, 33, 168, 1), rgba(88, 28, 135, 1)) !important;
+}
+
+.paypal-cart-actions paypal-add-to-cart-button .addToCartButtonContainer.buttonColorStyle,
+.paypal-cart-actions paypal-add-to-cart-button .addToCartButtonContainer.buttonColorStyle span,
+.paypal-cart-actions paypal-add-to-cart-button .addToCartButtonContainer.buttonColorStyle svg,
+.paypal-floating-cart paypal-cart-button .viewCartButtonContainer.buttonColorStyle,
+.paypal-floating-cart paypal-cart-button .viewCartButtonContainer.buttonColorStyle span,
+.paypal-floating-cart paypal-cart-button .viewCartButtonContainer.buttonColorStyle svg {
+  color: inherit !important;
+}
+
+.paypal-cart-actions paypal-add-to-cart-button .addToCartButtonContainer.buttonColorStyle svg path,
+.paypal-cart-actions paypal-add-to-cart-button .addToCartButtonContainer.buttonColorStyle svg *,
+.paypal-floating-cart paypal-cart-button .viewCartButtonContainer.buttonColorStyle svg path,
+.paypal-floating-cart paypal-cart-button .viewCartButtonContainer.buttonColorStyle svg * {
+  fill: currentColor !important;
+}
+
+.paypal-cart-actions paypal-add-to-cart-button .addToCartButtonContainer.buttonColorStyle #btn-text_add,
+.paypal-cart-actions paypal-add-to-cart-button .addToCartButtonContainer.buttonColorStyle #btn-text_added,
+.paypal-cart-actions paypal-add-to-cart-button .addToCartButtonContainer.buttonColorStyle #btn-text_adding,
+.paypal-floating-cart paypal-cart-button .viewCartButtonContainer.buttonColorStyle #cart-btn_count,
+.paypal-floating-cart paypal-cart-button .viewCartButtonContainer.buttonColorStyle #cart-btn_count_reader,
+.paypal-floating-cart paypal-cart-button .viewCartButtonContainer.buttonColorStyle #cart-label,
+.paypal-floating-cart paypal-cart-button .viewCartButtonContainer.buttonColorStyle #cart-plural,
+.paypal-floating-cart paypal-cart-button .viewCartButtonContainer.buttonColorStyle #cart-singular {
+  color: inherit !important;
+}
+
+.paypal-cart-actions paypal-add-to-cart-button .addToCartButtonContainer.buttonColorStyle .addToCartSpinner {
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  border-top-color: rgba(255, 255, 255, 0.88) !important;
+}
+
+.paypal-floating-cart {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 70;
+  width: fit-content;
+  height: fit-content;
+  overflow: visible;
+  isolation: isolate;
+}
+
+.paypal-floating-cart paypal-cart-button {
+  display: block;
+  width: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.paypal-floating-cart__spark {
+  position: absolute;
+  right: 3.9rem;
+  bottom: 2.55rem;
+  width: 1rem;
+  height: 1rem;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(243, 226, 196, 0.98) 0%, rgba(192, 132, 252, 0.88) 38%, rgba(168, 85, 247, 0) 74%);
+  box-shadow:
+    0 0 0 0 rgba(192, 132, 252, 0.28),
+    0 0 18px rgba(192, 132, 252, 0.44),
+    0 0 28px rgba(168, 85, 247, 0.24);
+  animation: cart-spark-breathe 2.9s ease-in-out infinite;
+}
+
+.paypal-floating-cart__spark::before,
+.paypal-floating-cart__spark::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1.7rem;
+  height: 1px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(243, 226, 196, 0.94), transparent);
+  transform: translate3d(-50%, -50%, 0) rotate(32deg);
+  filter: drop-shadow(0 0 8px rgba(243, 226, 196, 0.48));
+}
+
+.paypal-floating-cart__spark::after {
+  transform: translate3d(-50%, -50%, 0) rotate(-58deg);
+}
+
+.paypal-floating-cart::before {
+  content: '';
+  position: absolute;
+  inset: -0.9rem;
+  z-index: 0;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(243, 226, 196, 0.34) 0%, rgba(192, 132, 252, 0.2) 24%, rgba(168, 85, 247, 0.08) 44%, transparent 72%);
+  filter: blur(14px);
+  pointer-events: none;
+  opacity: 0.2;
+  transform: scale(0.96);
+  animation: cart-button-flash 3.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+.paypal-floating-cart::after {
+  content: '';
+  position: absolute;
+  inset: -0.35rem;
+  z-index: 0;
+  border-radius: 999px;
+  background:
+    linear-gradient(120deg, transparent 36%, rgba(243, 226, 196, 0.82) 48%, transparent 60%);
+  mix-blend-mode: screen;
+  filter: blur(9px);
+  pointer-events: none;
+  opacity: 0.08;
+  transform: translate3d(-10%, -8%, 0) scale(0.95);
+  animation: cart-button-sweep 3.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+.addons-panel__list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+  margin-top: 1rem;
+}
+
+.addon-row {
+  position: relative;
+  perspective: none;
+  height: auto;
+  min-height: 100%;
+  border-radius: 18px;
+  border: 1px solid var(--border-soft);
+  background:
+    linear-gradient(180deg, rgba(192, 132, 252, 0.08), transparent 60%),
+    var(--surface-card-soft);
+  overflow: visible;
+  color: var(--text);
+  outline: none;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+}
+
+.addon-row--expanded {
+  padding: 1.05rem;
+  display: grid;
+  gap: 0.95rem;
+}
+
+.addon-row:hover,
+.addon-row:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(192, 132, 252, 0.42);
+  box-shadow:
+    0 0 0 1px rgba(192, 132, 252, 0.16),
+    0 18px 40px rgba(0, 0, 0, 0.18),
+    0 0 24px rgba(139, 92, 246, 0.12);
+}
+
+.addon-row--expanded:hover,
+.addon-row--expanded:focus-visible {
+  transform: translateY(-2px);
+}
+
+.addons-panel__pitch {
+  margin-top: 1rem;
+  padding: 1rem 1rem 1.05rem;
+  border-radius: 18px;
+  border: 1px solid rgba(192, 132, 252, 0.16);
+  background:
+    linear-gradient(180deg, rgba(168, 85, 247, 0.1), rgba(255, 255, 255, 0.03)),
+    rgba(10, 10, 16, 0.55);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.addons-panel__pitch h3 {
+  margin: 0 0 0.45rem;
+  font-size: 1.1rem;
+}
+
+.addons-panel__pitch p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.addon-row__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  padding-bottom: 0.15rem;
+}
+
+.addon-row__summary {
+  margin: 0.4rem 0 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.addon-row__section {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.addon-row__label {
+  color: var(--purple-neon);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.addon-row__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.addon-row__chips li {
+  padding: 0.42rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(192, 132, 252, 0.18);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  font-size: 0.79rem;
+  line-height: 1.2;
+}
+
+.addon-row__section--bestfor p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.dna-gallery {
+  position: relative;
+  overflow: hidden;
+  padding-bottom: clamp(4rem, 7vh, 6rem);
+  background:
+    radial-gradient(circle at 50% 12%, rgba(243, 226, 196, 0.16), transparent 28%),
+    radial-gradient(circle at 50% 54%, rgba(167, 139, 250, 0.16), transparent 40%),
+    linear-gradient(180deg, #09090d 0%, #050509 100%);
+}
+
+.dna-gallery::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 22%, rgba(255, 255, 255, 0.06), transparent 24%),
+    radial-gradient(circle at 50% 62%, rgba(243, 226, 196, 0.08), transparent 30%);
+  opacity: 0.7;
+}
+
+.dna-gallery__intro {
+  position: relative;
+  z-index: 1;
+  max-width: 44rem;
+  margin-bottom: 1.6rem;
+}
+
+.dna-gallery__intro h2 {
+  margin: 0.85rem 0 0;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(2.8rem, 5vw, 4.8rem);
+  line-height: 0.92;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+
+.dna-gallery__intro p:last-child {
+  max-width: 38rem;
+  margin: 1rem 0 0;
+  color: rgba(248, 250, 252, 0.68);
+  line-height: 1.7;
+}
+
+.dna-gallery__track {
+  position: relative;
+  min-height: 170vh;
+}
+
+.dna-gallery__sticky {
+  position: sticky;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100vh;
+  padding: 0 0.75rem;
+}
+
+.dna-gallery__aura {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 44%, rgba(243, 226, 196, 0.16), transparent 24%),
+    radial-gradient(circle at 50% 60%, rgba(167, 139, 250, 0.14), transparent 30%);
+  filter: blur(26px);
+  pointer-events: none;
+}
+
+.dna-gallery__stage {
+  position: relative;
+  width: min(100%, 1800px);
+  height: min(1320px, 100vh);
+  overflow: visible;
+  transform-style: preserve-3d;
+}
+
+.dna-gallery__strands {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.dna-gallery__strand,
+.dna-gallery__cross {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: block;
+}
+
+.dna-gallery__strand {
+  width: 2px;
+  height: 84%;
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+  opacity: 0.3;
+}
+
+.dna-gallery__strand--left {
+  transform: translate3d(-96px, -50%, 0) rotate(10deg);
+}
+
+.dna-gallery__strand--right {
+  transform: translate3d(96px, -50%, 0) rotate(-10deg);
+}
+
+.dna-gallery__cross {
+  width: 340px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  opacity: 0.22;
+}
+
+.dna-gallery__cross--top {
+  transform: translate3d(-50%, -50%, 0) rotate(-28deg);
+  top: 28%;
+}
+
+.dna-gallery__cross--bottom {
+  transform: translate3d(-50%, -50%, 0) rotate(28deg);
+  top: 60%;
+}
+
+.dna-gallery__glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(243, 226, 196, 0.12), transparent 44%);
+}
+
+.dna-card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: clamp(14rem, 20vw, 24rem);
+  aspect-ratio: 3 / 4;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.5rem;
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.32);
+  cursor: pointer;
+  text-align: left;
+  backdrop-filter: blur(10px);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    filter 180ms ease;
+}
+
+.dna-card:hover,
+.dna-card:focus-visible {
+  border-color: rgba(243, 226, 196, 0.28);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.38);
+  filter: brightness(1.04);
+}
+
+.dna-card:focus-visible {
+  outline: 2px solid rgba(243, 226, 196, 0.5);
+  outline-offset: 4px;
+}
+
+.dna-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: contrast(1.08) saturate(1.05);
+}
+
+.dna-card__fade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(3, 3, 3, 0.02), transparent 26%, rgba(3, 3, 3, 0.42));
+}
+
+.dna-card__number {
+  position: absolute;
+  top: 0.85rem;
+  left: 0.85rem;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.1rem;
+  height: 1.65rem;
+  padding: 0 0.5rem;
+  border-radius: 999px;
+  background: rgba(10, 10, 12, 0.5);
+  color: rgba(248, 250, 252, 0.88);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  backdrop-filter: blur(10px);
+}
+
+.dna-card__copy {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  padding: 0.95rem;
+}
+
+.dna-card__copy p {
+  margin: 0;
+  color: rgba(245, 240, 230, 0.58);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
+.dna-card__copy h3 {
+  margin: 0.45rem 0 0;
+  color: #f5f0e6;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.6rem;
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+}
+
+.dna-card__copy span {
+  display: block;
+  margin-top: 0.4rem;
+  color: rgba(245, 240, 230, 0.72);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.dna-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 1.2rem;
+  background: rgba(5, 5, 9, 0.78);
+  backdrop-filter: blur(18px);
+}
+
+.dna-modal__panel {
+  position: relative;
+  width: min(100%, 76rem);
+  max-height: min(92vh, 54rem);
+  overflow: hidden;
+  border: 1px solid rgba(243, 226, 196, 0.14);
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at top left, rgba(167, 139, 250, 0.16), transparent 24%),
+    linear-gradient(180deg, rgba(12, 12, 18, 0.98), rgba(7, 7, 11, 0.98));
+  box-shadow: 0 0 0 1px rgba(192, 132, 252, 0.12), 0 32px 100px rgba(0, 0, 0, 0.5), 0 0 60px rgba(139, 92, 246, 0.2);
+}
+
+.dna-modal__veil {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at top right, rgba(243, 226, 196, 0.08), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent);
+}
+
+.dna-modal__close,
+.dna-modal__nav {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(10, 10, 12, 0.72);
+  color: #f8fafc;
+  backdrop-filter: blur(14px);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.dna-modal__close:hover,
+.dna-modal__nav:hover,
+.dna-modal__close:focus-visible,
+.dna-modal__nav:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(243, 226, 196, 0.28);
+  color: #f3e2c4;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25);
+}
+
+.dna-modal__close {
+  top: 1rem;
+  right: 1rem;
+}
+
+.dna-modal__nav--prev {
+  top: 50%;
+  left: 1rem;
+  transform: translateY(-50%);
+}
+
+.dna-modal__nav--next {
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+}
+
+.dna-modal__grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
+}
+
+.dna-modal__imageShell {
+  min-height: 42vh;
+  overflow: hidden;
+  background: #050505;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dna-modal__image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+.dna-modal__copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.5rem;
+}
+
+.dna-modal__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  color: rgba(245, 240, 230, 0.56);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+}
+
+.dna-modal__copy h3 {
+  margin: 0.85rem 0 0;
+  color: #f5f0e6;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(2.4rem, 3vw, 3.8rem);
+  line-height: 0.92;
+  letter-spacing: -0.05em;
+}
+
+.dna-modal__copy p {
+  margin: 1rem 0 0;
+  color: rgba(248, 250, 252, 0.72);
+  line-height: 1.7;
+}
+
+.dna-modal__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.dna-modal__tags span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.1rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(248, 250, 252, 0.72);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.dna-modal__hint {
+  margin: 0;
+  color: rgba(248, 250, 252, 0.42);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.dna-scroll-gallery {
+  position: relative;
+  overflow: hidden;
+  margin-top: calc(-1 * clamp(3rem, 5vh, 4.5rem));
+  padding-top: 0;
+  padding-bottom: 0;
+  background:
+    radial-gradient(circle at 50% 12%, rgba(243, 226, 196, 0.16), transparent 28%),
+    radial-gradient(circle at 24% 42%, rgba(168, 85, 247, 0.12), transparent 28%),
+    radial-gradient(circle at 78% 34%, rgba(59, 130, 246, 0.08), transparent 30%),
+    linear-gradient(180deg, #10111a 0%, #0a0a12 46%, #050509 100%);
+}
+
+.dna-scroll-gallery::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.08), transparent 24%),
+    radial-gradient(circle at 50% 62%, rgba(243, 226, 196, 0.08), transparent 30%);
+  opacity: 0.95;
+}
+
+.dna-scroll-gallery__intro {
+  position: relative;
+  z-index: 1;
+  max-width: 44rem;
+  margin-bottom: 0.9rem;
+}
+
+.dna-scroll-gallery__intro h2 {
+  margin: 0.85rem 0 0;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(2.8rem, 5vw, 4.8rem);
+  line-height: 0.92;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+
+.dna-scroll-gallery__intro p:last-child {
+  max-width: 38rem;
+  margin: 1rem 0 0;
+  color: rgba(248, 250, 252, 0.68);
+  line-height: 1.7;
+}
+
+.dna-scroll-gallery__shell {
+  position: relative;
+  z-index: 1;
+  width: 100vw;
+  height: 100%;
+  margin-left: calc(50% - 50vw);
+  padding-inline: 0;
+  display: flex;
+  flex-direction: column;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0)),
+    linear-gradient(180deg, rgba(8, 8, 14, 0.72), rgba(5, 5, 9, 0.95));
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dna-scroll-gallery__track {
+  position: relative;
+  height: 100svh;
+  margin-top: calc(-1 * clamp(0.75rem, 1.5vh, 1.5rem));
+}
+
+.dna-scroll-gallery__sticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: flex;
+  align-items: stretch;
+  padding-top: 0;
+}
+
+.dna-scroll-gallery__toolbar {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: center;
+  width: min(100%, 1600px);
+  margin: 0 auto 0.3rem;
+  padding-inline: clamp(0.75rem, 2vw, 1.5rem);
+  color: rgba(245, 240, 230, 0.58);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
+.dna-scroll-gallery__toolbarHint {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.55rem;
+  color: rgba(248, 250, 252, 0.82);
+  letter-spacing: 0.18em;
+}
+
+.dna-scroll-gallery__toolbarCue {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--purple-neon);
+  filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.32));
+}
+
+.dna-scroll-gallery__viewport {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.dna-scroll-gallery__rail {
+  display: flex;
+  gap: 0;
+  width: max-content;
+  align-items: stretch;
+  min-height: clamp(46rem, 92vh, 64rem);
+  padding: 0.2rem clamp(0.75rem, 2vw, 1.5rem) 1.1rem;
+}
+
+.dna-scroll-gallery__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  flex: 0 0 clamp(28rem, 28vw, 34rem);
+  height: clamp(46rem, 92vh, 64rem);
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.32);
+  cursor: pointer;
+  text-align: left;
+  white-space: normal;
+  backdrop-filter: blur(10px);
+  margin-left: -1px;
+  transition:
+    flex-basis 360ms ease,
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    filter 180ms ease,
+    opacity 180ms ease;
+}
+
+.dna-scroll-gallery__card:first-child {
+  margin-left: 0;
+  border-top-left-radius: 28px;
+  border-bottom-left-radius: 28px;
+}
+
+.dna-scroll-gallery__card:last-child {
+  border-top-right-radius: 28px;
+  border-bottom-right-radius: 28px;
+}
+
+.dna-scroll-gallery__card.is-active {
+  border-color: rgba(243, 226, 196, 0.26);
+  box-shadow:
+    0 26px 68px rgba(0, 0, 0, 0.42),
+    0 0 0 1px rgba(243, 226, 196, 0.12);
+  filter: brightness(1.04);
+}
+
+.dna-scroll-gallery__card.is-active,
+.dna-scroll-gallery__card:hover,
+.dna-scroll-gallery__card:focus-visible {
+  position: relative;
+  z-index: 1;
+}
+
+.dna-scroll-gallery__card:hover,
+.dna-scroll-gallery__card:focus-visible {
+  border-color: rgba(243, 226, 196, 0.28);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.38);
+  filter: brightness(1.03);
+}
+
+.dna-scroll-gallery__card:focus-visible {
+  outline: 2px solid rgba(243, 226, 196, 0.5);
+  outline-offset: 4px;
+}
+
+.dna-scroll-gallery__imageShell {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(243, 226, 196, 0.12), transparent 42%),
+    #050505;
+}
+
+.dna-scroll-gallery__imageShell--travel {
+  isolation: isolate;
+}
+
+.dna-scroll-gallery__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0.12) 42%, rgba(0, 0, 0, 0.72) 100%),
+    radial-gradient(circle at 50% 34%, rgba(168, 85, 247, 0.1), transparent 52%);
+  opacity: 0.86;
+  transition: opacity 220ms ease;
+}
+
+.dna-scroll-gallery__image {
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.dna-scroll-gallery__copy {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: clamp(1.15rem, 2vw, 1.6rem);
+  background:
+    linear-gradient(180deg, rgba(5, 5, 9, 0.04), rgba(5, 5, 9, 0.84));
+}
+
+.dna-scroll-gallery__copy p {
+  margin: 0;
+  color: var(--purple-neon);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.dna-scroll-gallery__copy h3 {
+  margin: 0;
+  color: #f5f0e6;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(2.2rem, 3.6vw, 4.2rem);
+  line-height: 0.92;
+  letter-spacing: -0.05em;
+}
+
+.dna-scroll-gallery__copy span {
+  color: rgba(248, 250, 252, 0.72);
+  line-height: 1.7;
+  font-size: 0.96rem;
+  max-width: 24rem;
+}
+
+.dna-scroll-gallery__card.is-active .dna-scroll-gallery__overlay {
+  opacity: 1;
+}
+
+.dna-scroll-gallery__card.is-active .dna-scroll-gallery__copy {
+  background:
+    linear-gradient(180deg, rgba(5, 5, 9, 0.02), rgba(5, 5, 9, 0.9)),
+    rgba(8, 8, 12, 0.22);
+}
+
+.dna-scroll-gallery__card.is-active .dna-scroll-gallery__copy h3 {
+  font-size: clamp(2.6rem, 4vw, 5rem);
+}
+
+.dna-scroll-gallery__action {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.35rem;
+  color: rgba(248, 250, 252, 0.86);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.dna-scroll-gallery__action svg {
+  flex: none;
+  color: var(--purple-neon);
+}
+
+.dna-scroll-gallery__nav {
+  display: none;
+}
+
+section#work {
+  padding-top: clamp(1.5rem, 4vh, 3rem);
+}
+
+@keyframes cart-button-flash {
+  0%,
+  100% {
+    opacity: 0.18;
+    transform: scale(0.96);
+  }
+
+  18% {
+    opacity: 0.72;
+    transform: scale(1.02);
+  }
+
+  42% {
+    opacity: 0.28;
+    transform: scale(1);
+  }
+
+  70% {
+    opacity: 0.52;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes cart-button-sweep {
+  0%,
+  100% {
+    opacity: 0.08;
+    transform: translate3d(-10%, -8%, 0) scale(0.95);
+  }
+
+  14% {
+    opacity: 0.42;
+  }
+
+  32% {
+    opacity: 0.26;
+    transform: translate3d(2%, 1%, 0) scale(1);
+  }
+
+  68% {
+    opacity: 0.18;
+    transform: translate3d(6%, 4%, 0) scale(1.03);
+  }
+}
+
+@keyframes cart-button-core-flash {
+  0%,
+  100% {
+    filter: brightness(1.03);
+    box-shadow: 0 16px 36px rgba(91, 33, 182, 0.22);
+  }
+
+  18% {
+    filter: brightness(1.11);
+    box-shadow: 0 0 0 1px rgba(192, 132, 252, 0.2), 0 0 28px rgba(192, 132, 252, 0.3), 0 18px 42px rgba(91, 33, 182, 0.3);
+  }
+
+  42% {
+    filter: brightness(1.06);
+    box-shadow: 0 0 0 1px rgba(192, 132, 252, 0.14), 0 0 20px rgba(192, 132, 252, 0.22), 0 17px 40px rgba(91, 33, 182, 0.26);
+  }
+
+  72% {
+    filter: brightness(1.08);
+    box-shadow: 0 0 0 1px rgba(192, 132, 252, 0.08), 0 0 14px rgba(192, 132, 252, 0.12), 0 16px 36px rgba(91, 33, 182, 0.22);
+  }
+}
+
+@keyframes cart-spark-breathe {
+  0%,
+  100% {
+    opacity: 0.42;
+    transform: scale(0.86) translate3d(0, 0, 0);
+  }
+
+  22% {
+    opacity: 1;
+    transform: scale(1.2) translate3d(0, -1px, 0);
+  }
+
+  48% {
+    opacity: 0.62;
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+
+  74% {
+    opacity: 0.9;
+    transform: scale(1.14) translate3d(0, -1px, 0);
+  }
+}
+
+@media (max-width: 900px) {
+  .paypal-floating-cart {
+    right: 1rem;
+    bottom: 1rem;
+    max-width: calc(100vw - 2rem);
+  }
+
+  .paypal-floating-cart__pointer {
+    display: none;
+  }
+
+  .projects-grid,
+  .styles-grid,
+  .packages-grid,
+  .process {
+    grid-template-columns: 1fr;
+  }
+
+  .addons-panel__list {
+    grid-template-columns: 1fr;
+  }
+
+  .dna-scroll-gallery__card {
+    flex-basis: 82vw;
+    height: clamp(40rem, 84vh, 52rem);
+  }
+
+  .dna-scroll-gallery__imageShell {
+    min-height: 16rem;
+  }
+
+  .dna-modal__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dna-modal__imageShell {
+    min-height: 34vh;
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+@media (max-width: 620px) {
+  .paypal-floating-cart {
+    right: 0.75rem;
+    bottom: 0.75rem;
+    max-width: calc(100vw - 1.5rem);
+  }
+
+  .paypal-floating-cart__pointer {
+    display: none;
+  }
+
+  .addon-row--expanded {
+    padding: 0.95rem;
+  }
+
+  .addon-row__chips {
+    gap: 0.35rem;
+  }
+
+  .addon-row__chips li {
+    padding: 0.38rem 0.62rem;
+    font-size: 0.74rem;
+  }
+
+  .dna-scroll-gallery {
+    padding-bottom: 0;
+  }
+
+  .dna-scroll-gallery__intro h2 {
+    font-size: clamp(2.5rem, 10vw, 3.8rem);
+  }
+
+  .dna-scroll-gallery__intro p:last-child {
+    font-size: 0.95rem;
+  }
+
+  .dna-scroll-gallery__toolbar {
+    gap: 0.75rem;
+    font-size: 0.62rem;
+  }
+
+  .dna-scroll-gallery__toolbarHint {
+    gap: 0.4rem;
+    letter-spacing: 0.14em;
+  }
+
+  .dna-scroll-gallery__hint {
+    font-size: 0.82rem;
+  }
+
+  .dna-scroll-gallery__copy {
+    padding: 1rem;
+  }
+
+  .dna-scroll-gallery__rail {
+    min-height: clamp(40rem, 84vh, 52rem);
+  }
+
+  .dna-scroll-gallery__card {
+    flex-basis: clamp(18rem, 76vw, 26rem);
+    height: clamp(40rem, 84vh, 52rem);
+  }
+
+  .dna-scroll-gallery__copy h3 {
+    font-size: clamp(1.9rem, 8vw, 3rem);
+  }
+
+  .dna-scroll-gallery__card.is-active .dna-scroll-gallery__copy h3 {
+    font-size: clamp(2.1rem, 8.5vw, 3.25rem);
+  }
+
+  .dna-modal {
+    padding: 0.7rem;
+  }
+
+  .dna-modal__panel {
+    border-radius: 22px;
+  }
+
+  .dna-modal__copy {
+    padding: 1.1rem;
+  }
+
+  .dna-modal__close {
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+
+  .dna-modal__nav--prev {
+    left: 0.75rem;
+  }
+
+  .dna-modal__nav--next {
+    right: 0.75rem;
+  }
+}
