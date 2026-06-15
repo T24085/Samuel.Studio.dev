@@ -388,7 +388,6 @@ export function ChatAssistant() {
 
   const hasProfile = Boolean(clientProfile);
   const statusLabel = sending ? 'Thinking' : hasProfile ? 'Ready' : 'Need details';
-  const modelLabel = hasProfile ? ollamaModelCandidates.join(' / ') : 'Name, email, phone required';
 
   useEffect(() => {
     saveChatState({
@@ -645,7 +644,6 @@ export function ChatAssistant() {
 
           <div className="chat-assistant__meta">
             <span>{statusLabel}</span>
-            <span>{modelLabel}</span>
           </div>
 
           {!hasProfile ? (
@@ -714,13 +712,7 @@ export function ChatAssistant() {
                     <div className="chat-assistant__bubble">
                       {message.role === 'assistant' ? (
                         <div className="chat-assistant__bubble-meta">
-                          <span>
-                            {message.source === 'fallback'
-                              ? 'Fallback'
-                              : message.source === 'ollama'
-                                ? `Nova${message.model ? ` · ${message.model}` : ''}`
-                                : 'Nova'}
-                          </span>
+                          <span>{message.source === 'fallback' ? 'Fallback' : 'Nova'}</span>
                         </div>
                       ) : null}
                       {message.content}
@@ -791,7 +783,7 @@ export function ChatAssistant() {
                 />
 
                 <div className="chat-assistant__footer">
-                  <p>{error || 'Transcript is saved server-side and can be forwarded to Nova later.'}</p>
+                  {error ? <p>{error}</p> : null}
                   <div className="chat-assistant__footerActions">
                     <button className="button button--ghost button--small chat-assistant__reset" type="button" onClick={handleResetChat} disabled={sending}>
                       Reset
