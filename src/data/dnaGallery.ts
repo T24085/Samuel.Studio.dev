@@ -7,62 +7,48 @@ export type DnaGalleryItem = {
 };
 
 const baseUrl = import.meta.env.BASE_URL;
-const mockupImages = import.meta.glob('../../Mockups/*.png', {
-  eager: true,
-  import: 'default',
-}) as Record<string, string>;
 
-const mockupAsset = (fileName: string) => {
-  const image = mockupImages[`../../Mockups/${fileName}`];
-
-  if (!image) {
-    throw new Error(`Missing mockup asset: ${fileName}`);
-  }
-
-  return image;
-};
-
-const wheelGallerySource = [
+const gallerySource = [
   {
     id: 'dna-01',
     number: '01',
-    title: 'Food Editorial',
-    description: 'Warm, food-led promo site with playful product photography and soft contrast.',
+    title: 'Trendel Lumber Co.',
+    description: 'Red-and-black lumber supply homepage with a warehouse-scale hero and strong trade credentials.',
     image: `${baseUrl}dna-gallery/01.png`,
   },
   {
     id: 'dna-02',
     number: '02',
-    title: 'Studio Launch',
-    description: 'Dark luxury layout with structured cards and a polished agency feel.',
+    title: 'Summit Construction',
+    description: 'Clean construction landing page with a bright residential hero and service cards.',
     image: `${baseUrl}dna-gallery/02.png`,
   },
   {
     id: 'dna-03',
     number: '03',
-    title: 'Tactical Hero',
-    description: 'High-contrast tactical landing page with a hard-edged hero and feature blocks.',
+    title: 'Pinnacle Roofing',
+    description: 'Roofing homepage with a high-contrast house hero, service grid, and trust signals.',
     image: `${baseUrl}dna-gallery/03.png`,
   },
   {
     id: 'dna-04',
     number: '04',
-    title: 'Competition Build',
-    description: 'Performance-focused product page with a heavier, gear-driven composition.',
+    title: 'Prairie Auto Repair',
+    description: 'Auto repair studio with a sharp service hero, compact offers, and local proof points.',
     image: `${baseUrl}dna-gallery/04.png`,
   },
   {
     id: 'dna-05',
     number: '05',
-    title: 'Gun Guys',
-    description: 'Cinema-style brand homepage with bold typography and restrained motion.',
+    title: 'Luna Boutique',
+    description: 'Soft fashion storefront with elegant editorial photography and refined product rhythm.',
     image: `${baseUrl}dna-gallery/05.png`,
   },
   {
     id: 'dna-06',
     number: '06',
-    title: 'Faith Ministry',
-    description: 'Bright church landing page with red accents and a welcoming service hierarchy.',
+    title: 'Vero Ristorante',
+    description: 'Warm restaurant homepage with an inviting hero, table booking flow, and menu highlights.',
     image: `${baseUrl}dna-gallery/06.png`,
   },
   {
@@ -71,6 +57,27 @@ const wheelGallerySource = [
     title: 'Faith Family',
     description: 'Faith-centered storefront with clean white space and devotional product framing.',
     image: `${baseUrl}dna-gallery/07.png`,
+  },
+  {
+    id: 'dna-08',
+    number: '08',
+    title: 'Modern Motion',
+    description: 'Smooth, high-contrast website with a more experimental motion-led presentation.',
+    image: `${baseUrl}dna-gallery/08.png`,
+  },
+  {
+    id: 'dna-09',
+    number: '09',
+    title: 'Corporate Grid',
+    description: 'Structured business layout with a dense card system and polished professional tone.',
+    image: `${baseUrl}dna-gallery/09.png`,
+  },
+  {
+    id: 'dna-10',
+    number: '10',
+    title: 'Studio Pattern',
+    description: 'Editorial-style landing page with a layout that leans into rhythm and contrast.',
+    image: `${baseUrl}dna-gallery/10.png`,
   },
   {
     id: 'dna-11',
@@ -109,4 +116,4 @@ const wheelGallerySource = [
   },
 ] as const;
 
-export const dnaGalleryItems: DnaGalleryItem[] = wheelGallerySource.map((item) => item);
+export const dnaGalleryItems: DnaGalleryItem[] = gallerySource.map((item) => item);

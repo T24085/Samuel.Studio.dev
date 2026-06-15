@@ -1,33 +1,34 @@
-import { useEffect, useRef, useState } from 'react';
-import { motion, useMotionValue, useReducedMotion } from 'framer-motion';
-import { ChevronRight } from 'lucide-react';
-import { dnaGalleryItems } from '../data/dnaGallery';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { AnimatePresence, motion, useMotionValue, useReducedMotion } from 'framer-motion';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { dnaGalleryItems, type DnaGalleryItem } from '../data/dnaGallery';
 
-export function DnaGallery() {
-  const sectionRef = useRef<HTMLElement | null>(null);
-  const trackRef = useRef<HTMLDivElement | null>(null);
-  const viewportRef = useRef<HTMLDivElement | null>(null);
+function useMarqueeMotion({
+  active,
+  direction,
+  initialOffset = 0,
+  reducedMotion,
+  speed,
+}: {
+  active: boolean;
+  direction: 1 | -1;
+  initialOffset?: number;
+  reducedMotion: boolean;
+  speed: number;
+}) {
   const railRef = useRef<HTMLDivElement | null>(null);
-  const slideRefs = useRef<Array<HTMLButtonElement | null>>([]);
-  const reducedMotion = useReducedMotion();
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const [isGalleryActive, setIsGalleryActive] = useState(false);
+  const viewportRef = useRef<HTMLDivElement | null>(null);
   const railX = useMotionValue(0);
-  const isGalleryActiveRef = useRef(false);
   const loopWidthRef = useRef(0);
-  const offsetRef = useRef(0);
+  const offsetRef = useRef(initialOffset);
   const animationFrameRef = useRef(0);
-  const snapFrameRef = useRef(0);
   const lastTickRef = useRef(0);
-  const lastScrollYRef = useRef(0);
-  const loopItems = [...dnaGalleryItems, ...dnaGalleryItems];
 
   useEffect(() => {
-    const updateTravel = () => {
+    const updateWidth = () => {
       const rail = railRef.current;
-      const viewport = viewportRef.current;
 
-      if (!rail || !viewport) {
+      if (!rail) {
         return;
       }
 
@@ -40,12 +41,12 @@ export function DnaGallery() {
       }
     };
 
-    updateTravel();
+    updateWidth();
 
     const rail = railRef.current;
     const viewport = viewportRef.current;
     const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(() => {
-      window.requestAnimationFrame(updateTravel);
+      window.requestAnimationFrame(updateWidth);
     });
 
     if (observer) {
@@ -58,68 +59,19 @@ export function DnaGallery() {
       }
     }
 
-    window.addEventListener('resize', updateTravel);
+    window.addEventListener('resize', updateWidth);
 
     return () => {
       observer?.disconnect();
-      window.removeEventListener('resize', updateTravel);
+      window.removeEventListener('resize', updateWidth);
     };
   }, [railX]);
-
-  useEffect(() => {
-    const section = sectionRef.current;
-
-    if (!section) {
-      return;
-    }
-
-    const updateLockState = () => {
-      const sectionRect = section.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-      const direction = window.scrollY >= lastScrollYRef.current ? 1 : -1;
-      const active = sectionRect.bottom > 0 && sectionRect.top < viewportHeight;
-      const snapBand = Math.max(120, viewportHeight * 0.22);
-      const shouldSnap = direction > 0 && sectionRect.top >= 0 && sectionRect.top <= snapBand && sectionRect.bottom > viewportHeight * 0.35;
-
-      lastScrollYRef.current = window.scrollY;
-      isGalleryActiveRef.current = active;
-      setIsGalleryActive(active);
-
-      if (shouldSnap) {
-        window.cancelAnimationFrame(snapFrameRef.current);
-        snapFrameRef.current = window.requestAnimationFrame(() => {
-          const currentTop = section.getBoundingClientRect().top;
-
-          if (currentTop > 0) {
-            window.scrollBy({ top: currentTop, left: 0, behavior: 'auto' });
-          }
-        });
-      }
-    };
-
-    const onScroll = () => {
-      window.cancelAnimationFrame(snapFrameRef.current);
-      snapFrameRef.current = window.requestAnimationFrame(updateLockState);
-    };
-
-    lastScrollYRef.current = window.scrollY;
-    updateLockState();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-
-    return () => {
-      window.cancelAnimationFrame(snapFrameRef.current);
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-    };
-  }, []);
 
   useEffect(() => {
     if (reducedMotion) {
       return;
     }
 
-    const speed = 34;
     const tick = (time: number) => {
       const loopWidth = loopWidthRef.current;
 
@@ -130,8 +82,9 @@ export function DnaGallery() {
       const delta = Math.min(32, time - lastTickRef.current);
       lastTickRef.current = time;
 
-      if (isGalleryActiveRef.current && loopWidth > 0) {
-        offsetRef.current = (offsetRef.current + (speed * delta) / 1000) % loopWidth;
+      if (active && loopWidth > 0) {
+        const nextOffset = offsetRef.current + direction * (speed * delta) / 1000;
+        offsetRef.current = ((nextOffset % loopWidth) + loopWidth) % loopWidth;
         railX.set(-offsetRef.current);
       }
 
@@ -143,117 +96,312 @@ export function DnaGallery() {
     return () => {
       window.cancelAnimationFrame(animationFrameRef.current);
     };
-  }, [railX, reducedMotion]);
+  }, [active, direction, reducedMotion, railX, speed]);
 
   useEffect(() => {
-    if (activeIndex === null) {
-      return;
+    if (!reducedMotion && initialOffset > 0) {
+      offsetRef.current = initialOffset;
+      railX.set(-initialOffset);
     }
+  }, [initialOffset, railX, reducedMotion]);
+
+  return { railRef, railX, viewportRef };
+}
+
+function GalleryPreviewModal({
+  index,
+  item,
+  onClose,
+  onNext,
+  onPrev,
+  total,
+  reducedMotion,
+}: {
+  index: number;
+  item: DnaGalleryItem | null;
+  onClose: () => void;
+  onNext: () => void;
+  onPrev: () => void;
+  total: number;
+  reducedMotion: boolean;
+}) {
+  useEffect(() => {
+    if (!item) {
+      return undefined;
+    }
+
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setActiveIndex(null);
-      }
-
-      if (!dnaGalleryItems.length) {
-        return;
+        onClose();
       }
 
       if (event.key === 'ArrowRight') {
-        setActiveIndex((current) => ((current ?? 0) + 1) % dnaGalleryItems.length);
+        onNext();
       }
 
       if (event.key === 'ArrowLeft') {
-        setActiveIndex((current) => ((current ?? 0) - 1 + dnaGalleryItems.length) % dnaGalleryItems.length);
+        onPrev();
       }
     };
 
     window.addEventListener('keydown', onKeyDown);
 
     return () => {
+      document.body.style.overflow = previous;
       window.removeEventListener('keydown', onKeyDown);
     };
-  }, [activeIndex]);
+  }, [item, onClose, onNext, onPrev]);
+
+  return (
+    <AnimatePresence>
+      {item ? (
+        <motion.div
+          className="dna-modal"
+          role="presentation"
+          onClick={onClose}
+          initial={reducedMotion ? { opacity: 1 } : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.22, ease: 'easeOut' }}
+        >
+          <motion.div
+            className="dna-modal__panel"
+            role="dialog"
+            aria-modal="true"
+            aria-label={item.title}
+            initial={reducedMotion ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96, y: 18 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={reducedMotion ? { opacity: 1 } : { opacity: 0, scale: 0.96, y: 18 }}
+            transition={{ type: 'spring', stiffness: 140, damping: 20 }}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="dna-modal__veil" aria-hidden="true" />
+
+            <button type="button" className="dna-modal__close" onClick={onClose} aria-label="Close preview">
+              <X size={18} />
+            </button>
+
+            {total > 1 ? (
+              <>
+                <button type="button" className="dna-modal__nav dna-modal__nav--prev" onClick={onPrev} aria-label="Previous preview">
+                  <ChevronLeft size={18} />
+                </button>
+                <button type="button" className="dna-modal__nav dna-modal__nav--next" onClick={onNext} aria-label="Next preview">
+                  <ChevronRight size={18} />
+                </button>
+              </>
+            ) : null}
+
+            <div className="dna-modal__grid">
+              <div className="dna-modal__imageShell">
+                <img className="dna-modal__image" src={item.image} alt={item.description} loading="eager" decoding="async" />
+              </div>
+
+              <div className="dna-modal__copy">
+                <div className="dna-modal__meta">
+                  <span>
+                    {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
+                  </span>
+                  <span>Nova Studio</span>
+                </div>
+
+                <div>
+                  <h3>{item.title}</h3>
+                  <p>{item.description}</p>
+                </div>
+
+                <div className="dna-modal__tags">
+                  <span>Homepage mockup</span>
+                  <span>Click to browse</span>
+                </div>
+
+                <p className="dna-modal__hint">Use escape or the arrow keys to browse the set.</p>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      ) : null}
+    </AnimatePresence>
+  );
+}
+
+function MarqueeRow({
+  active,
+  direction,
+  initialOffset,
+  items,
+  activeItemId,
+  onSelect,
+  reducedMotion,
+  rowLabel,
+  speed,
+}: {
+  active: boolean;
+  direction: 1 | -1;
+  initialOffset?: number;
+  items: DnaGalleryItem[];
+  activeItemId: string | null;
+  onSelect: (itemId: string) => void;
+  reducedMotion: boolean;
+  rowLabel: string;
+  speed: number;
+}) {
+  const loopItems = useMemo(() => [...items, ...items], [items]);
+  const { railRef, railX, viewportRef } = useMarqueeMotion({
+    active,
+    direction,
+    initialOffset,
+    reducedMotion,
+    speed,
+  });
+
+  return (
+    <div className="dna-scroll-gallery__row">
+      <div className="dna-scroll-gallery__rowHeader">
+        <span>{rowLabel}</span>
+        <span>{String(items.length).padStart(2, '0')} images</span>
+      </div>
+
+      <div className="dna-scroll-gallery__rowViewport" ref={viewportRef}>
+        <motion.div className="dna-scroll-gallery__rowRail" ref={railRef} style={reducedMotion ? undefined : { x: railX }}>
+          {loopItems.map((item, index) => {
+            const isSelected = activeItemId === item.id;
+
+            return (
+              <motion.button
+                key={`${item.id}-${index}`}
+                type="button"
+                className={`dna-scroll-gallery__card${isSelected ? ' is-active' : ''}`}
+                onClick={() => onSelect(item.id)}
+                initial={reducedMotion ? undefined : { opacity: 0, y: 16 }}
+                whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.25 }}
+                transition={{ duration: 0.38, ease: 'easeOut', delay: index * 0.015 }}
+              >
+                <div className="dna-scroll-gallery__imageShell dna-scroll-gallery__imageShell--compact">
+                  <img className="dna-scroll-gallery__image" src={item.image} alt={item.description} loading="lazy" decoding="async" />
+                  <div className="dna-scroll-gallery__overlay" aria-hidden="true" />
+                </div>
+
+                <div className="dna-scroll-gallery__copy dna-scroll-gallery__copy--compact">
+                  <p>{item.number}</p>
+                  <h3>{item.title}</h3>
+                  <span>{item.description}</span>
+                  <div className="dna-scroll-gallery__action">
+                    <span>Open preview</span>
+                    <ChevronRight size={16} />
+                  </div>
+                </div>
+              </motion.button>
+            );
+          })}
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+export function DnaGallery() {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const reducedMotion = useReducedMotion();
+  const [isActive, setIsActive] = useState(false);
+  const [activeItemId, setActiveItemId] = useState<string | null>(null);
+  const topRowItems = useMemo(() => dnaGalleryItems.slice(0, 8), []);
+  const bottomRowItems = useMemo(() => dnaGalleryItems.slice(8), []);
+
+  const activeIndex = activeItemId === null ? -1 : dnaGalleryItems.findIndex((item) => item.id === activeItemId);
+  const activeItem = activeIndex >= 0 ? dnaGalleryItems[activeIndex] : null;
+
+  useEffect(() => {
+    const section = sectionRef.current;
+
+    if (!section) {
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsActive(entry.isIntersecting);
+      },
+      {
+        threshold: 0.14,
+      },
+    );
+
+    observer.observe(section);
+
+    return () => observer.disconnect();
+  }, []);
+
+  const openItem = (itemId: string) => {
+    setActiveItemId(itemId);
+  };
+
+  const closeItem = () => {
+    setActiveItemId(null);
+  };
+
+  const nextItem = () => {
+    if (!dnaGalleryItems.length) {
+      return;
+    }
+
+    setActiveItemId((current) => {
+      const currentIndex = current === null ? 0 : dnaGalleryItems.findIndex((item) => item.id === current);
+      return dnaGalleryItems[(currentIndex + 1) % dnaGalleryItems.length].id;
+    });
+  };
+
+  const prevItem = () => {
+    if (!dnaGalleryItems.length) {
+      return;
+    }
+
+    setActiveItemId((current) => {
+      const currentIndex = current === null ? 0 : dnaGalleryItems.findIndex((item) => item.id === current);
+      return dnaGalleryItems[(currentIndex - 1 + dnaGalleryItems.length) % dnaGalleryItems.length].id;
+    });
+  };
 
   return (
     <section className="section dna-scroll-gallery dna-scroll-gallery--travel" id="gallery" ref={sectionRef}>
-      <div className="dna-scroll-gallery__track" ref={trackRef}>
-        <div className="dna-scroll-gallery__sticky">
-          <div className="dna-scroll-gallery__shell">
-            <div className="dna-scroll-gallery__toolbar" aria-hidden="true">
-              <span>Scroll sideways</span>
-              <span className="dna-scroll-gallery__toolbarHint">
-                <motion.span
-                  className="dna-scroll-gallery__toolbarCue"
-                  animate={
-                    reducedMotion
-                      ? undefined
-                      : {
-                          x: [0, 6, 0],
-                          opacity: [0.55, 1, 0.55],
-                        }
-                  }
-                  transition={reducedMotion ? undefined : { duration: 1.6, ease: 'easeInOut', repeat: Infinity }}
-                >
-                  <ChevronRight size={14} />
-                </motion.span>
-                Tap a panel to focus
-                <motion.span
-                  className="dna-scroll-gallery__toolbarCue"
-                  animate={
-                    reducedMotion
-                      ? undefined
-                      : {
-                          x: [0, -6, 0],
-                          opacity: [0.55, 1, 0.55],
-                        }
-                  }
-                  transition={reducedMotion ? undefined : { duration: 1.6, ease: 'easeInOut', repeat: Infinity, delay: 0.2 }}
-                >
-                  <ChevronRight size={14} />
-                </motion.span>
-              </span>
-              <span>{String(dnaGalleryItems.length).padStart(2, '0')} mockups</span>
-            </div>
+      <div className="dna-scroll-gallery__shell">
+        <MarqueeRow
+          active={isActive}
+          direction={-1}
+          activeItemId={activeItemId}
+          items={topRowItems}
+          onSelect={openItem}
+          reducedMotion={Boolean(reducedMotion)}
+          rowLabel="Top row"
+          speed={58}
+        />
 
-            <div className="dna-scroll-gallery__viewport" ref={viewportRef}>
-              <motion.div className="dna-scroll-gallery__rail" ref={railRef} style={reducedMotion ? undefined : { x: railX }}>
-                {loopItems.map((item, index) => (
-                  <motion.button
-                    key={`${item.id}-${index}`}
-                    type="button"
-                    className={`dna-scroll-gallery__card${activeIndex === index ? ' is-active' : ''}`}
-                    onClick={() => setActiveIndex((current) => (current === index ? null : index))}
-                    initial={reducedMotion ? undefined : { opacity: 0, y: 18 }}
-                    whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.35 }}
-                    transition={{ duration: 0.42, ease: 'easeOut', delay: index * 0.03 }}
-                    aria-pressed={activeIndex === index}
-                    ref={(node) => {
-                      slideRefs.current[index] = node;
-                    }}
-                  >
-                    <div className="dna-scroll-gallery__imageShell dna-scroll-gallery__imageShell--travel">
-                      <img className="dna-scroll-gallery__image" src={item.image} alt={item.description} loading="lazy" decoding="async" />
-                      <div className="dna-scroll-gallery__overlay" aria-hidden="true" />
-                    </div>
-
-                    <div className="dna-scroll-gallery__copy dna-scroll-gallery__copy--travel">
-                      <p>{item.number} / Nova Studio</p>
-                      <h3>{item.title}</h3>
-                      <span>{item.description}</span>
-                      <div className="dna-scroll-gallery__action">
-                        <span>{activeIndex === index ? 'Unfocus panel' : 'Focus panel'}</span>
-                        <ChevronRight size={16} />
-                      </div>
-                    </div>
-                  </motion.button>
-                ))}
-              </motion.div>
-            </div>
-          </div>
-        </div>
+        <MarqueeRow
+          active={isActive}
+          direction={1}
+          activeItemId={activeItemId}
+          initialOffset={260}
+          items={bottomRowItems}
+          onSelect={openItem}
+          reducedMotion={Boolean(reducedMotion)}
+          rowLabel="Bottom row"
+          speed={46}
+        />
       </div>
+
+      <GalleryPreviewModal
+        index={activeIndex >= 0 ? activeIndex : 0}
+        item={activeItem}
+        onClose={closeItem}
+        onNext={nextItem}
+        onPrev={prevItem}
+        reducedMotion={Boolean(reducedMotion)}
+        total={dnaGalleryItems.length}
+      />
     </section>
   );
 }
