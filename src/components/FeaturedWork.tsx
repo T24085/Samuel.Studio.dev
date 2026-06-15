@@ -5,6 +5,12 @@ export function FeaturedWork() {
   return (
     <section className="section" id="work">
       <div className="featured-work__shell">
+        <div className="featured-work__header section-heading" data-reveal>
+          <p className="section-label">Featured work</p>
+          <h2>Recent Projects</h2>
+          <p>A curated selection of websites designed to elevate brands and deliver measurable results.</p>
+        </div>
+
         <div className="projects-grid">
           {projects.map((project, index) => {
             return (

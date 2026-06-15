@@ -1,7 +1,22 @@
 import { emailAddress, intakeFormUrl } from './site';
 
 export const assistantName = 'Nova';
-export const ollamaModelCandidates = ['gemma4:12b'];
+const defaultOllamaModelCandidates = ['gemma4:12b', 'gemma3:12b', 'llama3.1:8b', 'qwen2.5:7b'] as const;
+
+function normalizeModelCandidates(raw: string | undefined) {
+  if (!raw) {
+    return [...defaultOllamaModelCandidates];
+  }
+
+  const values = raw
+    .split(',')
+    .map((candidate: string) => candidate.trim())
+    .filter((candidate: string) => Boolean(candidate));
+
+  return [...new Set(values.length > 0 ? values : [...defaultOllamaModelCandidates])];
+}
+
+export const ollamaModelCandidates = normalizeModelCandidates(import.meta.env.VITE_OLLAMA_MODEL_CANDIDATES);
 
 const publicChatBaseUrl = import.meta.env.VITE_PUBLIC_CHAT_BASE_URL?.trim() || 'https://chat.novatec.casa';
 const assistantChatFallback = import.meta.env.PROD ? `${publicChatBaseUrl}/api/assistant-chat` : '/api/assistant-chat';

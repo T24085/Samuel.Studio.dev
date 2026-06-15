@@ -1011,6 +1011,14 @@ section#work {
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
   padding-inline: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.featured-work__header {
+  width: min(100%, 1600px);
+  margin: 0 auto;
+  padding-inline: clamp(0.75rem, 2vw, 1.5rem);
 }
 
 .featured-work__shell .projects-grid {
@@ -1061,6 +1069,11 @@ section#work {
     width: 100%;
     margin-left: 0;
     margin-right: 0;
+  }
+
+  .featured-work__header {
+    width: 100%;
+    padding-inline: 0.75rem;
   }
 
   .featured-work__shell .projects-grid {

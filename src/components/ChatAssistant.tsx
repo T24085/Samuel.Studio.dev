@@ -714,7 +714,13 @@ export function ChatAssistant() {
                     <div className="chat-assistant__bubble">
                       {message.role === 'assistant' ? (
                         <div className="chat-assistant__bubble-meta">
-                          <span>{message.source === 'ollama' ? `Ollama${message.model ? ` · ${message.model}` : ''}` : message.source === 'fallback' ? 'Fallback' : 'Nova'}</span>
+                          <span>
+                            {message.source === 'fallback'
+                              ? 'Fallback'
+                              : message.source === 'ollama'
+                                ? `Nova${message.model ? ` · ${message.model}` : ''}`
+                                : 'Nova'}
+                          </span>
                         </div>
                       ) : null}
                       {message.content}

@@ -3,6 +3,8 @@ import { dirname, resolve } from 'node:path';
 const routeAssistantChat = '/api/assistant-chat';
 const routeChatLog = '/api/chat-log';
 const ollamaChatUrl = 'http://127.0.0.1:11434/api/chat';
+const ollamaTagsUrl = process.env.OLLAMA_TAGS_URL || ollamaChatUrl.replace(/\/api\/chat\/?$/, '/api/tags');
+const defaultOllamaModelCandidates = ['gemma4:12b', 'gemma3:12b', 'llama3.1:8b', 'qwen2.5:7b'];
 const logFilePath = resolve(process.cwd(), 'logs', 'nova-chat-transcripts.ndjson');
 const sessionDirPath = resolve(process.cwd(), 'logs', 'chat-sessions');
 function jsonResponse(res, status, data) {
@@ -34,6 +36,9 @@ async function readJsonBody(req) {
 }
 function cleanText(value, fallback) {
     return typeof value === 'string' && value.trim() ? value.trim() : fallback;
+}
+function uniqueStrings(values) {
+    return [...new Set(values.filter((value) => typeof value === 'string' && value.trim()).map((value) => value.trim()))];
 }
 function normalizeClientProfile(profile) {
     return {
@@ -71,6 +76,32 @@ function normalizeTranscript(payload) {
         clientProfile,
         messages: normalizedMessages,
     };
+}
+async function fetchInstalledOllamaModels() {
+    try {
+        const response = await fetch(ollamaTagsUrl);
+        if (!response.ok) {
+            return [];
+        }
+        const data = (await response.json());
+        if (!data || !Array.isArray(data.models)) {
+            return [];
+        }
+        return data.models
+            .map((model) => (typeof model?.name === 'string' ? model.name.trim() : ''))
+            .filter(Boolean);
+    }
+    catch {
+        return [];
+    }
+}
+function buildModelCandidates(payloadCandidates, transcriptModel, installedModels) {
+    return uniqueStrings([
+        ...(Array.isArray(payloadCandidates) ? payloadCandidates.filter((candidate) => typeof candidate === 'string') : []),
+        transcriptModel,
+        ...installedModels,
+        ...defaultOllamaModelCandidates,
+    ]);
 }
 function sanitizeSessionId(sessionId) {
     return sessionId.replace(/[^a-zA-Z0-9._-]/g, '_');
@@ -424,8 +455,9 @@ async function handleAssistantChat(req, res) {
     }
     const latestUserMessage = [...transcript.messages].reverse().find((message) => message.role === 'user');
     const requestText = latestUserMessage?.content || '';
-    const modelCandidates = Array.isArray(payload.modelCandidates) && payload.modelCandidates.length > 0 ? payload.modelCandidates : [transcript.model];
     const systemPrompt = typeof payload.systemPrompt === 'string' && payload.systemPrompt.trim() ? payload.systemPrompt.trim() : 'You are Nova, the Samuel Studio assistant.';
+    const installedModels = await fetchInstalledOllamaModels();
+    const modelCandidates = buildModelCandidates(payload.modelCandidates, transcript.model, installedModels);
     let reply = null;
     let lastError = null;
     for (const model of modelCandidates) {
