@@ -144,8 +144,26 @@ function buildSessionMemoryPrompt(transcript) {
     `- Email: ${transcript.clientProfile.email}`,
     `- Phone: ${transcript.clientProfile.phone}`,
     'Use the profile only as supporting context.',
-    'Answer the latest user question directly with a specific Samuel Studio recommendation.',
+    'Answer the latest user question directly with a specific Samuel Studio recommendation or a direct site fact.',
+    'Do not default to a package if the user is asking what Samuel Studio builds, what is included, or how the process works.',
     'Keep the tone premium, concise, and studio-led.',
+  ].join('\n');
+}
+
+function buildWebsiteKnowledgePrompt() {
+  return [
+    'Samuel Studio knowledge base:',
+    '- Samuel Studio builds custom websites for businesses, brands, creators, churches, ministries, and product-based companies.',
+    '- Starter Landing Page: $300 - $500. A focused single-page site for one clear offer and a simple inquiry path.',
+    '- Portfolio Website: $600 - $1,000. A polished multi-page presence for services, proof, bookings, galleries, and contact.',
+    '- Brand / Campaign Website: Starting at $1,000+. A high-impact launch site for brands that need presence, storytelling, and scale.',
+    '- AI Lead Assistant: from $299. Answers questions and captures leads.',
+    '- SEO: from $299. Helps the site show up in search and attract more traffic.',
+    '- Online Booking & Scheduling: from $249. Lets visitors book appointments or consultations.',
+    '- Online Store (E-Commerce): from $499. Adds a catalog, cart, and checkout.',
+    '- Content Creation Package: from $299. Covers website copy and messaging.',
+    '- Website Care Plan: $49 / month. Covers monitoring, backups, minor updates, and support.',
+    '- Intake form and email are available when a conversation needs human follow-up.',
   ].join('\n');
 }
 
@@ -321,7 +339,7 @@ function normalizeIntentResponse(userText, responseText) {
   if (isProductIntent(userText)) {
     return buildBrandedRecommendationResponse(
       'Brand / Campaign Website + Online Store.',
-      'That gives your business a polished front and a clear path to sell.',
+      'That gives your business a polished front and a clear path to sell. If you want traffic and conversion support, add SEO and Content Creation.',
       'Want me to outline the pages?',
     );
   }
@@ -482,6 +500,7 @@ async function callOllama(model, systemPrompt, transcript) {
   const latestUserMessage = [...transcript.messages].reverse().find((message) => message.role === 'user');
   const intentPrimer = latestUserMessage ? buildIntentPrimer(latestUserMessage.content) : '';
   const intentDirective = latestUserMessage ? buildIntentDirective(latestUserMessage.content) : '';
+  const knowledgePrompt = buildWebsiteKnowledgePrompt();
 
   try {
     const response = await fetch(ollamaChatUrl, {
@@ -495,6 +514,7 @@ async function callOllama(model, systemPrompt, transcript) {
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'system', content: buildSessionMemoryPrompt(transcript) },
+          { role: 'system', content: knowledgePrompt },
           ...(intentDirective ? [{ role: 'system', content: intentDirective }] : []),
           ...(intentPrimer ? [{ role: 'system', content: intentPrimer }] : []),
           ...buildConversationMessages(transcript),
