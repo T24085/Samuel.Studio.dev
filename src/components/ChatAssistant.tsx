@@ -254,8 +254,12 @@ function buildTranscriptMessages(conversation: ChatMessage[]) {
   return conversation
     .filter((message) => !isFallbackMessage(message) && message.source !== 'seed')
     .map((entry) => ({
+      id: entry.id,
       role: entry.role,
       content: entry.content,
+      createdAt: entry.createdAt,
+      source: entry.source,
+      model: entry.model,
     }));
 }
 

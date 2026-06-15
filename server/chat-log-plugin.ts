@@ -115,7 +115,24 @@ function normalizeClientProfile(profile?: Partial<ClientProfile> | null): Client
 
 function normalizeTranscript(payload: ChatLogPayload): NormalizedTranscript {
   const messages = Array.isArray(payload.messages) ? payload.messages : [];
+  const receivedAt = new Date().toISOString();
   const clientProfile = normalizeClientProfile(payload.clientProfile);
+  const normalizedMessages: ChatMessage[] = [];
+
+  for (const [index, message] of messages.entries()) {
+    if (!message || (message.role !== 'user' && message.role !== 'assistant') || typeof message.content !== 'string') {
+      continue;
+    }
+
+    normalizedMessages.push({
+      id: typeof message.id === 'string' && message.id ? message.id : `${message.role}_${index}_${Date.now()}`,
+      role: message.role,
+      content: message.content,
+      createdAt: typeof message.createdAt === 'number' ? message.createdAt : Date.now() + index,
+      source: message.source === 'ollama' || message.source === 'fallback' || message.source === 'seed' ? message.source : undefined,
+      model: typeof message.model === 'string' && message.model ? message.model : undefined,
+    });
+  }
 
   return {
     assistant: cleanText(payload.assistant, 'Nova'),
@@ -123,19 +140,10 @@ function normalizeTranscript(payload: ChatLogPayload): NormalizedTranscript {
     pageUrl: cleanText(payload.pageUrl, 'unknown-page'),
     model: cleanText(payload.model, 'unknown-model'),
     loggedAt: cleanText(payload.loggedAt, new Date().toISOString()),
-    receivedAt: new Date().toISOString(),
+    receivedAt,
     sendEmail: Boolean(payload.sendEmail),
     clientProfile,
-    messages: messages.filter(
-      (message): message is ChatMessage =>
-        Boolean(
-          message &&
-            typeof message.id === 'string' &&
-            (message.role === 'user' || message.role === 'assistant') &&
-            typeof message.content === 'string' &&
-            typeof message.createdAt === 'number',
-        ),
-    ),
+    messages: normalizedMessages,
   };
 }
 
