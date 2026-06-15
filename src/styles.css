@@ -607,6 +607,14 @@ img {
   padding-left: 0.15em;
 }
 
+.hero__copy h1 .hero__headlineAccent {
+  color: var(--purple-neon);
+  padding-left: 0;
+  text-shadow:
+    0 0 12px rgba(192, 132, 252, 0.45),
+    0 0 28px rgba(168, 85, 247, 0.26);
+}
+
 .hero__lede {
   max-width: 37rem;
   margin: 1.25rem 0 0;
