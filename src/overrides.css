@@ -1481,8 +1481,8 @@ section#work {
 
 .pricing-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(24rem, 0.85fr);
-  gap: 1.2rem;
+  grid-template-columns: minmax(0, 1.35fr) minmax(20rem, 0.86fr);
+  gap: 1.5rem;
   align-items: start;
 }
 
@@ -1672,7 +1672,7 @@ section#work {
 
 .project-builder {
   position: sticky;
-  top: 7.2rem;
+  top: clamp(5.5rem, 8vh, 6.5rem);
   align-self: start;
 }
 
@@ -1887,7 +1887,7 @@ section#work {
 .pricing-faq {
   display: grid;
   gap: 1rem;
-  margin-top: 1.4rem;
+  margin-top: 0;
 }
 
 .pricing-faq__list {
@@ -1917,17 +1917,64 @@ section#work {
   color: var(--muted);
 }
 
+.pricing-section__block {
+  display: grid;
+  gap: 1rem;
+  margin-top: 0;
+}
+
+.package-card__body {
+  display: grid;
+  gap: 0.95rem;
+}
+
+.package-card--custom {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(16rem, 0.58fr);
+  gap: 1rem 1.4rem;
+  align-items: start;
+}
+
+.package-card--custom .package-card__top {
+  grid-column: 1 / -1;
+}
+
+.package-card--custom .package-card__body {
+  grid-column: 1;
+}
+
+.package-card--custom .button {
+  grid-column: 2;
+  align-self: end;
+  margin-top: 0;
+}
+
+.package-card__result--compact {
+  min-height: 100%;
+}
+
 @media (max-width: 1180px) {
   .pricing-layout {
     grid-template-columns: 1fr;
   }
 
-  .project-builder {
-    position: static;
-  }
-
   .upgrade-grid {
     grid-template-columns: 1fr;
+  }
+
+  .package-card--custom {
+    grid-template-columns: 1fr;
+  }
+
+  .package-card--custom .package-card__top,
+  .package-card--custom .package-card__body,
+  .package-card--custom .button {
+    grid-column: auto;
+  }
+
+  .project-builder {
+    position: static;
   }
 }
 
@@ -1950,7 +1997,6 @@ section#work {
     grid-template-columns: 1fr;
   }
 
-  .package-card__top,
   .project-builder__selectedPackage,
   .project-builder__addonRow,
   .project-builder__sectionHeader,

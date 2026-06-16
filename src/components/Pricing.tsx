@@ -135,9 +135,13 @@ function PackageCard({
     <article
       className={
         selected
-          ? 'package-card package-card--featured package-card--selected'
+          ? pkg.id === 'custom'
+            ? 'package-card package-card--custom package-card--featured package-card--selected'
+            : 'package-card package-card--featured package-card--selected'
           : pkg.featured
-            ? 'package-card package-card--featured'
+            ? pkg.id === 'custom'
+              ? 'package-card package-card--custom package-card--featured'
+              : 'package-card package-card--featured'
             : 'package-card'
       }
       key={pkg.id}
@@ -158,24 +162,35 @@ function PackageCard({
         <strong className="package-card__price">{pkg.price}</strong>
       </div>
 
-      <div>
-        <h3>{pkg.title}</h3>
-        <p className="package-card__description">{pkg.description}</p>
-      </div>
+      <div className="package-card__body">
+        <div>
+          <h3>{pkg.title}</h3>
+          <p className="package-card__description">{pkg.description}</p>
+        </div>
 
-      <div className="package-card__result">
-        <span>What you get</span>
-        <p>{pkg.customerFacingExplanation}</p>
-      </div>
+        {pkg.id === 'custom' ? (
+          <div className="package-card__result package-card__result--compact">
+            <span>Best fit</span>
+            <p>{pkg.customerFacingExplanation}</p>
+          </div>
+        ) : (
+          <>
+            <div className="package-card__result">
+              <span>What you get</span>
+              <p>{pkg.customerFacingExplanation}</p>
+            </div>
 
-      <ul className="check-list">
-        {pkg.includes.map((item) => (
-          <li key={item}>
-            <Check size={15} />
-            <span>{item}</span>
-          </li>
-        ))}
-      </ul>
+            <ul className="check-list">
+              {pkg.includes.map((item) => (
+                <li key={item}>
+                  <Check size={15} />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </div>
 
       <button
         className={selected || pkg.featured ? 'button button--primary button--full' : 'button button--secondary button--full'}
@@ -268,10 +283,10 @@ export function Pricing() {
 
       <div className="container pricing-layout">
         <div className="pricing-layout__main">
-          <div className="pricing-layout__packages" id="pricing-packages">
-            <div className="pricing-layout__heading" data-reveal>
+          <div className="pricing-section__block" id="pricing-packages" data-reveal>
+            <div className="pricing-layout__heading">
               <h3>Choose a package</h3>
-              <p>Start with the best fit, then refine the project with the builder on the right.</p>
+              <p>Start with the best fit, then add extras only where they help the business actually grow.</p>
             </div>
 
             <div className="packages-grid">
@@ -281,15 +296,34 @@ export function Pricing() {
             </div>
           </div>
 
-          <div className="pricing-layout__addons" data-reveal>
+          <div className="pricing-section__block" data-reveal>
             <div className="pricing-layout__heading">
               <h3>Add Features That Help Your Website Do More</h3>
-              <p>Need more than a basic website? Add tools that help customers find you, contact you, book with you, or buy from you online.</p>
+              <p>
+                Need more than a basic website? Add tools that help customers find you, contact you, book with you, or
+                buy from you online.
+              </p>
             </div>
 
             <div className="upgrade-grid">
               {addOns.map((addon) => (
                 <AddOnCard key={addon.id} addon={addon} selected={selectedAddonIds.includes(addon.id)} onToggle={handleToggleAddon} />
+              ))}
+            </div>
+          </div>
+
+          <div className="pricing-faq" data-reveal>
+            <div className="pricing-layout__heading">
+              <h3>FAQ</h3>
+              <p>Quick answers to the most common pricing questions.</p>
+            </div>
+
+            <div className="pricing-faq__list">
+              {faqItems.map((item) => (
+                <details className="pricing-faq__item" key={item.question}>
+                  <summary>{item.question}</summary>
+                  <p>{item.answer}</p>
+                </details>
               ))}
             </div>
           </div>
@@ -303,22 +337,6 @@ export function Pricing() {
           }}
           onRemoveAddOn={handleRemoveAddon}
         />
-      </div>
-
-      <div className="container pricing-faq" data-reveal>
-        <div className="pricing-layout__heading">
-          <h3>FAQ</h3>
-          <p>Quick answers to the most common pricing questions.</p>
-        </div>
-
-        <div className="pricing-faq__list">
-          {faqItems.map((item) => (
-            <details className="pricing-faq__item" key={item.question}>
-              <summary>{item.question}</summary>
-              <p>{item.answer}</p>
-            </details>
-          ))}
-        </div>
       </div>
     </section>
   );

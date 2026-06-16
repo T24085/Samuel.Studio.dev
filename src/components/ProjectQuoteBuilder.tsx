@@ -31,10 +31,7 @@ export function ProjectQuoteBuilder({ selectedPackage, selectedAddOns, onChangeP
         <div className="project-builder__header">
           <p className="section-label">Project Builder</p>
           <h3>Build Your Website Plan</h3>
-          <p>
-            Choose your package, add any upgrades, and send your project request. We will review the details and confirm
-            the best setup before starting.
-          </p>
+          <p>Choose your package, add any upgrades, and send your project request. We will review the details before starting.</p>
         </div>
 
         {!selectedPackage ? (
@@ -127,9 +124,7 @@ export function ProjectQuoteBuilder({ selectedPackage, selectedAddOns, onChangeP
 
               <div className="project-builder__payment" id="project-payment">
                 <span className="project-builder__paymentLabel">Pay Deposit / Start Project</span>
-                <p>
-                  Secure your project with a deposit. Add-ons may require review before final pricing is confirmed.
-                </p>
+                <p>Secure your project with a deposit. Add-ons may require review before final pricing is confirmed.</p>
 
                 {selectedPackage?.cartAddToCartId ? (
                   <PayPalCartButtons addToCartId={selectedPackage.cartAddToCartId} />
