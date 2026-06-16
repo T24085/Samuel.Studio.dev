@@ -1481,14 +1481,20 @@ section#work {
 
 .pricing-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(20rem, 0.86fr);
-  gap: 1.5rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1.5rem, 2vw, 2.25rem);
   align-items: start;
+  width: 100%;
+  padding-inline: clamp(0.9rem, 2.25vw, 2rem);
+}
+
+.pricing-layout--fullbleed {
+  width: 100%;
 }
 
 .pricing-layout__main {
   display: grid;
-  gap: 1.4rem;
+  gap: clamp(1.5rem, 2vw, 2rem);
 }
 
 .pricing-layout__packages,
@@ -1500,7 +1506,7 @@ section#work {
 .pricing-layout__heading {
   display: grid;
   gap: 0.55rem;
-  max-width: 42rem;
+  max-width: 48rem;
 }
 
 .pricing-layout__heading h3 {
@@ -1671,8 +1677,7 @@ section#work {
 }
 
 .project-builder {
-  position: sticky;
-  top: clamp(5.5rem, 8vh, 6.5rem);
+  position: static;
   align-self: start;
 }
 

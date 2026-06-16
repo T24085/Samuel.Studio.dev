@@ -281,7 +281,7 @@ export function Pricing() {
         </p>
       </div>
 
-      <div className="container pricing-layout">
+      <div className="pricing-layout pricing-layout--fullbleed">
         <div className="pricing-layout__main">
           <div className="pricing-section__block" id="pricing-packages" data-reveal>
             <div className="pricing-layout__heading">
@@ -312,6 +312,15 @@ export function Pricing() {
             </div>
           </div>
 
+          <ProjectQuoteBuilder
+            selectedPackage={selectedPackage}
+            selectedAddOns={selectedAddOns}
+            onChangePackage={() => {
+              document.getElementById('pricing-packages')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
+            onRemoveAddOn={handleRemoveAddon}
+          />
+
           <div className="pricing-faq" data-reveal>
             <div className="pricing-layout__heading">
               <h3>FAQ</h3>
@@ -328,15 +337,6 @@ export function Pricing() {
             </div>
           </div>
         </div>
-
-        <ProjectQuoteBuilder
-          selectedPackage={selectedPackage}
-          selectedAddOns={selectedAddOns}
-          onChangePackage={() => {
-            document.getElementById('pricing-packages')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }}
-          onRemoveAddOn={handleRemoveAddon}
-        />
       </div>
     </section>
   );
