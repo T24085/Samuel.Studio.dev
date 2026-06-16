@@ -118,16 +118,16 @@ function buildFallbackReply(userText: string) {
 
   if (query.includes('nutrition') || query.includes('supplement') || query.includes('supplements') || query.includes('product') || query.includes('products') || query.includes('store') || query.includes('storefront') || query.includes('shop') || query.includes('retail') || query.includes('catalog') || query.includes('e-commerce') || query.includes('ecommerce')) {
     return [
-      'Brand / Campaign Website + Online Store. That gives your business a polished front and a clear path to sell.',
-      'If the catalog is limited, a Starter Landing Page can open the door cleanly, with SEO and Content Creation to support trust.',
+      'Business Growth Website + Sell Products or Services Online. That gives your business a polished front and a clear path to sell.',
+      'If the catalog is limited, a Starter Website can open the door cleanly, with Get Found on Google and Website Copy & Content Help to support trust.',
       'Want me to map the pages for you?',
     ].join(' ');
   }
 
   if (query.includes('church') || query.includes('ministry') || query.includes('faith')) {
     return [
-      'Portfolio Website. It gives you room for sermons, events, ministries, and clear contact paths.',
-      'If you only need a simple one-page presence, the Starter Landing Page can work too.',
+      'Professional Website. It gives you room for sermons, events, ministries, and clear contact paths.',
+      'If you only need a simple one-page presence, the Starter Website can work too.',
       'Want me to outline the pages?',
     ].join(' ');
   }
@@ -191,40 +191,40 @@ function buildFallbackReply(userText: string) {
     query.includes('gyms')
   ) {
     return [
-      'Portfolio Website. It gives you room for services, proof, bookings, menus, locations, and a stronger contact path.',
-      'If you want something leaner, the Starter Landing Page is the simpler route.',
+      'Professional Website. It gives you room for services, proof, bookings, menus, locations, and a stronger contact path.',
+      'If you want something leaner, the Starter Website is the simpler route.',
       'Want me to outline the pages?',
     ].join(' ');
   }
 
   if (query.includes('price') || query.includes('pricing') || query.includes('cost')) {
     return [
-      'Starter Landing Page starts at $300-$500, Portfolio Website at $600-$1,000, and Brand / Campaign Website starts at $1,000+.',
-      'Common add-ons include AI Lead Assistant from $299, SEO from $299, Booking from $249, Online Store from $499, Content Creation from $299, and Care Plan at $49/month.',
+      'Starter Website starts at $499, Professional Website starts at $999, and Business Growth Website starts at $1,999.',
+      'Common add-ons include Never Miss a Lead from $299, Get Found on Google from $149, Let Customers Schedule Online from $199, Sell Products or Services Online from $399, Website Copy & Content Help from $199, and Keep My Website Updated at $49/month.',
     ].join(' ');
   }
 
   if (query.includes('ai assistant') || query.includes('chat assistant') || query.includes('lead assistant')) {
     return [
-      'AI Lead Assistant. It answers questions, captures leads, and points visitors toward the next step.',
+      'Never Miss a Lead. It answers questions, captures leads, and points visitors toward the next step.',
       'It starts at $299 and works well for service businesses, consultants, churches, and local brands.',
     ].join(' ');
   }
 
   if (query.includes('booking') || query.includes('schedule')) {
-    return 'Online Booking & Scheduling starts at $249 and lets visitors book appointments or consultations directly from the site with confirmations and reminders.';
+    return 'Let Customers Schedule Online starts at $199 and lets visitors book appointments or consultations directly from the site with confirmations and reminders.';
   }
 
   if (query.includes('seo') || query.includes('google')) {
-    return 'SEO starts at $299 and covers keyword optimization, meta titles and descriptions, indexing setup, performance improvements, local SEO, and Search Console setup.';
+    return 'Get Found on Google starts at $149 and covers keyword optimization, page titles and descriptions, indexing setup, performance improvements, local SEO, and Search Console setup.';
   }
 
   if (query.includes('store') || query.includes('storefront') || query.includes('shop') || query.includes('retail') || query.includes('catalog') || query.includes('e-commerce') || query.includes('ecommerce')) {
-    return 'Online Store / E-Commerce starts at $499 and includes a catalog, shopping cart, secure checkout, payment setup, inventory management, order notifications, and mobile-friendly storefront support.';
+    return 'Sell Products or Services Online starts at $399 and includes a catalog, shopping cart, secure checkout, payment setup, inventory management, order notifications, and mobile-friendly storefront support.';
   }
 
   if (query.includes('content') || query.includes('copy') || query.includes('writing')) {
-    return 'Content Creation Package. It starts at $299 and covers homepage copy, service page writing, about page content, calls to action, SEO-friendly formatting, and brand messaging support.';
+    return 'Website Copy & Content Help starts at $199 and covers homepage copy, service page writing, about page content, calls to action, SEO-friendly formatting, and brand messaging support.';
   }
 
   if (query.includes('care') || query.includes('support') || query.includes('maintenance')) {
