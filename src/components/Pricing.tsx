@@ -1,6 +1,7 @@
 import { ArrowUpRight, Check } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { addOns, packages, type AddOn, type Package } from '../data/pricing';
+import { intakeFormUrl } from '../data/site';
 import { ProjectQuoteBuilder } from './ProjectQuoteBuilder';
 
 const projectQuoteStorageKey = 'samuelStudioProjectQuote';
@@ -154,7 +155,7 @@ function PackageCard({
         <div>
           <p className="package-card__eyebrow">Best for</p>
           <div className="package-card__chips" aria-label={`${pkg.title} best for`}>
-            {pkg.bestFor.map((item) => (
+            {pkg.bestFor.slice(0, 3).map((item) => (
               <span key={item}>{item}</span>
             ))}
           </div>
@@ -181,7 +182,7 @@ function PackageCard({
             </div>
 
             <ul className="check-list">
-              {pkg.includes.map((item) => (
+              {pkg.includes.slice(0, 6).map((item) => (
                 <li key={item}>
                   <Check size={15} />
                   <span>{item}</span>
@@ -226,7 +227,7 @@ function AddOnCard({
 
       <p className="upgrade-card__description">{addon.description}</p>
 
-      <p className="upgrade-card__bestFor">{addon.bestFor}</p>
+      <p className="upgrade-card__helper">{addon.bestFor}</p>
 
       <button className={selected ? 'button button--primary button--full' : 'button button--secondary button--full'} type="button" onClick={() => onToggle(addon)}>
         {selected ? 'Added to Quote' : 'Add to Project Quote'}
@@ -241,6 +242,7 @@ export function Pricing() {
   const [selectedAddonIds, setSelectedAddonIds] = useState<string[]>(() => loadStoredQuote().selectedAddonIds);
 
   const selectedPackage = packages.find((pkg) => pkg.id === selectedPackageId) ?? null;
+  const visiblePackages = packages.filter((pkg) => pkg.id !== 'custom');
   const selectedAddOns = addOns.filter((addon) => selectedAddonIds.includes(addon.id));
 
   useEffect(() => {
@@ -290,11 +292,25 @@ export function Pricing() {
             </div>
 
             <div className="packages-grid">
-              {packages.map((pkg) => (
+              {visiblePackages.map((pkg) => (
                 <PackageCard key={pkg.id} pkg={pkg} selected={pkg.id === selectedPackageId} onSelect={handleSelectPackage} />
               ))}
             </div>
           </div>
+
+          <article className="pricing-custom-quote" data-reveal>
+            <div className="pricing-custom-quote__copy">
+              <p className="pricing-custom-quote__eyebrow">Custom Quote</p>
+              <h3>Need something custom?</h3>
+              <p>
+                For e-commerce, memberships, advanced booking systems, dashboards, web apps, or larger websites.
+              </p>
+            </div>
+            <a className="button button--secondary" href={intakeFormUrl} target="_blank" rel="noreferrer">
+              Request a Custom Quote
+              <ArrowUpRight size={16} />
+            </a>
+          </article>
 
           <div className="pricing-section__block" data-reveal>
             <div className="pricing-layout__heading">
@@ -312,15 +328,6 @@ export function Pricing() {
             </div>
           </div>
 
-          <ProjectQuoteBuilder
-            selectedPackage={selectedPackage}
-            selectedAddOns={selectedAddOns}
-            onChangePackage={() => {
-              document.getElementById('pricing-packages')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }}
-            onRemoveAddOn={handleRemoveAddon}
-          />
-
           <div className="pricing-faq" data-reveal>
             <div className="pricing-layout__heading">
               <h3>FAQ</h3>
@@ -337,6 +344,15 @@ export function Pricing() {
             </div>
           </div>
         </div>
+
+        <ProjectQuoteBuilder
+          selectedPackage={selectedPackage}
+          selectedAddOns={selectedAddOns}
+          onChangePackage={() => {
+            document.getElementById('pricing-packages')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }}
+          onRemoveAddOn={handleRemoveAddon}
+        />
       </div>
     </section>
   );
