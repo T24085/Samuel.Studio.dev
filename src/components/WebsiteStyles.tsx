@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { styleItems, type StyleItem } from '../data/styles';
 
 type WebsiteStylesProps = {
@@ -6,27 +6,18 @@ type WebsiteStylesProps = {
 };
 
 export function WebsiteStyles({ onOpenStyle }: WebsiteStylesProps) {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isFlipped, setIsFlipped] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [flippedCards, setFlippedCards] = useState<Record<number, boolean>>({});
 
   const deckSize = styleItems.length;
-  const activeItem = styleItems[activeIndex];
-  const ActiveIcon = activeItem.icon;
-  const nextItem = styleItems[(activeIndex + 1) % deckSize];
-  const trailingItem = styleItems[(activeIndex + 2) % deckSize];
+  const selectedItem = styleItems[selectedIndex];
 
-  const advanceDeck = () => {
-    setActiveIndex((value) => (value + 1) % deckSize);
-    setIsFlipped(false);
-  };
-
-  const handleDeckClick = () => {
-    if (!isFlipped) {
-      setIsFlipped(true);
-      return;
-    }
-
-    advanceDeck();
+  const toggleCard = (index: number) => {
+    setSelectedIndex(index);
+    setFlippedCards((current) => ({
+      ...current,
+      [index]: !current[index],
+    }));
   };
 
   return (
@@ -39,82 +30,91 @@ export function WebsiteStyles({ onOpenStyle }: WebsiteStylesProps) {
         </div>
 
         <div className="styles-deck" data-reveal>
-          <div className="styles-deck__stage">
-            <div className="styles-deck__stack" aria-hidden="true">
-              {[trailingItem, nextItem].map((item, index) => (
-                <article
-                  className={`style-card style-card--deck style-card--stacked style-card--stacked-${index + 1} style-card--stacked-${item.accent}`}
-                  key={`${item.title}-${index}`}
+          <div className="styles-deck__table">
+            {styleItems.map((item, index) => {
+              const flipped = Boolean(flippedCards[index]);
+              const CardIcon = item.icon;
+              const step = deckSize > 1 ? 84 / (deckSize - 1) : 0;
+              const left = `${8 + index * step}%`;
+              const offset = index - (deckSize - 1) / 2;
+              const angle = `${offset * 10.5}deg`;
+              const top = `${1.5 + Math.abs(offset) * 0.35}rem`;
+              const lift = flipped ? '-1.2rem' : index === selectedIndex ? '-0.35rem' : '0rem';
+              const scale = flipped ? '1.045' : index === selectedIndex ? '1.03' : '0.98';
+              const depth = `${200 - index * 10}`;
+
+              return (
+                <button
+                  className={flipped ? 'style-card style-card--deck style-card--flipped style-card--open' : 'style-card style-card--deck'}
+                  type="button"
+                  key={item.title}
+                  aria-pressed={flipped}
+                  aria-label={flipped ? `Close ${item.title}` : `Flip ${item.title} to reveal the text`}
+                  onClick={() => toggleCard(index)}
+                  style={
+                    {
+                      ['--card-left' as never]: left,
+                      ['--card-angle' as never]: angle,
+                      ['--card-top' as never]: top,
+                      ['--card-lift' as never]: lift,
+                      ['--card-scale' as never]: scale,
+                      ['--card-depth' as never]: depth,
+                    } as CSSProperties
+                  }
                 >
-                  <div className={`style-card__preview style-card__preview--${item.accent}`}>
-                    <img className="style-card__image" src={item.image} alt="" loading="lazy" />
-                    <div className="style-card__preview-overlay" aria-hidden="true" />
-                    <span>{item.preview}</span>
-                    <div className="style-card__preview-lines" aria-hidden="true" />
-                  </div>
-                </article>
-              ))}
-            </div>
-
-            <button
-              className={isFlipped ? 'style-card style-card--deck style-card--flipped' : 'style-card style-card--deck'}
-              type="button"
-              aria-pressed={isFlipped}
-              aria-label={isFlipped ? `Advance from ${activeItem.title} to the next visual direction` : `Flip ${activeItem.title} to reveal the text`}
-              onClick={handleDeckClick}
-            >
-              <span className="style-card__surface">
-                <span className="style-card__face style-card__face--front">
-                  <span className={`style-card__preview style-card__preview--${activeItem.accent}`}>
-                    <img className="style-card__image" src={activeItem.image} alt="" loading="lazy" />
-                    <div className="style-card__preview-overlay" aria-hidden="true" />
-                    <span>{activeItem.preview}</span>
-                    <div className="style-card__preview-lines" aria-hidden="true" />
-                    <span className="style-card__flipHint">{isFlipped ? 'Flip again for the next card' : 'Click to flip the card'}</span>
-                  </span>
-                  <div className="style-card__frontFooter">
-                    <div className="style-card__frontMark">
-                      <div className="style-card__icon">
-                        <ActiveIcon size={18} />
+                  <span className="style-card__surface">
+                    <span className="style-card__face style-card__face--front">
+                      <span className={`style-card__preview style-card__preview--${item.accent}`}>
+                        <img className="style-card__image" src={item.image} alt="" loading="lazy" />
+                        <div className="style-card__preview-overlay" aria-hidden="true" />
+                        <span>{item.preview}</span>
+                        <div className="style-card__preview-lines" aria-hidden="true" />
+                        <span className="style-card__flipHint">{flipped ? 'Flip to hide' : 'Flip to reveal'}</span>
+                      </span>
+                      <div className="style-card__frontFooter">
+                        <div className="style-card__frontMark">
+                          <div className="style-card__icon">
+                            <CardIcon size={18} />
+                          </div>
+                          <div>
+                            <strong>{item.title}</strong>
+                            <span>Tap to reveal the direction notes.</span>
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <strong>{activeItem.title}</strong>
-                        <span>Tap to reveal the direction notes.</span>
-                      </div>
-                    </div>
-                  </div>
-                </span>
+                    </span>
 
-                <span className="style-card__face style-card__face--back">
-                  <span className="style-card__backTop">
-                    <span className="section-label">Visual direction</span>
-                    <span className={`style-card__backChip style-card__backChip--${activeItem.accent}`}>{activeItem.preview}</span>
+                    <span className="style-card__face style-card__face--back">
+                      <span className="style-card__backTop">
+                        <span className="section-label">Visual direction</span>
+                        <span className={`style-card__backChip style-card__backChip--${item.accent}`}>{item.preview}</span>
+                      </span>
+                      <div className="style-card__backBody">
+                        <p className="style-card__backEyebrow">
+                          Card {index + 1} of {deckSize}
+                        </p>
+                        <h3>{item.title}</h3>
+                        <p>{item.description}</p>
+                      </div>
+                      <div className="style-card__backFooter">
+                        <p>Flip the card back over when you’re ready to compare it with the rest of the table.</p>
+                      </div>
+                    </span>
                   </span>
-                  <div className="style-card__backBody">
-                    <p className="style-card__backEyebrow">Card {activeIndex + 1} of {deckSize}</p>
-                    <h3>{activeItem.title}</h3>
-                    <p>{activeItem.description}</p>
-                  </div>
-                  <div className="style-card__backFooter">
-                    <p>Click the card again to move to the next direction. Open the full mockup if you want to inspect the layout at scale.</p>
-                  </div>
-                </span>
-              </span>
-            </button>
+                </button>
+              );
+            })}
           </div>
 
-          <div className="styles-deck__meta">
+          <div className="styles-deck__rail">
             <div className="styles-deck__counter">
-              <span>Card {activeIndex + 1}</span>
-              <strong>{activeItem.title}</strong>
+              <span>Selected card</span>
+              <strong>{selectedItem.title}</strong>
             </div>
-            <p>Flip the top card to reveal the text. The next two directions are stacked behind it like a physical deck.</p>
+            <p>{selectedItem.description}</p>
             <div className="styles-deck__actions">
-              <button className="button button--secondary button--small" type="button" onClick={() => onOpenStyle(activeItem)}>
-                Open mockup
-              </button>
-              <button className="button button--ghost button--small" type="button" onClick={advanceDeck}>
-                Next card
+              <button className="button button--ghost button--small" type="button" onClick={() => onOpenStyle(selectedItem)}>
+                Open selected mockup
               </button>
             </div>
           </div>
