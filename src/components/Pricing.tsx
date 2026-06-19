@@ -40,6 +40,7 @@ type StoredProjectQuote = {
 
 type LoadedProjectQuote = {
   selectedPackageId: string | null;
+  visualSelectedPackageId: string | null;
   selectedAddonIds: string[];
 };
 
@@ -89,14 +90,14 @@ function splitPriceLabel(price: string) {
 
 function loadStoredQuote(): LoadedProjectQuote {
   if (typeof window === 'undefined') {
-    return { selectedPackageId: null, selectedAddonIds: [] };
+    return { selectedPackageId: null, visualSelectedPackageId: null, selectedAddonIds: [] };
   }
 
   try {
     const raw = window.localStorage.getItem(projectQuoteStorageKey);
 
     if (!raw) {
-      return { selectedPackageId: 'professional', selectedAddonIds: ['seo', 'booking'] };
+      return { selectedPackageId: 'professional', visualSelectedPackageId: 'starter', selectedAddonIds: ['seo', 'booking'] };
     }
 
     const parsed = JSON.parse(raw) as Partial<StoredProjectQuote>;
@@ -107,9 +108,9 @@ function loadStoredQuote(): LoadedProjectQuote {
           .filter((id): id is string => Boolean(id))
       : [];
 
-    return { selectedPackageId, selectedAddonIds };
+    return { selectedPackageId, visualSelectedPackageId: selectedPackageId, selectedAddonIds };
   } catch {
-    return { selectedPackageId: null, selectedAddonIds: [] };
+    return { selectedPackageId: null, visualSelectedPackageId: null, selectedAddonIds: [] };
   }
 }
 
@@ -296,8 +297,10 @@ function AddOnCard({
 }
 
 export function Pricing() {
-  const [selectedPackageId, setSelectedPackageId] = useState<string | null>(() => loadStoredQuote().selectedPackageId);
-  const [selectedAddonIds, setSelectedAddonIds] = useState<string[]>(() => loadStoredQuote().selectedAddonIds);
+  const initialQuote = loadStoredQuote();
+  const [selectedPackageId, setSelectedPackageId] = useState<string | null>(initialQuote.selectedPackageId);
+  const [visualSelectedPackageId, setVisualSelectedPackageId] = useState<string | null>(initialQuote.visualSelectedPackageId);
+  const [selectedAddonIds, setSelectedAddonIds] = useState<string[]>(initialQuote.selectedAddonIds);
 
   const selectedPackage = packages.find((pkg) => pkg.id === selectedPackageId) ?? null;
   const visiblePackages = packages.filter((pkg) => pkg.id !== 'custom');
@@ -313,6 +316,7 @@ export function Pricing() {
 
   const handleSelectPackage = (pkg: Package) => {
     setSelectedPackageId(pkg.id);
+    setVisualSelectedPackageId(pkg.id);
     scrollToProjectBuilder();
   };
 
@@ -346,7 +350,7 @@ export function Pricing() {
           <div className="pricing-section__block" id="pricing-packages" data-reveal>
             <div className="packages-grid">
               {visiblePackages.map((pkg) => (
-                <PackageCard key={pkg.id} pkg={pkg} selected={pkg.id === selectedPackageId} onSelect={handleSelectPackage} />
+                <PackageCard key={pkg.id} pkg={pkg} selected={pkg.id === visualSelectedPackageId} onSelect={handleSelectPackage} />
               ))}
             </div>
           </div>
