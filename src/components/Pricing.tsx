@@ -8,6 +8,9 @@ import {
   ShieldCheck,
   ShoppingCart,
   SlidersHorizontal,
+  Sparkles,
+  Rocket,
+  BarChart3,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { addOns, packages, type AddOn, type Package } from '../data/pricing';
@@ -153,6 +156,14 @@ function PackageCard({
   onSelect: (pkg: Package) => void;
 }) {
   const priceParts = splitPriceLabel(pkg.price);
+  const packageIcon =
+    pkg.id === 'starter' ? (
+      <Sparkles size={17} />
+    ) : pkg.id === 'professional' ? (
+      <Rocket size={17} />
+    ) : (
+      <BarChart3 size={17} />
+    );
 
   return (
     <article
@@ -202,7 +213,9 @@ function PackageCard({
         ) : (
           <>
             <div className="package-card__result">
-              <span>What you get</span>
+              <span className="package-card__resultIcon" aria-hidden="true">
+                {packageIcon}
+              </span>
               <p>{pkg.customerFacingExplanation}</p>
             </div>
 
@@ -274,8 +287,6 @@ function AddOnCard({
 
       <p className="upgrade-card__description">{addon.description}</p>
 
-      <p className="upgrade-card__helper">{addon.bestFor}</p>
-
       <button className={selected ? 'button button--primary button--full' : 'button button--secondary button--full'} type="button" onClick={() => onToggle(addon)}>
         {selected ? 'Added to Quote' : 'Add to Project Quote'}
         <ArrowUpRight size={16} />
@@ -322,22 +333,17 @@ export function Pricing() {
   return (
     <section className="section pricing-section" id="pricing">
       <div className="container pricing-section__intro" data-reveal>
-        <p className="section-label">Website pricing</p>
+        <p className="section-label">Website Packages</p>
         <h2>Simple Website Packages for Real Businesses</h2>
         <p>
-          Choose the starting point that fits your goals, then add only the features you need. Everything is built to
-          help you attract customers and grow online.
+          Choose a starting package that fits your goals, then add only the features you need.
+          Everything is built to help you attract customers and grow online.
         </p>
       </div>
 
       <div className="pricing-layout pricing-layout--fullbleed">
         <div className="pricing-layout__main">
           <div className="pricing-section__block" id="pricing-packages" data-reveal>
-            <div className="pricing-layout__heading">
-              <h3>Choose a package</h3>
-              <p>Start with the best fit, then add extras only where they help the business actually grow.</p>
-            </div>
-
             <div className="packages-grid">
               {visiblePackages.map((pkg) => (
                 <PackageCard key={pkg.id} pkg={pkg} selected={pkg.id === selectedPackageId} onSelect={handleSelectPackage} />
@@ -363,10 +369,11 @@ export function Pricing() {
           </article>
 
           <div className="pricing-section__block" data-reveal>
-          <div className="pricing-layout__heading">
-            <h3>Add Features That Help Your Website Do More</h3>
-            <p>Powerful add-ons to help customers find you, contact you, book with you, or buy from you online.</p>
-          </div>
+            <div className="pricing-layout__heading">
+              <p className="section-label">Add Features</p>
+              <h3>Add Features That Help Your Website Do More</h3>
+              <p>Powerful add-ons to help customers find you, contact you, book with you, or buy from you online.</p>
+            </div>
 
             <div className="upgrade-grid">
               {addOns.map((addon) => (
