@@ -1,4 +1,4 @@
-import { ArrowUpRight, Check, X } from 'lucide-react';
+import { ArrowUpRight, Check, FileText, Lock, Plus, X } from 'lucide-react';
 import { type AddOn, type Package } from '../data/pricing';
 import { intakeFormUrl } from '../data/site';
 import { PayPalCartButtons } from './PayPalCartButtons';
@@ -29,8 +29,15 @@ export function ProjectQuoteBuilder({ selectedPackage, selectedAddOns, onChangeP
     <aside className="project-builder" id="project-builder" data-reveal>
       <div className="project-builder__inner">
         <div className="project-builder__header">
-          <p className="section-label">Project Builder</p>
-          <h3>Build Your Website Plan</h3>
+          <div className="project-builder__titleRow">
+            <span className="project-builder__icon" aria-hidden="true">
+              <FileText size={18} />
+            </span>
+            <div>
+              <p className="section-label">Project Builder</p>
+              <h3>Build Your Website Plan</h3>
+            </div>
+          </div>
           <p>Choose your package, add any upgrades, and send your project request. We will review the details before starting.</p>
         </div>
 
@@ -57,9 +64,9 @@ export function ProjectQuoteBuilder({ selectedPackage, selectedAddOns, onChangeP
               <div className="project-builder__selectedPackage">
                 <div>
                   <h4>{selectedPackage.title}</h4>
-                  <p>{selectedPackage.price}</p>
+                  <p>Starting at</p>
                 </div>
-                {selectedPackage.featured ? <span className="project-builder__badge">Most Popular</span> : null}
+                <strong>{selectedPackage.price}</strong>
               </div>
             </div>
 
@@ -104,6 +111,13 @@ export function ProjectQuoteBuilder({ selectedPackage, selectedAddOns, onChangeP
                   </ul>
                 </div>
               ) : null}
+
+              <div className="project-builder__addMore" aria-hidden="true">
+                <span>
+                  <Plus size={14} />
+                  Add more features
+                </span>
+              </div>
             </div>
 
             <div className="project-builder__section project-builder__total">
@@ -118,9 +132,14 @@ export function ProjectQuoteBuilder({ selectedPackage, selectedAddOns, onChangeP
 
             <div className="project-builder__actions">
               <a className="button button--primary button--full" href={intakeFormUrl} target="_blank" rel="noreferrer">
-                Submit Project Request
+                Continue
                 <ArrowUpRight size={16} />
               </a>
+
+              <div className="project-builder__note">
+                <Lock size={14} />
+                <span>Secure • No payment now</span>
+              </div>
 
               <div className="project-builder__payment" id="project-payment">
                 <span className="project-builder__paymentLabel">Pay Deposit / Start Project</span>

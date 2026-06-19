@@ -1,4 +1,14 @@
-import { ArrowUpRight, Check } from 'lucide-react';
+import {
+  ArrowUpRight,
+  Bot,
+  CalendarDays,
+  Check,
+  PenLine,
+  Search,
+  ShieldCheck,
+  ShoppingCart,
+  SlidersHorizontal,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { addOns, packages, type AddOn, type Package } from '../data/pricing';
 import { intakeFormUrl } from '../data/site';
@@ -64,6 +74,16 @@ function formatCurrency(value: number) {
   }).format(value);
 }
 
+function splitPriceLabel(price: string) {
+  const match = price.match(/^(Starting at)\s+(.+)$/i);
+
+  if (match) {
+    return { label: match[1], value: match[2] };
+  }
+
+  return { label: 'Starting at', value: price };
+}
+
 function loadStoredQuote(): LoadedProjectQuote {
   if (typeof window === 'undefined') {
     return { selectedPackageId: null, selectedAddonIds: [] };
@@ -73,7 +93,7 @@ function loadStoredQuote(): LoadedProjectQuote {
     const raw = window.localStorage.getItem(projectQuoteStorageKey);
 
     if (!raw) {
-      return { selectedPackageId: null, selectedAddonIds: [] };
+      return { selectedPackageId: 'professional', selectedAddonIds: ['seo', 'booking'] };
     }
 
     const parsed = JSON.parse(raw) as Partial<StoredProjectQuote>;
@@ -132,6 +152,8 @@ function PackageCard({
   selected: boolean;
   onSelect: (pkg: Package) => void;
 }) {
+  const priceParts = splitPriceLabel(pkg.price);
+
   return (
     <article
       className={
@@ -160,7 +182,10 @@ function PackageCard({
             ))}
           </div>
         </div>
-        <strong className="package-card__price">{pkg.price}</strong>
+        <div className="package-card__priceGroup">
+          <span className="package-card__priceLabel">{priceParts.label}</span>
+          <strong className="package-card__priceValue">{priceParts.value}</strong>
+        </div>
       </div>
 
       <div className="package-card__body">
@@ -215,14 +240,36 @@ function AddOnCard({
   selected: boolean;
   onToggle: (addon: AddOn) => void;
 }) {
+  const priceParts = splitPriceLabel(addon.price);
+  const icon =
+    addon.id === 'seo' ? (
+      <Search size={18} />
+    ) : addon.id === 'lead-assistant' ? (
+      <Bot size={18} />
+    ) : addon.id === 'booking' ? (
+      <CalendarDays size={18} />
+    ) : addon.id === 'commerce' ? (
+      <ShoppingCart size={18} />
+    ) : addon.id === 'copy' ? (
+      <PenLine size={18} />
+    ) : (
+      <ShieldCheck size={18} />
+    );
+
   return (
     <article className={selected ? 'upgrade-card upgrade-card--selected' : 'upgrade-card'} data-reveal>
       <div className="upgrade-card__top">
-        <div>
-          <p className="upgrade-card__eyebrow">{addon.internalName}</p>
-          <h3>{addon.name}</h3>
+        <div className="upgrade-card__identity">
+          <span className="upgrade-card__icon">{icon}</span>
+          <div>
+            <p className="upgrade-card__eyebrow">{addon.internalName}</p>
+            <h3>{addon.name}</h3>
+          </div>
         </div>
-        <strong className="upgrade-card__price">{addon.price}</strong>
+        <div className="upgrade-card__priceGroup">
+          <span className="upgrade-card__priceLabel">{priceParts.label}</span>
+          <strong className="upgrade-card__priceValue">{priceParts.value}</strong>
+        </div>
       </div>
 
       <p className="upgrade-card__description">{addon.description}</p>
@@ -278,8 +325,8 @@ export function Pricing() {
         <p className="section-label">Website pricing</p>
         <h2>Simple Website Packages for Real Businesses</h2>
         <p>
-          Choose the starting point that fits your business. You can add features like SEO, booking, content help, or
-          lead capture as your project grows.
+          Choose the starting point that fits your goals, then add only the features you need. Everything is built to
+          help you attract customers and grow online.
         </p>
       </div>
 
@@ -299,6 +346,9 @@ export function Pricing() {
           </div>
 
           <article className="pricing-custom-quote" data-reveal>
+            <span className="pricing-custom-quote__icon" aria-hidden="true">
+              <SlidersHorizontal size={18} />
+            </span>
             <div className="pricing-custom-quote__copy">
               <p className="pricing-custom-quote__eyebrow">Custom Quote</p>
               <h3>Need something custom?</h3>
@@ -313,13 +363,10 @@ export function Pricing() {
           </article>
 
           <div className="pricing-section__block" data-reveal>
-            <div className="pricing-layout__heading">
-              <h3>Add Features That Help Your Website Do More</h3>
-              <p>
-                Need more than a basic website? Add tools that help customers find you, contact you, book with you, or
-                buy from you online.
-              </p>
-            </div>
+          <div className="pricing-layout__heading">
+            <h3>Add Features That Help Your Website Do More</h3>
+            <p>Powerful add-ons to help customers find you, contact you, book with you, or buy from you online.</p>
+          </div>
 
             <div className="upgrade-grid">
               {addOns.map((addon) => (

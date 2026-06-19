@@ -1443,8 +1443,10 @@ section#work {
 .pricing-section__intro {
   display: grid;
   gap: 0.8rem;
-  max-width: 48rem;
-  margin-bottom: 1.7rem;
+  max-width: 64rem;
+  margin: 0 auto 1.9rem;
+  justify-items: center;
+  text-align: center;
 }
 
 .pricing-section__intro h2,
@@ -1475,7 +1477,7 @@ section#work {
 }
 
 .pricing-section__intro p:last-child {
-  max-width: 40rem;
+  max-width: 52rem;
   margin: 0;
 }
 
@@ -1541,6 +1543,32 @@ section#work {
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
+}
+
+.package-card__priceGroup,
+.upgrade-card__priceGroup {
+  display: grid;
+  justify-items: end;
+  gap: 0.15rem;
+  text-align: right;
+}
+
+.package-card__priceLabel,
+.upgrade-card__priceLabel {
+  color: var(--text);
+  font-size: 0.72rem;
+  font-weight: 600;
+  opacity: 0.72;
+  white-space: nowrap;
+}
+
+.package-card__priceValue,
+.upgrade-card__priceValue {
+  color: var(--purple-neon);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
 }
 
 .package-card__eyebrow,
@@ -1663,16 +1691,34 @@ section#work {
   gap: 1rem;
 }
 
-.upgrade-card__top h3 {
-  margin: 0.35rem 0 0;
-  font-size: 1.15rem;
+.upgrade-card__identity {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  min-width: 0;
 }
 
-.upgrade-card__price,
-.package-card__price {
-  white-space: nowrap;
-  font-size: 1.1rem;
-  font-weight: 700;
+.upgrade-card__icon,
+.pricing-custom-quote__icon,
+.project-builder__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 2.65rem;
+  height: 2.65rem;
+  border-radius: 999px;
+  color: #d8b4fe;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(243, 226, 196, 0.2), rgba(168, 85, 247, 0.12) 30%, rgba(91, 33, 182, 0.12) 100%),
+    rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(192, 132, 252, 0.22);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.upgrade-card__identity h3 {
+  margin: 0.3rem 0 0;
+  font-size: 1.15rem;
 }
 
 .upgrade-card__description {
@@ -1691,6 +1737,53 @@ section#work {
   color: var(--muted);
   font-size: 0.86rem;
   line-height: 1.5;
+}
+
+.pricing-custom-quote {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 1.15rem 1.25rem;
+  border-radius: 24px;
+  border: 1px solid var(--border-default);
+  background:
+    radial-gradient(circle at top left, rgba(168, 85, 247, 0.1), transparent 28%),
+    var(--surface-card-soft);
+  box-shadow: 0 18px 60px var(--shadow-soft);
+}
+
+.pricing-custom-quote__copy {
+  display: grid;
+  gap: 0.35rem;
+  max-width: 46rem;
+}
+
+.pricing-custom-quote__eyebrow {
+  margin: 0;
+  color: var(--purple-neon);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.pricing-custom-quote h3 {
+  margin: 0;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1.8rem, 2.9vw, 2.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+.pricing-custom-quote p:last-child {
+  margin: 0.2rem 0 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.pricing-custom-quote .button {
+  flex: none;
 }
 
 .project-builder {
@@ -1717,6 +1810,20 @@ section#work {
 .project-builder__header {
   display: grid;
   gap: 0.8rem;
+}
+
+.project-builder__titleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.project-builder__titleRow .section-label {
+  margin-bottom: 0.2rem;
+}
+
+.project-builder__icon {
+  color: #d8b4fe;
 }
 
 .project-builder__header h3 {
@@ -1774,6 +1881,21 @@ section#work {
 .project-builder__addonRow h4 {
   margin: 0;
   font-size: 1.04rem;
+}
+
+.project-builder__selectedPackage strong {
+  color: var(--purple-neon);
+  font-size: 1.1rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.project-builder__selectedPackage p {
+  margin-top: 0.25rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .project-builder__selectedPackage p,
@@ -1862,6 +1984,24 @@ section#work {
   color: var(--purple-neon);
 }
 
+.project-builder__addMore {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1rem;
+  border-radius: 16px;
+  border: 1px solid rgba(192, 132, 252, 0.14);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.project-builder__addMore span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
 .project-builder__total {
   display: grid;
   gap: 0.55rem;
@@ -1876,6 +2016,18 @@ section#work {
   display: grid;
   gap: 0.95rem;
   padding-top: 0.3rem;
+}
+
+.project-builder__note {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.project-builder__note svg {
+  color: var(--purple-neon);
 }
 
 .project-builder__payment {
@@ -1978,53 +2130,6 @@ section#work {
   min-height: 100%;
 }
 
-.pricing-custom-quote {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.25rem;
-  padding: 1.15rem 1.25rem;
-  border-radius: 24px;
-  border: 1px solid var(--border-default);
-  background:
-    radial-gradient(circle at top left, rgba(168, 85, 247, 0.1), transparent 28%),
-    var(--surface-card-soft);
-  box-shadow: 0 18px 60px var(--shadow-soft);
-}
-
-.pricing-custom-quote__copy {
-  display: grid;
-  gap: 0.35rem;
-  max-width: 46rem;
-}
-
-.pricing-custom-quote__eyebrow {
-  margin: 0;
-  color: var(--purple-neon);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.pricing-custom-quote h3 {
-  margin: 0;
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: clamp(1.8rem, 2.9vw, 2.5rem);
-  line-height: 0.95;
-  letter-spacing: -0.04em;
-}
-
-.pricing-custom-quote p:last-child {
-  margin: 0.2rem 0 0;
-  color: var(--muted);
-  line-height: 1.65;
-}
-
-.pricing-custom-quote .button {
-  flex: none;
-}
-
 @media (max-width: 1180px) {
   .pricing-layout {
     grid-template-columns: 1fr;
@@ -2102,6 +2207,37 @@ section#work {
 
   .pricing-custom-quote {
     flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pricing-custom-quote .button {
+    width: 100%;
+  }
+
+  .project-builder__titleRow,
+  .project-builder__selectedPackage,
+  .project-builder__addonRow,
+  .project-builder__sectionHeader,
+  .upgrade-card__top {
+    flex-direction: column;
+  }
+
+  .project-builder__selectedPackage,
+  .project-builder__addonRow,
+  .project-builder__addMore,
+  .project-builder__monthlyNote,
+  .project-builder__payment,
+  .pricing-faq__item {
+    padding: 0.9rem;
+  }
+
+  .package-card__priceGroup,
+  .upgrade-card__priceGroup {
+    justify-items: flex-start;
+    text-align: left;
+  }
+
+  .project-builder__note {
     align-items: flex-start;
   }
 
