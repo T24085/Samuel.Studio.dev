@@ -1672,8 +1672,8 @@ section#work {
 .upgrade-card {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  padding: 1rem;
+  gap: 0.62rem;
+  padding: 0.95rem;
   border-radius: 20px;
   border: 1px solid var(--border-default);
   background:
@@ -1740,8 +1740,8 @@ section#work {
 
 .upgrade-card__description {
   margin: 0;
-  font-size: 0.95rem;
-  line-height: 1.55;
+  font-size: 0.92rem;
+  line-height: 1.45;
 }
 
 .upgrade-card__bestFor {
@@ -1763,7 +1763,7 @@ section#work {
   align-items: center;
   justify-content: space-between;
   gap: 1.25rem;
-  padding: 1.15rem 1.25rem;
+  padding: 1.05rem 1.2rem;
   border-radius: 24px;
   border: 1px solid var(--border-default);
   background:
@@ -1791,7 +1791,7 @@ section#work {
   margin: 0;
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(1.8rem, 2.9vw, 2.5rem);
-  line-height: 0.95;
+  line-height: 0.92;
   letter-spacing: -0.04em;
 }
 
