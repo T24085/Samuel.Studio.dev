@@ -69,7 +69,7 @@ export const packages: Package[] = [
     customerFacingExplanation:
       'Best for businesses that need a complete online presence with enough room to explain services, show photos, build trust, and generate leads.',
     featured: true,
-    cartAddToCartId: 'XWNT5W4DVYANU',
+    cartAddToCartId: '776NMJ97LJZ2Q',
   },
   {
     id: 'growth',
@@ -89,7 +89,7 @@ export const packages: Package[] = [
     cta: 'Grow My Business Online',
     customerFacingExplanation:
       'Best for businesses ready to grow, automate, and dominate online.',
-    cartAddToCartId: 'WJQGNAXVCD9T6',
+    cartAddToCartId: 'MVEQMSVCGDFQL',
   },
   {
     id: 'custom',
