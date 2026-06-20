@@ -10,19 +10,15 @@ import { ChatAssistant } from './components/ChatAssistant';
 import { Pricing } from './components/Pricing';
 import { PricingModal } from './components/PricingModal';
 import { Process } from './components/Process';
-import { StyleImageModal } from './components/StyleImageModal';
-import { WebsiteStyles } from './components/WebsiteStyles';
-import { type StyleItem } from './data/styles';
 import { intakeFormUrl } from './data/site';
 
-const observedSections = ['home', 'gallery', 'work', 'styles', 'pricing', 'process', 'contact'] as const;
+const observedSections = ['home', 'gallery', 'work', 'pricing', 'process', 'contact'] as const;
 const themeStorageKey = 'nova-studio-theme';
 type Theme = 'dark' | 'light';
 
 export default function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [pricingOpen, setPricingOpen] = useState(false);
-  const [styleImageItem, setStyleImageItem] = useState<StyleItem | null>(null);
   const [activeSection, setActiveSection] = useState<(typeof observedSections)[number]>('home');
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window === 'undefined') {
@@ -94,7 +90,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const locked = pricingOpen || mobileOpen || styleImageItem;
+    const locked = pricingOpen || mobileOpen;
     const root = document.documentElement;
 
     root.classList.toggle('scroll-locked', Boolean(locked));
@@ -102,7 +98,7 @@ export default function App() {
     return () => {
       root.classList.remove('scroll-locked');
     };
-  }, [mobileOpen, pricingOpen, styleImageItem]);
+  }, [mobileOpen, pricingOpen]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -121,7 +117,6 @@ export default function App() {
       if (event.key === 'Escape') {
         setPricingOpen(false);
         setMobileOpen(false);
-        setStyleImageItem(null);
       }
     };
 
@@ -146,7 +141,6 @@ export default function App() {
         <Hero intakeFormUrl={intakeFormUrl} />
         <DnaGallery />
         <FeaturedWork />
-        <WebsiteStyles onOpenStyle={setStyleImageItem} />
         <Pricing />
         <Process />
         <IntakeCTA />
@@ -155,7 +149,6 @@ export default function App() {
       <FloatingCartButton />
       <ChatAssistant />
       <PricingModal open={pricingOpen} onClose={() => setPricingOpen(false)} />
-      <StyleImageModal item={styleImageItem} onClose={() => setStyleImageItem(null)} />
     </div>
   );
 }
