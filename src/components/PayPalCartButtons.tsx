@@ -19,14 +19,13 @@ function initializePayPalCartButton(buttonId: string, action: 'AddToCart' | 'Car
 }
 
 function clickHiddenPayPalButton(container: HTMLDivElement | null) {
-  const button = container?.querySelector('button');
+  const element = container?.querySelector('paypal-add-to-cart-button');
 
-  if (button instanceof HTMLButtonElement) {
-    button.click();
+  if (element instanceof HTMLElement) {
+    element.click();
     return true;
   }
 
-  container?.click();
   return false;
 }
 
@@ -74,7 +73,18 @@ export function PayPalCartButtons({ addToCartId, label = 'Add to cart', variant 
         {label}
         <ArrowUpRight size={16} />
       </button>
-      <div ref={hiddenButtonRef} className="sr-only" aria-hidden="true">
+      <div
+        ref={hiddenButtonRef}
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          width: '1px',
+          height: '1px',
+          overflow: 'hidden',
+          clip: 'rect(0, 0, 0, 0)',
+          whiteSpace: 'nowrap',
+        }}
+      >
         <paypal-add-to-cart-button data-id={addToCartId} />
       </div>
     </div>
