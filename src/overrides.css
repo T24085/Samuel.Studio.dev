@@ -1524,10 +1524,20 @@ section#work {
 }
 
 .package-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: visible;
+}
+
+.package-card__badge {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  pointer-events: none;
 }
 
 .package-card--selected {
@@ -2062,6 +2072,46 @@ section#work {
 
 .project-builder__payment .paypal-cart-actions {
   margin-top: 0.15rem;
+}
+
+.project-builder__subscription {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.35rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--border-default);
+}
+
+.project-builder__subscriptionList {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.project-builder__subscriptionItem {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.95rem 1rem;
+  border-radius: 18px;
+  border: 1px solid rgba(192, 132, 252, 0.16);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.project-builder__subscriptionCopy {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.project-builder__subscriptionCopy strong {
+  font-size: 1rem;
+}
+
+.project-builder__subscriptionCopy span {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.paypal-subscription-actions {
+  min-height: 48px;
 }
 
 .project-builder__empty,

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent, type KeyboardEvent as ReactKeyboardEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type ChangeEvent, type FormEvent, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { MessageCircle, Send, Sparkles, X } from 'lucide-react';
 import {
   assistantChatUrl,
@@ -9,7 +9,7 @@ import {
   starterPrompts,
 } from '../data/assistant';
 import { assets } from '../data/assets';
-import { emailAddress } from '../data/site';
+import { emailAddress, getSitePresentation, siteKey } from '../data/site';
 
 type ChatRole = 'user' | 'assistant';
 
@@ -18,6 +18,8 @@ type ChatMessage = {
   role: ChatRole;
   content: string;
   createdAt: number;
+  siteKey: string;
+  siteLabel: string;
   source?: 'ollama' | 'fallback' | 'seed';
   model?: string;
 };
@@ -30,12 +32,25 @@ type ClientProfile = {
 
 type StoredChatState = {
   sessionId: string;
+  siteKey: string;
   messages: ChatMessage[];
   clientProfile?: ClientProfile;
 };
 
-const storageKey = 'samuel-studio-assistant-chat';
+const storageKey = `samuel-studio-assistant-chat:${siteKey}`;
 const assistantRequestTimeoutMs = 60000;
+const sitePresentation = getSitePresentation(siteKey);
+const chatThemeVars = {
+  '--chat-site-accent': sitePresentation.accent,
+  '--chat-site-accent-soft': sitePresentation.accentSoft,
+  '--chat-site-accent-strong': sitePresentation.accentStrong,
+  '--chat-site-border': sitePresentation.border,
+  '--chat-site-glow': sitePresentation.glow,
+  '--chat-site-assistant-start': sitePresentation.assistantBubbleStart,
+  '--chat-site-assistant-end': sitePresentation.assistantBubbleEnd,
+  '--chat-site-user-start': sitePresentation.userBubbleStart,
+  '--chat-site-user-end': sitePresentation.userBubbleEnd,
+} as CSSProperties;
 
 function createId() {
   if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
@@ -51,9 +66,11 @@ function createGreeting(profile?: ClientProfile): ChatMessage {
   return {
     id: createId(),
     role: 'assistant',
+    siteKey: sitePresentation.key,
+    siteLabel: sitePresentation.label,
     content: greetingName
-      ? `${assistantName} is ready, ${greetingName}. Tell me what kind of business you are building and I will point you to the right package.`
-      : `${assistantName} is ready. Tell me what kind of business you are building and I will point you to the right package.`,
+      ? `${assistantName} is ready, ${greetingName}. Tell me what kind of business you are building, what the site needs to do, and when you want it live.`
+      : `${assistantName} is ready. Tell me what kind of business you are building, what the site needs to do, and when you want it live.`,
     createdAt: Date.now(),
     source: 'seed',
   };
@@ -79,6 +96,7 @@ function loadChatState(): StoredChatState {
   if (typeof window === 'undefined') {
     return {
       sessionId: createId(),
+      siteKey: sitePresentation.key,
       messages: [createGreeting()],
     };
   }
@@ -89,11 +107,17 @@ function loadChatState(): StoredChatState {
     if (raw) {
       const parsed = JSON.parse(raw) as Partial<StoredChatState>;
 
-      if (typeof parsed.sessionId === 'string' && Array.isArray(parsed.messages) && parsed.messages.length > 0) {
+      if (
+        typeof parsed.sessionId === 'string' &&
+        parsed.siteKey === sitePresentation.key &&
+        Array.isArray(parsed.messages) &&
+        parsed.messages.length > 0
+      ) {
         const clientProfile = normalizeClientProfile(parsed.clientProfile as Partial<ClientProfile> | undefined);
 
         return {
           sessionId: parsed.sessionId,
+          siteKey: parsed.siteKey,
           messages: parsed.messages,
           clientProfile: clientProfile || undefined,
         };
@@ -105,6 +129,7 @@ function loadChatState(): StoredChatState {
 
   return {
     sessionId: createId(),
+    siteKey: sitePresentation.key,
     messages: [createGreeting()],
   };
 }
@@ -115,12 +140,27 @@ function saveChatState(state: StoredChatState) {
 
 function buildFallbackReply(userText: string) {
   const query = userText.toLowerCase();
+  const commerceSignals = ['ordering', 'order online', 'online order', 'online ordering', 'delivery', 'pickup', 'takeout', 'menu', 'menus'];
 
-  if (query.includes('nutrition') || query.includes('supplement') || query.includes('supplements') || query.includes('product') || query.includes('products') || query.includes('store') || query.includes('storefront') || query.includes('shop') || query.includes('retail') || query.includes('catalog') || query.includes('e-commerce') || query.includes('ecommerce')) {
+  if (
+    query.includes('nutrition') ||
+    query.includes('supplement') ||
+    query.includes('supplements') ||
+    query.includes('product') ||
+    query.includes('products') ||
+    query.includes('store') ||
+    query.includes('storefront') ||
+    query.includes('shop') ||
+    query.includes('retail') ||
+    query.includes('catalog') ||
+    query.includes('e-commerce') ||
+    query.includes('ecommerce') ||
+    (['bakery', 'restaurant', 'restaurants', 'cafe', 'coffee shop', 'catering'].some((term) => query.includes(term)) && commerceSignals.some((term) => query.includes(term)))
+  ) {
     return [
       'Business Growth Website + Sell Products or Services Online. That gives your business a polished front and a clear path to sell.',
       'If the catalog is limited, a Starter Website can open the door cleanly, with Get Found on Google and Website Copy & Content Help to support trust.',
-      'Want me to map the pages for you?',
+      'What products matter most, what pages do you need, and when do you want it live?',
     ].join(' ');
   }
 
@@ -128,7 +168,7 @@ function buildFallbackReply(userText: string) {
     return [
       'Professional Website. It gives you room for sermons, events, ministries, and clear contact paths.',
       'If you only need a simple one-page presence, the Starter Website can work too.',
-      'Want me to outline the pages?',
+      'What ministries, pages, and launch timing should I note?',
     ].join(' ');
   }
 
@@ -193,14 +233,15 @@ function buildFallbackReply(userText: string) {
     return [
       'Professional Website. It gives you room for services, proof, bookings, menus, locations, and a stronger contact path.',
       'If you want something leaner, the Starter Website is the simpler route.',
-      'Want me to outline the pages?',
+      'What services, pages, and launch timing should I note?',
     ].join(' ');
   }
 
   if (query.includes('price') || query.includes('pricing') || query.includes('cost')) {
     return [
       'Starter Website starts at $499, Professional Website starts at $999, and Business Growth Website starts at $1,999.',
-      'Common add-ons include Never Miss a Lead from $299, Get Found on Google from $149, Let Customers Schedule Online from $199, Sell Products or Services Online from $399, Website Copy & Content Help from $199, and Keep My Website Updated at $49/month.',
+      'Common add-ons include Never Miss a Lead from $299, Get Found on Google from $149, Let Customers Schedule Online from $199, Sell Products or Services Online from $399, Website Copy & Content Help from $199, Keep My Website Updated at $49/month, and Priority Website Care at $100/month.',
+      'What kind of project are you pricing, and what budget range should I note?',
     ].join(' ');
   }
 
@@ -208,42 +249,43 @@ function buildFallbackReply(userText: string) {
     return [
       'Never Miss a Lead. It answers questions, captures leads, and points visitors toward the next step.',
       'It starts at $299 and works well for service businesses, consultants, churches, and local brands.',
+      'What should it collect, and what project is it supporting?',
     ].join(' ');
   }
 
   if (query.includes('booking') || query.includes('schedule')) {
-    return 'Let Customers Schedule Online starts at $199 and lets visitors book appointments or consultations directly from the site with confirmations and reminders.';
+    return 'Let Customers Schedule Online starts at $199 and lets visitors book appointments or consultations directly from the site with confirmations and reminders. What appointment types, pages, and timeline should I note?';
   }
 
   if (query.includes('seo') || query.includes('google')) {
-    return 'Get Found on Google starts at $149 and covers keyword optimization, page titles and descriptions, indexing setup, performance improvements, local SEO, and Search Console setup.';
+    return 'Get Found on Google starts at $149 and covers keyword optimization, page titles and descriptions, indexing setup, performance improvements, local SEO, and Search Console setup. What pages, audience, and budget range should I capture?';
   }
 
   if (query.includes('store') || query.includes('storefront') || query.includes('shop') || query.includes('retail') || query.includes('catalog') || query.includes('e-commerce') || query.includes('ecommerce')) {
-    return 'Sell Products or Services Online starts at $399 and includes a catalog, shopping cart, secure checkout, payment setup, inventory management, order notifications, and mobile-friendly storefront support.';
+    return 'Sell Products or Services Online starts at $399 and includes a catalog, shopping cart, secure checkout, payment setup, inventory management, order notifications, and mobile-friendly storefront support. What product categories, pages, and launch timing should I note?';
   }
 
   if (query.includes('content') || query.includes('copy') || query.includes('writing')) {
-    return 'Website Copy & Content Help starts at $199 and covers homepage copy, service page writing, about page content, calls to action, SEO-friendly formatting, and brand messaging support.';
+    return 'Website Copy & Content Help starts at $199 and covers homepage copy, service page writing, about page content, calls to action, SEO-friendly formatting, and brand messaging support. What pages and brand goals should I capture?';
   }
 
-  if (query.includes('care') || query.includes('support') || query.includes('maintenance')) {
-    return 'Website Care Plan. It is $49 per month and covers monitoring, security checks, backups, performance reviews, minor content updates, and priority support.';
+  if (query.includes('care') || query.includes('support') || query.includes('maintenance') || query.includes('subscription') || query.includes('monthly')) {
+    return 'Website care plans include Keep My Website Updated at $49 per month and Priority Website Care at $100 per month. Both cover monitoring, security checks, backups, minor content updates, and ongoing support, with the higher tier giving you faster response and more hands-on help. What site does it support and what changes do you expect each month?';
   }
 
   if (query.includes('process') || query.includes('how does it work')) {
-    return 'The process is Discovery Form, Style Direction, Design & Build, Review & Refine, Launch, and Support. The intake form is the fastest way to start.';
+    return 'The process is Discovery Form, Style Direction, Design & Build, Review & Refine, Launch, and Support. The intake form is the fastest way to start. What goal, pages, and timeline should I note first?';
   }
 
   if (query.includes('intake') || query.includes('form')) {
-    return 'For the intake form, send your goals, brand direction, target audience, pages you need, examples you like, timeline, and budget range.';
+    return 'For the intake form, send your goals, brand direction, target audience, pages you need, examples you like, timeline, and budget range. If you already know them, send any must-have features too.';
   }
 
   if (query.includes('contact') || query.includes('email')) {
     return `You can use the intake form or email ${emailAddress}.`;
   }
 
-  return 'Tell me what kind of business you are building, and I can point you to the right package or add-ons.';
+  return 'Tell me what kind of business you are building, what the site needs to do, and when you want it live.';
 }
 
 function isFallbackMessage(message: ChatMessage) {
@@ -267,6 +309,7 @@ async function requestAssistantReply(payload: {
   assistant: string;
   sessionId: string;
   pageUrl: string;
+  siteKey: string;
   clientProfile: ClientProfile;
   messages: Array<{ role: string; content: string }>;
   userText: string;
@@ -288,6 +331,7 @@ async function requestAssistantReply(payload: {
           assistant: payload.assistant,
           sessionId: payload.sessionId,
           pageUrl: payload.pageUrl,
+          siteKey: payload.siteKey,
           clientProfile: payload.clientProfile,
           systemPrompt: assistantSystemPrompt,
           modelCandidates: ollamaModelCandidates,
@@ -329,6 +373,7 @@ async function requestAssistantReply(payload: {
 async function persistTranscript(payload: {
   sessionId: string;
   pageUrl: string;
+  siteKey: string;
   model: string;
   clientProfile: ClientProfile;
   messages: ChatMessage[];
@@ -342,6 +387,7 @@ async function persistTranscript(payload: {
     assistant: assistantName,
     sessionId: payload.sessionId,
     pageUrl: payload.pageUrl,
+    siteKey: payload.siteKey,
     model: payload.model,
     clientProfile: payload.clientProfile,
     loggedAt: new Date().toISOString(),
@@ -392,6 +438,7 @@ export function ChatAssistant() {
   useEffect(() => {
     saveChatState({
       sessionId,
+      siteKey: sitePresentation.key,
       messages,
       clientProfile: clientProfile || undefined,
     });
@@ -461,6 +508,7 @@ export function ChatAssistant() {
 
     saveChatState({
       sessionId,
+      siteKey: sitePresentation.key,
       messages: nextMessages,
       clientProfile: nextProfile,
     });
@@ -468,6 +516,7 @@ export function ChatAssistant() {
     void persistTranscript({
       sessionId,
       pageUrl: window.location.href,
+      siteKey,
       model: ollamaModelCandidates[0] || 'unknown-model',
       clientProfile: nextProfile,
       messages: nextMessages,
@@ -492,6 +541,8 @@ export function ChatAssistant() {
     const userMessage: ChatMessage = {
       id: createId(),
       role: 'user',
+      siteKey: sitePresentation.key,
+      siteLabel: sitePresentation.label,
       content,
       createdAt: Date.now(),
     };
@@ -505,6 +556,7 @@ export function ChatAssistant() {
         assistant: assistantName,
         sessionId,
         pageUrl: window.location.href,
+        siteKey,
         clientProfile,
         messages: buildTranscriptMessages(conversation),
         userText: content,
@@ -513,6 +565,8 @@ export function ChatAssistant() {
       const assistantMessage: ChatMessage = {
         id: createId(),
         role: 'assistant',
+        siteKey: sitePresentation.key,
+        siteLabel: sitePresentation.label,
         content:
           reply.content ||
           'I can help with Samuel Studio packages, add-ons, and next steps. Try asking about pricing, timelines, or which service fits your project.',
@@ -523,14 +577,6 @@ export function ChatAssistant() {
 
       const nextMessages = [...conversation, assistantMessage];
       setMessages(nextMessages);
-      void persistTranscript({
-        sessionId,
-        pageUrl: window.location.href,
-        model: reply.model,
-        clientProfile,
-        messages: nextMessages,
-        sendEmail: false,
-      }).catch(() => undefined);
     } catch (requestError) {
       const message = requestError instanceof Error ? requestError.message : 'The assistant is temporarily unavailable.';
       setError(message);
@@ -538,8 +584,10 @@ export function ChatAssistant() {
       const fallbackMessage: ChatMessage = {
         id: createId(),
         role: 'assistant',
+        siteKey: sitePresentation.key,
+        siteLabel: sitePresentation.label,
         content:
-          'I am having trouble reaching the local model right now. Check that Ollama is running, then try again or ask about Samuel Studio services in a different way.',
+          'I am having trouble reaching the local model right now. Check that Ollama is running, then tell me the goal, pages, timeline, and budget so I can still capture the project brief.',
         createdAt: Date.now(),
         source: 'fallback',
         model: ollamaModelCandidates[0] || 'unknown-model',
@@ -547,14 +595,6 @@ export function ChatAssistant() {
 
       const nextMessages = [...conversation, fallbackMessage];
       setMessages(nextMessages);
-      void persistTranscript({
-        sessionId,
-        pageUrl: window.location.href,
-        model: ollamaModelCandidates[0] || 'unknown-model',
-        clientProfile,
-        messages: nextMessages,
-        sendEmail: false,
-      }).catch(() => undefined);
     } finally {
       setSending(false);
     }
@@ -584,6 +624,7 @@ export function ChatAssistant() {
     const nextSessionId = createId();
     const nextState = {
       sessionId: nextSessionId,
+      siteKey: sitePresentation.key,
       messages: [createGreeting()],
       clientProfile: undefined,
     };
@@ -601,7 +642,7 @@ export function ChatAssistant() {
   };
 
   return (
-    <div className="chat-assistant">
+    <div className="chat-assistant" style={chatThemeVars}>
       <button
         className="chat-assistant__launcher"
         type="button"
@@ -644,6 +685,7 @@ export function ChatAssistant() {
 
           <div className="chat-assistant__meta">
             <span>{statusLabel}</span>
+            <span className="chat-assistant__siteBadge">{sitePresentation.label}</span>
           </div>
 
           {!hasProfile ? (
@@ -708,13 +750,13 @@ export function ChatAssistant() {
                   <article
                     key={message.id}
                     className={message.role === 'user' ? 'chat-assistant__message chat-assistant__message--user' : 'chat-assistant__message chat-assistant__message--assistant'}
+                    data-site-key={message.siteKey}
                   >
                     <div className="chat-assistant__bubble">
-                      {message.role === 'assistant' ? (
-                        <div className="chat-assistant__bubble-meta">
-                          <span>{message.source === 'fallback' ? 'Fallback' : 'Nova'}</span>
-                        </div>
-                      ) : null}
+                      <div className="chat-assistant__bubble-meta">
+                        <span>{message.role === 'assistant' ? (message.source === 'fallback' ? 'Fallback' : 'Nova') : 'Client'}</span>
+                        <span>{message.siteLabel}</span>
+                      </div>
                       {message.content}
                     </div>
                   </article>

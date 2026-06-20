@@ -2,6 +2,7 @@ import { ArrowUpRight, Check, FileText, Lock, Plus, X } from 'lucide-react';
 import { type AddOn, type Package } from '../data/pricing';
 import { intakeFormUrl } from '../data/site';
 import { PayPalCartButtons } from './PayPalCartButtons';
+import { PayPalSubscriptionButton } from './PayPalSubscriptionButton';
 
 type ProjectQuoteBuilderProps = {
   selectedPackage: Package | null;
@@ -153,6 +154,37 @@ export function ProjectQuoteBuilder({ selectedPackage, selectedAddOns, onChangeP
                     <ArrowUpRight size={16} />
                   </a>
                 )}
+
+                {monthlyAddOns.length > 0 ? (
+                  <div className="project-builder__subscription">
+                    <span className="project-builder__paymentLabel">Monthly Subscription</span>
+                    <p>Any monthly add-ons are billed separately through PayPal.</p>
+                    <div className="project-builder__subscriptionList">
+                      {monthlyAddOns.map((addon) =>
+                        addon.paypalPlanId ? (
+                          <div className="project-builder__subscriptionItem" key={addon.id}>
+                            <div className="project-builder__subscriptionCopy">
+                              <strong>{addon.name}</strong>
+                              <span>{addon.price}</span>
+                            </div>
+                            <PayPalSubscriptionButton planId={addon.paypalPlanId} />
+                          </div>
+                        ) : (
+                          <div className="project-builder__subscriptionItem" key={addon.id}>
+                            <div className="project-builder__subscriptionCopy">
+                              <strong>{addon.name}</strong>
+                              <span>{addon.price}</span>
+                            </div>
+                            <a className="button button--secondary button--full" href={intakeFormUrl} target="_blank" rel="noreferrer">
+                              Request Subscription Setup
+                              <ArrowUpRight size={16} />
+                            </a>
+                          </div>
+                        ),
+                      )}
+                    </div>
+                  </div>
+                ) : null}
               </div>
             </div>
           </div>

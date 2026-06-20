@@ -25,6 +25,7 @@ export type AddOn = {
   includes: string[];
   bestFor: string;
   billing: 'one-time' | 'monthly';
+  paypalPlanId?: string;
 };
 
 export const packages: Package[] = [
@@ -174,5 +175,17 @@ export const addOns: AddOn[] = [
     includes: ['Website monitoring', 'Security checks', 'Backups', 'Minor content updates'],
     bestFor: 'Businesses that want support after launch and prefer not to manage updates themselves.',
     billing: 'monthly',
+  },
+  {
+    id: 'care-plus',
+    name: 'Priority Website Care',
+    internalName: 'Priority Care Subscription',
+    price: 'Starting at $100/month',
+    priceValue: 100,
+    description: 'Higher-touch monthly support for businesses that want faster updates, ongoing maintenance, and more direct help.',
+    includes: ['Website monitoring', 'Security checks', 'Backups', 'Minor content updates', 'Priority support'],
+    bestFor: 'Businesses that want a more hands-on monthly support plan.',
+    billing: 'monthly',
+    paypalPlanId: 'P-43R40579GM460452WNI3MFHY',
   },
 ];
