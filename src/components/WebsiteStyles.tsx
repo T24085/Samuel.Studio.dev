@@ -34,14 +34,14 @@ export function WebsiteStyles({ onOpenStyle }: WebsiteStylesProps) {
             {styleItems.map((item, index) => {
               const flipped = Boolean(flippedCards[index]);
               const CardIcon = item.icon;
-              const step = deckSize > 1 ? 84 / (deckSize - 1) : 0;
-              const left = `${8 + index * step}%`;
+              const step = deckSize > 1 ? 72 / (deckSize - 1) : 0;
+              const left = `${14 + index * step}%`;
               const offset = index - (deckSize - 1) / 2;
-              const angle = `${offset * 10.5}deg`;
-              const top = `${1.5 + Math.abs(offset) * 0.35}rem`;
-              const lift = flipped ? '-1.2rem' : index === selectedIndex ? '-0.35rem' : '0rem';
-              const scale = flipped ? '1.045' : index === selectedIndex ? '1.03' : '0.98';
-              const depth = `${200 - index * 10}`;
+              const angle = `${offset * 8.5}deg`;
+              const top = `${1.25 + Math.abs(offset) * 0.28}rem`;
+              const lift = flipped ? '-1.35rem' : index === selectedIndex ? '-0.45rem' : '0rem';
+              const scale = flipped ? '1.06' : index === selectedIndex ? '1.045' : '0.995';
+              const depth = `${300 - index * 12}`;
 
               return (
                 <button
