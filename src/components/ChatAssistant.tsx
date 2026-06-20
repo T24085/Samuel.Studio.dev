@@ -240,7 +240,7 @@ function buildFallbackReply(userText: string) {
   if (query.includes('price') || query.includes('pricing') || query.includes('cost')) {
     return [
       'Starter Website starts at $499, Professional Website starts at $999, and Business Growth Website starts at $1,999.',
-      'Common add-ons include Never Miss a Lead from $299, Get Found on Google from $149, Let Customers Schedule Online from $199, Sell Products or Services Online from $399, Website Copy & Content Help from $199, Keep My Website Updated at $49/month, and Priority Website Care at $100/month.',
+      'Common add-ons include Never Miss a Lead from $299, Get Found on Google from $149, Let Customers Schedule Online from $199, Sell Products or Services Online from $399, Website Copy & Content Help from $199, Keep My Website Updated at $49/month, and Priority Website Care as a separate $100/month subscription.',
       'What kind of project are you pricing, and what budget range should I note?',
     ].join(' ');
   }
@@ -270,7 +270,7 @@ function buildFallbackReply(userText: string) {
   }
 
   if (query.includes('care') || query.includes('support') || query.includes('maintenance') || query.includes('subscription') || query.includes('monthly')) {
-    return 'Website care plans include Keep My Website Updated at $49 per month and Priority Website Care at $100 per month. Both cover monitoring, security checks, backups, minor content updates, and ongoing support, with the higher tier giving you faster response and more hands-on help. What site does it support and what changes do you expect each month?';
+    return 'Website care plans include Keep My Website Updated at $49 per month and Priority Website Care as a separate $100 per month subscription. Both cover monitoring, security checks, backups, minor content updates, and ongoing support, with the higher tier giving you faster response and more hands-on help. What site does it support and what changes do you expect each month?';
   }
 
   if (query.includes('process') || query.includes('how does it work')) {

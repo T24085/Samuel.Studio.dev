@@ -289,7 +289,7 @@ function AddOnCard({
       <p className="upgrade-card__description">{addon.description}</p>
 
       <button className={selected ? 'button button--primary button--full' : 'button button--secondary button--full'} type="button" onClick={() => onToggle(addon)}>
-        {selected ? 'Added to Quote' : 'Add to Project Quote'}
+        {selected ? (addon.billing === 'monthly' ? 'Subscription Added' : 'Added to Quote') : addon.billing === 'monthly' ? 'Add Subscription' : 'Add to Project Quote'}
         <ArrowUpRight size={16} />
       </button>
     </article>

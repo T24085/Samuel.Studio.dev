@@ -1930,6 +1930,7 @@ section#work {
 .project-builder__selectedPackage p,
 .project-builder__addonRow p,
 .project-builder__monthlyNote p,
+.project-builder__subscriptionCopy p,
 .project-builder__total p,
 .project-builder__payment p,
 .pricing-faq__item p {
@@ -2108,6 +2109,11 @@ section#work {
 .project-builder__subscriptionCopy span {
   color: var(--muted);
   font-size: 0.84rem;
+}
+
+.project-builder__subscriptionCopy p {
+  color: var(--muted);
+  line-height: 1.6;
 }
 
 .project-builder__empty,

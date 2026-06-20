@@ -2,6 +2,7 @@ import { ArrowUpRight, Check, FileText, Lock, Plus, X } from 'lucide-react';
 import { type AddOn, type Package } from '../data/pricing';
 import { intakeFormUrl } from '../data/site';
 import { PayPalCartButtons } from './PayPalCartButtons';
+import { PayPalSubscriptionButton } from './PayPalSubscriptionButton';
 
 type ProjectQuoteBuilderProps = {
   selectedPackage: Package | null;
@@ -73,11 +74,11 @@ export function ProjectQuoteBuilder({ selectedPackage, selectedAddOns, onChangeP
 
           <div className="project-builder__section">
             <span className="project-builder__label">Selected Add-ons</span>
-            {selectedAddOns.length === 0 ? (
-              <p className="project-builder__emptyCopy">No add-ons selected yet.</p>
+            {oneTimeAddOns.length === 0 ? (
+              <p className="project-builder__emptyCopy">No one-time add-ons selected yet.</p>
             ) : (
               <div className="project-builder__addonList">
-                {selectedAddOns.map((addon) => (
+                {oneTimeAddOns.map((addon) => (
                   <article className="project-builder__addonRow" key={addon.id}>
                     <div>
                       <h4>{addon.name}</h4>
@@ -97,22 +98,6 @@ export function ProjectQuoteBuilder({ selectedPackage, selectedAddOns, onChangeP
               </div>
             )}
 
-            {monthlyAddOns.length > 0 ? (
-              <div className="project-builder__monthlyNote">
-                <span>Monthly add-ons billed separately:</span>
-                <ul>
-                  {monthlyAddOns.map((addon) => (
-                    <li key={addon.id}>
-                      <Check size={14} />
-                      <span>
-                        {addon.name} - {addon.price}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ) : null}
-
             <div className="project-builder__addMore" aria-hidden="true">
               <span>
                 <Plus size={14} />
@@ -120,6 +105,33 @@ export function ProjectQuoteBuilder({ selectedPackage, selectedAddOns, onChangeP
               </span>
             </div>
           </div>
+
+          {monthlyAddOns.length > 0 ? (
+            <div className="project-builder__section project-builder__subscription">
+              <span className="project-builder__label">Monthly Subscription</span>
+              <p>Monthly support is billed separately from the project quote.</p>
+
+              <div className="project-builder__subscriptionList">
+                {monthlyAddOns.map((addon) => (
+                  <article className="project-builder__subscriptionItem" key={addon.id}>
+                    <div className="project-builder__subscriptionCopy">
+                      <strong>{addon.name}</strong>
+                      <span>{addon.price}</span>
+                      <p>{addon.description}</p>
+                    </div>
+                    {addon.paypalPlanId ? (
+                      <PayPalSubscriptionButton planId={addon.paypalPlanId} label="Add subscription" variant="secondary" />
+                    ) : (
+                      <a className="button button--secondary button--full" href={intakeFormUrl} target="_blank" rel="noreferrer">
+                        Request Subscription Setup
+                        <ArrowUpRight size={16} />
+                      </a>
+                    )}
+                  </article>
+                ))}
+              </div>
+            </div>
+          ) : null}
 
           <div className="project-builder__section project-builder__total">
             <span className="project-builder__label">Estimated Starting Total</span>
@@ -156,37 +168,6 @@ export function ProjectQuoteBuilder({ selectedPackage, selectedAddOns, onChangeP
                   <ArrowUpRight size={16} />
                 </a>
               )}
-
-              {monthlyAddOns.length > 0 ? (
-                <div className="project-builder__subscription">
-                  <span className="project-builder__paymentLabel">Monthly Subscription</span>
-                  <p>Any monthly add-ons are added to your cart and billed separately through PayPal.</p>
-                  <div className="project-builder__subscriptionList">
-                    {monthlyAddOns.map((addon) =>
-                      addon.cartAddToCartId ? (
-                        <div className="project-builder__subscriptionItem" key={addon.id}>
-                          <div className="project-builder__subscriptionCopy">
-                            <strong>{addon.name}</strong>
-                            <span>{addon.price}</span>
-                          </div>
-                          <PayPalCartButtons addToCartId={addon.cartAddToCartId} label="Add to cart" variant="secondary" />
-                        </div>
-                      ) : (
-                        <div className="project-builder__subscriptionItem" key={addon.id}>
-                          <div className="project-builder__subscriptionCopy">
-                            <strong>{addon.name}</strong>
-                            <span>{addon.price}</span>
-                          </div>
-                          <a className="button button--secondary button--full" href={intakeFormUrl} target="_blank" rel="noreferrer">
-                            Request Subscription Setup
-                            <ArrowUpRight size={16} />
-                          </a>
-                        </div>
-                      ),
-                    )}
-                  </div>
-                </div>
-              ) : null}
             </div>
           </div>
         </div>

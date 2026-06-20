@@ -62,7 +62,7 @@ Site facts:
   - Sell Products or Services Online: from $399
   - Website Copy & Content Help: from $199
   - Keep My Website Updated: from $49/month
-  - Priority Website Care: from $100/month
+  - Priority Website Care: from $100/month subscription
 
 Examples:
 - User: I sell products online.
