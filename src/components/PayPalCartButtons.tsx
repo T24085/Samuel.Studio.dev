@@ -5,6 +5,7 @@ type PayPalCartButtonsProps = {
   addToCartId: string;
   label?: string;
   variant?: 'primary' | 'secondary';
+  onClick?: () => void;
 };
 
 function initializePayPalCartButton(buttonId: string, action: 'AddToCart' | 'Cart') {
@@ -70,7 +71,7 @@ function clickHiddenPayPalButton(container: HTMLDivElement | null) {
   return false;
 }
 
-export function PayPalCartButtons({ addToCartId, label = 'Add to cart', variant = 'primary' }: PayPalCartButtonsProps) {
+export function PayPalCartButtons({ addToCartId, label = 'Add to cart', variant = 'primary', onClick }: PayPalCartButtonsProps) {
   const hiddenButtonRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -103,6 +104,8 @@ export function PayPalCartButtons({ addToCartId, label = 'Add to cart', variant 
         className={`button button--${variant} button--full`}
         type="button"
         onClick={() => {
+          onClick?.();
+
           const container = hiddenButtonRef.current;
 
           if (clickHiddenPayPalButton(container)) {

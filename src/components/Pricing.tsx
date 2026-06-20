@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 import { addOns, packages, type AddOn, type Package } from '../data/pricing';
 import { intakeFormUrl } from '../data/site';
 import { ProjectQuoteBuilder } from './ProjectQuoteBuilder';
+import { PayPalCartButtons } from './PayPalCartButtons';
 
 const projectQuoteStorageKey = 'samuelStudioProjectQuote';
 
@@ -154,7 +155,7 @@ function PackageCard({
 }: {
   pkg: Package;
   selected: boolean;
-  onSelect: (pkg: Package) => void;
+  onSelect: (pkg: Package, options?: { scroll?: boolean }) => void;
 }) {
   const priceParts = splitPriceLabel(pkg.price);
   const packageIcon =
@@ -232,15 +233,14 @@ function PackageCard({
         )}
       </div>
 
-      <button
-        className={selected || pkg.featured ? 'button button--primary button--full' : 'button button--secondary button--full'}
-        type="button"
-        onClick={() => onSelect(pkg)}
-        aria-pressed={selected}
-      >
-        {pkg.cta}
-        <ArrowUpRight size={16} />
-      </button>
+      {pkg.cartAddToCartId ? (
+        <PayPalCartButtons
+          addToCartId={pkg.cartAddToCartId}
+          label={pkg.cta}
+          variant={selected || pkg.featured ? 'primary' : 'secondary'}
+          onClick={() => onSelect(pkg, { scroll: false })}
+        />
+      ) : null}
     </article>
   );
 }
@@ -314,10 +314,13 @@ export function Pricing() {
     window.localStorage.setItem(projectQuoteStorageKey, JSON.stringify(buildStoredQuote(selectedPackage, selectedAddOns)));
   }, [selectedPackage, selectedAddOns]);
 
-  const handleSelectPackage = (pkg: Package) => {
+  const handleSelectPackage = (pkg: Package, options?: { scroll?: boolean }) => {
     setSelectedPackageId(pkg.id);
     setVisualSelectedPackageId(pkg.id);
-    scrollToProjectBuilder();
+
+    if (options?.scroll !== false) {
+      scrollToProjectBuilder();
+    }
   };
 
   const handleToggleAddon = (addon: AddOn) => {
