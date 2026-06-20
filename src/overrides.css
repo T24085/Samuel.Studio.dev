@@ -2110,10 +2110,6 @@ section#work {
   font-size: 0.84rem;
 }
 
-.paypal-subscription-actions {
-  min-height: 48px;
-}
-
 .project-builder__empty,
 .project-builder__emptyCopy {
   padding: 1rem;

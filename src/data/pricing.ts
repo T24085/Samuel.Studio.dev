@@ -25,7 +25,7 @@ export type AddOn = {
   includes: string[];
   bestFor: string;
   billing: 'one-time' | 'monthly';
-  paypalPlanId?: string;
+  cartAddToCartId?: string;
 };
 
 export const packages: Package[] = [
@@ -186,6 +186,6 @@ export const addOns: AddOn[] = [
     includes: ['Website monitoring', 'Security checks', 'Backups', 'Minor content updates', 'Priority support'],
     bestFor: 'Businesses that want a more hands-on monthly support plan.',
     billing: 'monthly',
-    paypalPlanId: 'P-43R40579GM460452WNI3MFHY',
+    cartAddToCartId: 'P-43R40579GM460452WNI3MFHY',
   },
 ];

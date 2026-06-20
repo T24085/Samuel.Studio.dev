@@ -1,7 +1,10 @@
-import { useEffect } from 'react';
+import { ArrowUpRight } from 'lucide-react';
+import { useEffect, useRef } from 'react';
 
 type PayPalCartButtonsProps = {
   addToCartId: string;
+  label?: string;
+  variant?: 'primary' | 'secondary';
 };
 
 function initializePayPalCartButton(buttonId: string, action: 'AddToCart' | 'Cart') {
@@ -15,7 +18,21 @@ function initializePayPalCartButton(buttonId: string, action: 'AddToCart' | 'Car
   return true;
 }
 
-export function PayPalCartButtons({ addToCartId }: PayPalCartButtonsProps) {
+function clickHiddenPayPalButton(container: HTMLDivElement | null) {
+  const button = container?.querySelector('button');
+
+  if (button instanceof HTMLButtonElement) {
+    button.click();
+    return true;
+  }
+
+  container?.click();
+  return false;
+}
+
+export function PayPalCartButtons({ addToCartId, label = 'Add to cart', variant = 'primary' }: PayPalCartButtonsProps) {
+  const hiddenButtonRef = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => {
     let timer: number | null = null;
 
@@ -42,7 +59,24 @@ export function PayPalCartButtons({ addToCartId }: PayPalCartButtonsProps) {
 
   return (
     <div className="paypal-cart-actions">
-      <paypal-add-to-cart-button data-id={addToCartId} />
+      <button
+        className={`button button--${variant} button--full`}
+        type="button"
+        onClick={() => {
+          if (!clickHiddenPayPalButton(hiddenButtonRef.current)) {
+            initializePayPalCartButton(addToCartId, 'AddToCart');
+            window.setTimeout(() => {
+              clickHiddenPayPalButton(hiddenButtonRef.current);
+            }, 0);
+          }
+        }}
+      >
+        {label}
+        <ArrowUpRight size={16} />
+      </button>
+      <div ref={hiddenButtonRef} className="sr-only" aria-hidden="true">
+        <paypal-add-to-cart-button data-id={addToCartId} />
+      </div>
     </div>
   );
 }

@@ -19,7 +19,7 @@ export function PackageAction({ pkg, context = 'pricing' }: PackageActionProps) 
       );
     }
 
-    return <PayPalCartButtons addToCartId={pkg.cartAddToCartId} />;
+    return <PayPalCartButtons addToCartId={pkg.cartAddToCartId} label={pkg.cta} />;
   }
 
   if (pkg.checkoutUrl) {

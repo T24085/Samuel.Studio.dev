@@ -2,7 +2,6 @@ import { ArrowUpRight, Check, FileText, Lock, Plus, X } from 'lucide-react';
 import { type AddOn, type Package } from '../data/pricing';
 import { intakeFormUrl } from '../data/site';
 import { PayPalCartButtons } from './PayPalCartButtons';
-import { PayPalSubscriptionButton } from './PayPalSubscriptionButton';
 
 type ProjectQuoteBuilderProps = {
   selectedPackage: Package | null;
@@ -161,16 +160,16 @@ export function ProjectQuoteBuilder({ selectedPackage, selectedAddOns, onChangeP
               {monthlyAddOns.length > 0 ? (
                 <div className="project-builder__subscription">
                   <span className="project-builder__paymentLabel">Monthly Subscription</span>
-                  <p>Any monthly add-ons are billed separately through PayPal.</p>
+                  <p>Any monthly add-ons are added to your cart and billed separately through PayPal.</p>
                   <div className="project-builder__subscriptionList">
                     {monthlyAddOns.map((addon) =>
-                      addon.paypalPlanId ? (
+                      addon.cartAddToCartId ? (
                         <div className="project-builder__subscriptionItem" key={addon.id}>
                           <div className="project-builder__subscriptionCopy">
                             <strong>{addon.name}</strong>
                             <span>{addon.price}</span>
                           </div>
-                          <PayPalSubscriptionButton planId={addon.paypalPlanId} />
+                          <PayPalCartButtons addToCartId={addon.cartAddToCartId} label="Add to cart" variant="secondary" />
                         </div>
                       ) : (
                         <div className="project-builder__subscriptionItem" key={addon.id}>
