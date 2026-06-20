@@ -18,10 +18,51 @@ function initializePayPalCartButton(buttonId: string, action: 'AddToCart' | 'Car
   return true;
 }
 
+function findClickableElement(root: HTMLElement | ShadowRoot | null): HTMLElement | null {
+  if (!root) {
+    return null;
+  }
+
+  const clickableSelector = 'button, input[type="button"], input[type="submit"], [role="button"]';
+
+  if (root instanceof HTMLElement && root.matches(clickableSelector)) {
+    return root;
+  }
+
+  for (const child of Array.from(root.children)) {
+    if (!(child instanceof HTMLElement)) {
+      continue;
+    }
+
+    if (child.matches(clickableSelector)) {
+      return child;
+    }
+
+    const shadowTarget = findClickableElement(child.shadowRoot);
+    if (shadowTarget) {
+      return shadowTarget;
+    }
+
+    const nestedTarget = findClickableElement(child);
+    if (nestedTarget) {
+      return nestedTarget;
+    }
+  }
+
+  return null;
+}
+
 function clickHiddenPayPalButton(container: HTMLDivElement | null) {
   const element = container?.querySelector('paypal-add-to-cart-button');
 
   if (element instanceof HTMLElement) {
+    const target = findClickableElement(element.shadowRoot) ?? findClickableElement(element);
+
+    if (target) {
+      target.click();
+      return true;
+    }
+
     element.click();
     return true;
   }
@@ -62,11 +103,28 @@ export function PayPalCartButtons({ addToCartId, label = 'Add to cart', variant 
         className={`button button--${variant} button--full`}
         type="button"
         onClick={() => {
-          if (!clickHiddenPayPalButton(hiddenButtonRef.current)) {
-            initializePayPalCartButton(addToCartId, 'AddToCart');
-            window.setTimeout(() => {
-              clickHiddenPayPalButton(hiddenButtonRef.current);
-            }, 0);
+          const container = hiddenButtonRef.current;
+
+          if (clickHiddenPayPalButton(container)) {
+            return;
+          }
+
+          if (initializePayPalCartButton(addToCartId, 'AddToCart')) {
+            let attempts = 0;
+
+            const tryClick = () => {
+              if (clickHiddenPayPalButton(container)) {
+                return;
+              }
+
+              attempts += 1;
+
+              if (attempts < 30) {
+                window.requestAnimationFrame(tryClick);
+              }
+            };
+
+            window.requestAnimationFrame(tryClick);
           }
         }}
       >
