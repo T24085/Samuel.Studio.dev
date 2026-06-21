@@ -1447,7 +1447,7 @@ section#work {
 
 .dna-scroll-gallery__testimonials {
   width: min(100%, 76rem);
-  margin: 0 auto 1.2rem;
+  margin: clamp(2rem, 4vw, 3.25rem) auto 1.2rem;
   display: grid;
   gap: 1.15rem;
 }
@@ -2428,6 +2428,10 @@ section#work {
 @media (max-width: 620px) {
   .dna-scroll-gallery {
     padding-top: 0.75rem;
+  }
+
+  .dna-scroll-gallery__testimonials {
+    margin-top: 1.5rem;
   }
 
   .dna-scroll-gallery__shell {
