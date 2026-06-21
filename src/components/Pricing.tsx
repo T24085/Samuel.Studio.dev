@@ -16,7 +16,6 @@ import { useEffect, useState } from 'react';
 import { addOns, packages, type AddOn, type Package } from '../data/pricing';
 import { intakeFormUrl } from '../data/site';
 import { ProjectQuoteBuilder } from './ProjectQuoteBuilder';
-import { PayPalCartButtons } from './PayPalCartButtons';
 
 const projectQuoteStorageKey = 'samuelStudioProjectQuote';
 
@@ -233,14 +232,15 @@ function PackageCard({
         )}
       </div>
 
-      {pkg.cartAddToCartId ? (
-        <PayPalCartButtons
-          addToCartId={pkg.cartAddToCartId}
-          label={pkg.cta}
-          variant={selected || pkg.featured ? 'primary' : 'secondary'}
-          onClick={() => onSelect(pkg, { scroll: false })}
-        />
-      ) : null}
+      <button
+        className={selected || pkg.featured ? 'button button--primary button--full' : 'button button--secondary button--full'}
+        type="button"
+        onClick={() => onSelect(pkg)}
+        aria-pressed={selected}
+      >
+        {selected ? 'Added to Cart' : pkg.cta}
+        <ArrowUpRight size={16} />
+      </button>
     </article>
   );
 }
