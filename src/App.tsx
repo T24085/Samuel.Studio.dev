@@ -12,7 +12,7 @@ import { PricingModal } from './components/PricingModal';
 import { Process } from './components/Process';
 import { intakeFormUrl } from './data/site';
 
-const observedSections = ['home', 'gallery', 'work', 'pricing', 'process', 'contact'] as const;
+const observedSections = ['home', 'gallery', 'pricing', 'work', 'process', 'contact'] as const;
 const themeStorageKey = 'nova-studio-theme';
 type Theme = 'dark' | 'light';
 
@@ -140,8 +140,8 @@ export default function App() {
       <main>
         <Hero intakeFormUrl={intakeFormUrl} />
         <DnaGallery />
-        <FeaturedWork />
         <Pricing />
+        <FeaturedWork />
         <Process />
         <IntakeCTA />
       </main>

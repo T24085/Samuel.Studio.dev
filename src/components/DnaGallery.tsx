@@ -393,6 +393,22 @@ export function DnaGallery() {
         />
       </div>
 
+      <aside className="dna-scroll-gallery__testimonial" aria-label="Client feedback">
+        <div className="dna-scroll-gallery__testimonialHeader">
+          <span>Client Feedback</span>
+          <p>A quick note from a recent website launch.</p>
+        </div>
+
+        <blockquote className="dna-scroll-gallery__testimonialQuote">
+          “The process felt polished, clear, and easy to trust from the first conversation.”
+        </blockquote>
+
+        <div className="dna-scroll-gallery__testimonialMeta">
+          <strong>Recent client</strong>
+          <span>Website launch project</span>
+        </div>
+      </aside>
+
       <GalleryPreviewModal
         index={activeIndex >= 0 ? activeIndex : 0}
         item={activeItem}
