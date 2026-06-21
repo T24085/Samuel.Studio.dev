@@ -5,16 +5,19 @@ import { dnaGalleryItems, type DnaGalleryItem } from '../data/dnaGallery';
 
 const galleryTestimonials = [
   {
+    label: 'Clarity',
     quote: 'The process felt polished, clear, and easy to trust from the first conversation.',
     title: 'Recent client',
     detail: 'Website launch project',
   },
   {
+    label: 'Polish',
     quote: 'Every detail felt considered. The site looks premium and the next steps were always obvious.',
     title: 'Recent client',
     detail: 'Growth package build',
   },
   {
+    label: 'Momentum',
     quote: 'We moved from ideas to a clean, confident site faster than expected.',
     title: 'Recent client',
     detail: 'Mockup to launch',
@@ -386,13 +389,21 @@ export function DnaGallery() {
 
   return (
     <section className="section dna-scroll-gallery dna-scroll-gallery--travel" id="gallery" ref={sectionRef}>
-      <div className="dna-scroll-gallery__intro" data-reveal>
-        <span className="section-label">Website Mockups</span>
-        <h2>Mockups that set the tone.</h2>
-        <p>Preview the visual direction, spacing, and atmosphere before the build starts.</p>
-      </div>
-
       <div className="dna-scroll-gallery__shell">
+        <div className="dna-scroll-gallery__intro" data-reveal>
+          <div className="dna-scroll-gallery__introCopy">
+            <span className="section-label">Website Mockups</span>
+            <h2>Mockups that set the tone before launch.</h2>
+            <p>Preview the visual direction, spacing, and atmosphere before the build starts.</p>
+          </div>
+
+          <div className="dna-scroll-gallery__introAside">
+            <span>Open any preview</span>
+            <strong>Compare the direction before we build it.</strong>
+            <p>Select a card to inspect the layout and visual tone in more detail.</p>
+          </div>
+        </div>
+
         <MarqueeRow
           active={isActive}
           direction={-1}
@@ -420,12 +431,14 @@ export function DnaGallery() {
       <section className="dna-scroll-gallery__testimonials" aria-label="Client feedback">
         <div className="dna-scroll-gallery__testimonialsHeader">
           <span>Client Feedback</span>
+          <h3>Clear process. Better output.</h3>
           <p>Three short notes from recent launches.</p>
         </div>
 
         <div className="dna-scroll-gallery__testimonialsGrid">
           {galleryTestimonials.map((testimonial) => (
             <blockquote key={`${testimonial.title}-${testimonial.detail}`} className="dna-scroll-gallery__testimonial">
+              <span className="dna-scroll-gallery__testimonialLabel">{testimonial.label}</span>
               <p className="dna-scroll-gallery__testimonialQuote">{testimonial.quote}</p>
               <div className="dna-scroll-gallery__testimonialMeta">
                 <strong>{testimonial.title}</strong>
