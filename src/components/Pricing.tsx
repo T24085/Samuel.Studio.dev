@@ -14,35 +14,9 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { addOns, packages, type AddOn, type Package } from '../data/pricing';
+import { buildStoredQuote, loadStoredQuote, projectQuoteStorageKey } from '../data/projectQuote';
 import { intakeFormUrl } from '../data/site';
 import { ProjectQuoteBuilder } from './ProjectQuoteBuilder';
-
-const projectQuoteStorageKey = 'samuelStudioProjectQuote';
-
-type StoredPackageSelection = {
-  id: string;
-  name: string;
-  price: number;
-};
-
-type StoredAddOnSelection = {
-  id: string;
-  name: string;
-  internalName: string;
-  price: number;
-};
-
-type StoredProjectQuote = {
-  selectedPackage: StoredPackageSelection | null;
-  selectedAddons: StoredAddOnSelection[];
-  estimatedTotal: number;
-};
-
-type LoadedProjectQuote = {
-  selectedPackageId: string | null;
-  visualSelectedPackageId: string | null;
-  selectedAddonIds: string[];
-};
 
 const faqItems = [
   {
@@ -86,59 +60,6 @@ function splitPriceLabel(price: string) {
   }
 
   return { label: 'Starting at', value: price };
-}
-
-function loadStoredQuote(): LoadedProjectQuote {
-  if (typeof window === 'undefined') {
-    return { selectedPackageId: null, visualSelectedPackageId: null, selectedAddonIds: [] };
-  }
-
-  try {
-    const raw = window.localStorage.getItem(projectQuoteStorageKey);
-
-    if (!raw) {
-      return { selectedPackageId: 'professional', visualSelectedPackageId: 'starter', selectedAddonIds: ['seo', 'booking'] };
-    }
-
-    const parsed = JSON.parse(raw) as Partial<StoredProjectQuote>;
-    const selectedPackageId = typeof parsed.selectedPackage?.id === 'string' ? parsed.selectedPackage.id : null;
-    const selectedAddonIds = Array.isArray(parsed.selectedAddons)
-      ? parsed.selectedAddons
-          .map((addon) => (typeof addon?.id === 'string' ? addon.id : null))
-          .filter((id): id is string => Boolean(id))
-      : [];
-
-    return { selectedPackageId, visualSelectedPackageId: selectedPackageId, selectedAddonIds };
-  } catch {
-    return { selectedPackageId: null, visualSelectedPackageId: null, selectedAddonIds: [] };
-  }
-}
-
-function buildStoredQuote(selectedPackage: Package | null, selectedAddOns: AddOn[]): StoredProjectQuote {
-  const selectedPackagePayload = selectedPackage
-    ? {
-        id: selectedPackage.id,
-        name: selectedPackage.title,
-        price: selectedPackage.priceValue ?? 0,
-      }
-    : null;
-
-  const selectedAddOnsPayload = selectedAddOns.map((addon) => ({
-    id: addon.id,
-    name: addon.name,
-    internalName: addon.internalName,
-    price: addon.priceValue,
-  }));
-
-  const oneTimeAddOnTotal = selectedAddOns
-    .filter((addon) => addon.billing === 'one-time')
-    .reduce((sum, addon) => sum + addon.priceValue, 0);
-
-  return {
-    selectedPackage: selectedPackagePayload,
-    selectedAddons: selectedAddOnsPayload,
-    estimatedTotal: (selectedPackage?.priceValue ?? 0) + oneTimeAddOnTotal,
-  };
 }
 
 function scrollToProjectBuilder() {
@@ -312,6 +233,7 @@ export function Pricing() {
     }
 
     window.localStorage.setItem(projectQuoteStorageKey, JSON.stringify(buildStoredQuote(selectedPackage, selectedAddOns)));
+    window.dispatchEvent(new Event('samuel-studio-project-quote-changed'));
   }, [selectedPackage, selectedAddOns]);
 
   const handleSelectPackage = (pkg: Package, options?: { scroll?: boolean }) => {

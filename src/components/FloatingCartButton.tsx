@@ -1,48 +1,42 @@
-import { useEffect } from 'react';
+import { ShoppingCart } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { loadStoredQuote } from '../data/projectQuote';
 
-const floatingCartButtonId = 'pp-floating-cart';
-
-function initializeFloatingCartButton(buttonId: string) {
-  const cart = window.cartPaypal;
-
-  if (!cart) {
-    return false;
-  }
-
-  cart.Cart({ id: buttonId });
-  return true;
+function getCartCount() {
+  const quote = loadStoredQuote();
+  return (quote.selectedPackageId ? 1 : 0) + quote.selectedAddonIds.length;
 }
 
 export function FloatingCartButton() {
+  const [itemCount, setItemCount] = useState(() => getCartCount());
+
   useEffect(() => {
-    let timer: number | null = null;
-
-    const tryInitialize = () => {
-      const ready = initializeFloatingCartButton(floatingCartButtonId);
-
-      if (ready && timer !== null) {
-        window.clearInterval(timer);
-        timer = null;
-      }
+    const updateCount = () => {
+      setItemCount(getCartCount());
     };
 
-    tryInitialize();
-
-    if (!window.cartPaypal) {
-      timer = window.setInterval(tryInitialize, 100);
-    }
+    window.addEventListener('storage', updateCount);
+    window.addEventListener('samuel-studio-project-quote-changed', updateCount as EventListener);
 
     return () => {
-      if (timer !== null) {
-        window.clearInterval(timer);
-      }
+      window.removeEventListener('storage', updateCount);
+      window.removeEventListener('samuel-studio-project-quote-changed', updateCount as EventListener);
     };
   }, []);
 
   return (
-    <div className="paypal-floating-cart" aria-label="Floating cart">
+    <button
+      type="button"
+      className="paypal-floating-cart button button--primary"
+      aria-label={`Open cart, ${itemCount} item${itemCount === 1 ? '' : 's'}`}
+      onClick={() => {
+        document.getElementById('project-builder')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }}
+    >
       <div className="paypal-floating-cart__spark" aria-hidden="true" />
-      <paypal-cart-button data-id={floatingCartButtonId} />
-    </div>
+      <ShoppingCart size={18} />
+      <span>Cart</span>
+      <strong>({itemCount})</strong>
+    </button>
   );
 }

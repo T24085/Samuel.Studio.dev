@@ -1,9 +1,3 @@
-import type { HTMLAttributes } from 'react';
-
-type PayPalCartElementProps = HTMLAttributes<HTMLElement> & {
-  'data-id'?: string;
-};
-
 declare global {
   interface PayPalSubscriptionActions {
     subscription: {
@@ -27,22 +21,9 @@ declare global {
   }
 
   interface Window {
-    cartPaypal?: {
-      AddToCart: (config: { id: string }) => void;
-      Cart: (config: { id: string }) => void;
-    };
     paypal?: {
       Buttons: (config: PayPalButtonsConfig) => PayPalButtonsInstance;
     };
-  }
-}
-
-declare module 'react' {
-  namespace JSX {
-    interface IntrinsicElements {
-      'paypal-add-to-cart-button': PayPalCartElementProps;
-      'paypal-cart-button': PayPalCartElementProps;
-    }
   }
 }
 

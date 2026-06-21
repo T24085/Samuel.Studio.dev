@@ -1,7 +1,6 @@
 import { ArrowUpRight, Check, FileText, Lock, Plus, X } from 'lucide-react';
 import { type AddOn, type Package } from '../data/pricing';
 import { intakeFormUrl } from '../data/site';
-import { PayPalCartButtons } from './PayPalCartButtons';
 import { PayPalSubscriptionButton } from './PayPalSubscriptionButton';
 
 type ProjectQuoteBuilderProps = {
@@ -157,11 +156,14 @@ export function ProjectQuoteBuilder({ selectedPackage, selectedAddOns, onChangeP
             </div>
 
             <div className="project-builder__payment" id="project-payment">
-              <span className="project-builder__paymentLabel">Pay Deposit / Start Project</span>
-              <p>Secure your project with a deposit. Add-ons may require review before final pricing is confirmed.</p>
+              <span className="project-builder__paymentLabel">Review Cart</span>
+              <p>Your selected package and add-ons are saved here. Make changes before you send the project request.</p>
 
-              {selectedPackage?.cartAddToCartId ? (
-                <PayPalCartButtons addToCartId={selectedPackage.cartAddToCartId} />
+              {selectedPackage ? (
+                <button className="button button--primary button--full" type="button" onClick={onChangePackage}>
+                  Edit Cart
+                  <ArrowUpRight size={16} />
+                </button>
               ) : (
                 <a className="button button--secondary button--full" href={intakeFormUrl} target="_blank" rel="noreferrer">
                   Request a Custom Quote
