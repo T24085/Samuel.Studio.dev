@@ -1,4 +1,3 @@
-import { ArrowUpRight } from 'lucide-react';
 import { useEffect } from 'react';
 
 type PayPalCartButtonsProps = {
@@ -45,22 +44,12 @@ export function PayPalCartButtons({ addToCartId, label = 'Add to cart', variant 
   }, [addToCartId]);
 
   return (
-    <div
-      className="paypal-cart-actions"
-      onClick={() => {
-        onClick?.();
-      }}
-    >
-      <div className={`button button--${variant} button--full paypal-cart-actions__shell`} aria-hidden="true">
-        {label}
-        <ArrowUpRight size={16} />
-      </div>
-      <div
-        className="paypal-cart-actions__control"
-        aria-hidden="true"
-      >
-        <paypal-add-to-cart-button data-id={addToCartId} />
-      </div>
+    <div className={`paypal-cart-actions paypal-cart-actions--${variant}`} onClick={() => onClick?.()}>
+      <paypal-add-to-cart-button
+        className={`paypal-cart-actions__button button button--${variant} button--full`}
+        data-id={addToCartId}
+        aria-label={label}
+      />
     </div>
   );
 }
