@@ -391,17 +391,9 @@ export function DnaGallery() {
     <section className="section dna-scroll-gallery dna-scroll-gallery--travel" id="gallery" ref={sectionRef}>
       <div className="dna-scroll-gallery__shell">
         <div className="dna-scroll-gallery__intro" data-reveal>
-          <div className="dna-scroll-gallery__introCopy">
-            <span className="section-label">Website Mockups</span>
-            <h2>Mockups that set the tone before launch.</h2>
-            <p>Preview the visual direction, spacing, and atmosphere before the build starts.</p>
-          </div>
-
-          <div className="dna-scroll-gallery__introAside">
-            <span>Open any preview</span>
-            <strong>Compare the direction before we build it.</strong>
-            <p>Select a card to inspect the layout and visual tone in more detail.</p>
-          </div>
+          <span className="section-label">Website Mockups</span>
+          <h2>Mockups that set the tone.</h2>
+          <p>Preview the visual direction, spacing, and atmosphere before the build starts.</p>
         </div>
 
         <MarqueeRow
