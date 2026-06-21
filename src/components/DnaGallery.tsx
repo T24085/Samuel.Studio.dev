@@ -7,19 +7,16 @@ const galleryTestimonials = [
   {
     label: 'Clarity',
     quote: 'The process felt polished, clear, and easy to trust from the first conversation.',
-    title: 'Recent client',
     detail: 'Website launch project',
   },
   {
     label: 'Polish',
     quote: 'Every detail felt considered. The site looks premium and the next steps were always obvious.',
-    title: 'Recent client',
     detail: 'Growth package build',
   },
   {
     label: 'Momentum',
     quote: 'We moved from ideas to a clean, confident site faster than expected.',
-    title: 'Recent client',
     detail: 'Mockup to launch',
   },
 ] as const;
@@ -423,19 +420,18 @@ export function DnaGallery() {
       <section className="dna-scroll-gallery__testimonials" aria-label="Client feedback">
         <div className="dna-scroll-gallery__testimonialsHeader">
           <span>Client Feedback</span>
-          <h3>Clear process. Better output.</h3>
+          <h3>Clean process, better output.</h3>
           <p>Three short notes from recent launches.</p>
         </div>
 
         <div className="dna-scroll-gallery__testimonialsGrid">
           {galleryTestimonials.map((testimonial) => (
-            <blockquote key={`${testimonial.title}-${testimonial.detail}`} className="dna-scroll-gallery__testimonial">
-              <span className="dna-scroll-gallery__testimonialLabel">{testimonial.label}</span>
-              <p className="dna-scroll-gallery__testimonialQuote">{testimonial.quote}</p>
-              <div className="dna-scroll-gallery__testimonialMeta">
-                <strong>{testimonial.title}</strong>
-                <span>{testimonial.detail}</span>
-              </div>
+            <blockquote key={`${testimonial.label}-${testimonial.detail}`} className="dna-scroll-gallery__testimonial">
+              <p className="dna-scroll-gallery__testimonialQuote">“{testimonial.quote}”</p>
+              <p className="dna-scroll-gallery__testimonialMeta">
+                <span>{testimonial.label}</span>
+                <strong>{testimonial.detail}</strong>
+              </p>
             </blockquote>
           ))}
         </div>
