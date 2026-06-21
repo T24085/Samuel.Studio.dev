@@ -118,7 +118,12 @@ export function ProjectQuoteBuilder({ selectedPackage, selectedAddOns, onChangeP
                       <span>{addon.price}</span>
                       <p>{addon.description}</p>
                     </div>
-                    {addon.paypalPlanId ? (
+                    {addon.checkoutUrl ? (
+                      <a className="button button--secondary button--full" href={addon.checkoutUrl} target="_blank" rel="noreferrer">
+                        Add subscription
+                        <ArrowUpRight size={16} />
+                      </a>
+                    ) : addon.paypalPlanId ? (
                       <PayPalSubscriptionButton planId={addon.paypalPlanId} label="Add subscription" variant="secondary" />
                     ) : (
                       <a className="button button--secondary button--full" href={intakeFormUrl} target="_blank" rel="noreferrer">

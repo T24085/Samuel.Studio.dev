@@ -191,6 +191,14 @@ function AddOnCard({
       <ShieldCheck size={18} />
     );
 
+  const actionLabel = selected
+    ? addon.billing === 'monthly'
+      ? 'Subscription Added'
+      : 'Added to Quote'
+    : addon.billing === 'monthly'
+      ? 'Add Subscription'
+      : 'Add to Project Quote';
+
   return (
     <article className={selected ? 'upgrade-card upgrade-card--selected' : 'upgrade-card'} data-reveal>
       <div className="upgrade-card__top">
@@ -209,10 +217,23 @@ function AddOnCard({
 
       <p className="upgrade-card__description">{addon.description}</p>
 
-      <button className={selected ? 'button button--primary button--full' : 'button button--secondary button--full'} type="button" onClick={() => onToggle(addon)}>
-        {selected ? (addon.billing === 'monthly' ? 'Subscription Added' : 'Added to Quote') : addon.billing === 'monthly' ? 'Add Subscription' : 'Add to Project Quote'}
-        <ArrowUpRight size={16} />
-      </button>
+      {addon.checkoutUrl ? (
+        <a
+          className={selected ? 'button button--primary button--full' : 'button button--secondary button--full'}
+          href={addon.checkoutUrl}
+          target="_blank"
+          rel="noreferrer"
+          onClick={() => onToggle(addon)}
+        >
+          {actionLabel}
+          <ArrowUpRight size={16} />
+        </a>
+      ) : (
+        <button className={selected ? 'button button--primary button--full' : 'button button--secondary button--full'} type="button" onClick={() => onToggle(addon)}>
+          {actionLabel}
+          <ArrowUpRight size={16} />
+        </button>
+      )}
     </article>
   );
 }

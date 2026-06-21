@@ -24,6 +24,7 @@ export type AddOn = {
   includes: string[];
   bestFor: string;
   billing: 'one-time' | 'monthly';
+  checkoutUrl?: string;
   paypalPlanId?: string;
 };
 
@@ -115,6 +116,7 @@ export const addOns: AddOn[] = [
     includes: ['Page titles and descriptions', 'Local search setup', 'Search-friendly structure', 'Indexing support'],
     bestFor: 'Businesses that want stronger visibility in local search and Google results.',
     billing: 'one-time',
+    checkoutUrl: 'https://www.paypal.com/ncp/payment/JGKNRXCVLF8E4',
   },
   {
     id: 'lead-assistant',
@@ -127,6 +129,7 @@ export const addOns: AddOn[] = [
     includes: ['AI chat assistant', 'FAQ responses', 'Lead capture flow', 'Business-specific setup'],
     bestFor: 'Service businesses, churches, consultants, and local brands that want help after hours.',
     billing: 'one-time',
+    checkoutUrl: 'https://www.paypal.com/ncp/payment/WJQGNAXVCD9T6',
   },
   {
     id: 'booking',
@@ -139,6 +142,7 @@ export const addOns: AddOn[] = [
     includes: ['Booking calendar', 'Confirmation flow', 'Appointment reminders', 'Calendar integration'],
     bestFor: 'Businesses that book consultations, appointments, or service visits.',
     billing: 'one-time',
+    checkoutUrl: 'https://www.paypal.com/ncp/payment/XWNT5W4DVYANU',
   },
   {
     id: 'commerce',
@@ -151,6 +155,7 @@ export const addOns: AddOn[] = [
     includes: ['Product catalog', 'Cart and checkout', 'Payment setup', 'Order notifications'],
     bestFor: 'Businesses that want to take payments, sell products, or accept deposits online.',
     billing: 'one-time',
+    checkoutUrl: 'https://www.paypal.com/ncp/payment/ZYQ7E2X8VHTHQ',
   },
   {
     id: 'copy',
@@ -163,6 +168,7 @@ export const addOns: AddOn[] = [
     includes: ['Homepage copy', 'Service page copy', 'About page writing', 'Call-to-action support'],
     bestFor: 'Businesses that need help writing clear, confident website content.',
     billing: 'one-time',
+    checkoutUrl: 'https://www.paypal.com/ncp/payment/P494K8KN2S26A',
   },
   {
     id: 'care',
@@ -174,6 +180,7 @@ export const addOns: AddOn[] = [
     includes: ['Website monitoring', 'Security checks', 'Backups', 'Minor content updates'],
     bestFor: 'Businesses that want support after launch and prefer not to manage updates themselves.',
     billing: 'monthly',
+    checkoutUrl: 'https://www.paypal.com/ncp/payment/5CMLKVTLKLSEQ',
   },
   {
     id: 'care-plus',
