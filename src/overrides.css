@@ -712,7 +712,7 @@
   position: relative;
   overflow: hidden;
   margin-top: calc(-1 * clamp(2rem, 3.25vh, 3rem));
-  padding-top: 0;
+  padding-top: clamp(1rem, 2vw, 1.75rem);
   padding-bottom: 0;
   background:
     radial-gradient(circle at 50% 12%, rgba(243, 226, 196, 0.16), transparent 28%),
@@ -2427,7 +2427,7 @@ section#work {
 
 @media (max-width: 620px) {
   .dna-scroll-gallery {
-    padding-top: 0.5rem;
+    padding-top: 0.75rem;
   }
 
   .dna-scroll-gallery__shell {
