@@ -3,6 +3,24 @@ import { AnimatePresence, motion, useMotionValue, useReducedMotion } from 'frame
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { dnaGalleryItems, type DnaGalleryItem } from '../data/dnaGallery';
 
+const galleryTestimonials = [
+  {
+    quote: 'The process felt polished, clear, and easy to trust from the first conversation.',
+    title: 'Recent client',
+    detail: 'Website launch project',
+  },
+  {
+    quote: 'Every detail felt considered. The site looks premium and the next steps were always obvious.',
+    title: 'Recent client',
+    detail: 'Growth package build',
+  },
+  {
+    quote: 'We moved from ideas to a clean, confident site faster than expected.',
+    title: 'Recent client',
+    detail: 'Mockup to launch',
+  },
+] as const;
+
 function useMarqueeMotion({
   active,
   direction,
@@ -368,6 +386,12 @@ export function DnaGallery() {
 
   return (
     <section className="section dna-scroll-gallery dna-scroll-gallery--travel" id="gallery" ref={sectionRef}>
+      <div className="dna-scroll-gallery__intro" data-reveal>
+        <span className="section-label">Website Mockups</span>
+        <h2>Mockups that set the tone.</h2>
+        <p>Preview the visual direction, spacing, and atmosphere before the build starts.</p>
+      </div>
+
       <div className="dna-scroll-gallery__shell">
         <MarqueeRow
           active={isActive}
@@ -393,21 +417,24 @@ export function DnaGallery() {
         />
       </div>
 
-      <aside className="dna-scroll-gallery__testimonial" aria-label="Client feedback">
-        <div className="dna-scroll-gallery__testimonialHeader">
+      <section className="dna-scroll-gallery__testimonials" aria-label="Client feedback">
+        <div className="dna-scroll-gallery__testimonialsHeader">
           <span>Client Feedback</span>
-          <p>A quick note from a recent website launch.</p>
+          <p>Three short notes from recent launches.</p>
         </div>
 
-        <blockquote className="dna-scroll-gallery__testimonialQuote">
-          “The process felt polished, clear, and easy to trust from the first conversation.”
-        </blockquote>
-
-        <div className="dna-scroll-gallery__testimonialMeta">
-          <strong>Recent client</strong>
-          <span>Website launch project</span>
+        <div className="dna-scroll-gallery__testimonialsGrid">
+          {galleryTestimonials.map((testimonial) => (
+            <blockquote key={`${testimonial.title}-${testimonial.detail}`} className="dna-scroll-gallery__testimonial">
+              <p className="dna-scroll-gallery__testimonialQuote">{testimonial.quote}</p>
+              <div className="dna-scroll-gallery__testimonialMeta">
+                <strong>{testimonial.title}</strong>
+                <span>{testimonial.detail}</span>
+              </div>
+            </blockquote>
+          ))}
         </div>
-      </aside>
+      </section>
 
       <GalleryPreviewModal
         index={activeIndex >= 0 ? activeIndex : 0}
