@@ -159,7 +159,7 @@ function PackageCard({
         onClick={() => onSelect(pkg)}
         aria-pressed={selected}
       >
-        {selected ? 'Added to Cart' : pkg.cta}
+        {selected ? 'Selected' : pkg.cta}
         <ArrowUpRight size={16} />
       </button>
     </article>

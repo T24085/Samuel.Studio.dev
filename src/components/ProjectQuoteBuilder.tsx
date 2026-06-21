@@ -156,14 +156,14 @@ export function ProjectQuoteBuilder({ selectedPackage, selectedAddOns, onChangeP
             </div>
 
             <div className="project-builder__payment" id="project-payment">
-              <span className="project-builder__paymentLabel">Review Cart</span>
-              <p>Your selected package and add-ons are saved here. Make changes before you send the project request.</p>
+              <span className="project-builder__paymentLabel">Pay Deposit / Start Project</span>
+              <p>Secure your project with the deposit for the plan you selected. Add-ons can be added as they go live.</p>
 
-              {selectedPackage ? (
-                <button className="button button--primary button--full" type="button" onClick={onChangePackage}>
-                  Edit Cart
+              {selectedPackage?.checkoutUrl ? (
+                <a className="button button--primary button--full" href={selectedPackage.checkoutUrl} target="_blank" rel="noreferrer">
+                  Pay {selectedPackage.title} Deposit
                   <ArrowUpRight size={16} />
-                </button>
+                </a>
               ) : (
                 <a className="button button--secondary button--full" href={intakeFormUrl} target="_blank" rel="noreferrer">
                   Request a Custom Quote

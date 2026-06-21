@@ -11,7 +11,6 @@ export type Package = {
   cta: string;
   customerFacingExplanation: string;
   checkoutUrl?: string;
-  cartAddToCartId?: string;
   featured?: boolean;
 };
 
@@ -47,7 +46,7 @@ export const packages: Package[] = [
     cta: 'Start My Website',
     customerFacingExplanation:
       'Perfect if you need a simple website that helps people find you.',
-    cartAddToCartId: 'TS4B6ND3JD9RQ',
+    checkoutUrl: 'https://www.paypal.com/ncp/payment/TS4B6ND3JD9RQ',
   },
   {
     id: 'professional',
@@ -69,7 +68,7 @@ export const packages: Package[] = [
     customerFacingExplanation:
       'Best for businesses that need a complete online presence with enough room to explain services, show photos, build trust, and generate leads.',
     featured: true,
-    cartAddToCartId: '776NMJ97LJZ2Q',
+    checkoutUrl: 'https://www.paypal.com/ncp/payment/776NMJ97LJZ2Q',
   },
   {
     id: 'growth',
@@ -89,7 +88,7 @@ export const packages: Package[] = [
     cta: 'Grow My Business Online',
     customerFacingExplanation:
       'Best for businesses ready to grow, automate, and dominate online.',
-    cartAddToCartId: 'MVEQMSVCGDFQL',
+    checkoutUrl: 'https://www.paypal.com/ncp/payment/MVEQMSVCGDFQL',
   },
   {
     id: 'custom',

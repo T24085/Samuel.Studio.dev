@@ -8,32 +8,21 @@ type PackageActionProps = {
 };
 
 export function PackageAction({ pkg, context = 'pricing' }: PackageActionProps) {
+  if (pkg.checkoutUrl) {
+    return (
+      <a className="button button--primary button--full" href={pkg.checkoutUrl} target="_blank" rel="noreferrer">
+        Pay Deposit
+        <ArrowUpRight size={16} />
+      </a>
+    );
+  }
+
   if (context === 'modal') {
     return (
       <a className="button button--secondary button--full" href="#pricing">
         Purchase in pricing section
         <ArrowUpRight size={16} />
       </a>
-    );
-  }
-
-  if (pkg.checkoutUrl) {
-    return (
-      <form className="purchase-form" action={pkg.checkoutUrl} method="post" target="_blank">
-        <button className="button button--primary button--full purchase-form__button" type="submit">
-          {pkg.cta}
-          <ArrowUpRight size={16} />
-        </button>
-        <img
-          className="purchase-form__cards"
-          src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg"
-          alt="Accepted debit and credit cards"
-        />
-        <section className="purchase-form__powered-by" aria-label="Powered by PayPal">
-          Powered by
-          <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="PayPal" />
-        </section>
-      </form>
     );
   }
 
