@@ -150,11 +150,6 @@ export function ProjectQuoteBuilder({ selectedPackage, selectedAddOns, onChangeP
           </div>
 
           <div className="project-builder__actions">
-            <a className="button button--primary button--full" href={intakeFormUrl} target="_blank" rel="noreferrer">
-              Continue
-              <ArrowUpRight size={16} />
-            </a>
-
             <div className="project-builder__note">
               <Lock size={14} />
               <span>Secure • No payment now</span>
