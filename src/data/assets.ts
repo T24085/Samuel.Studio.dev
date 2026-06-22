@@ -7,4 +7,5 @@ export const assets = {
   profile: `${baseUrl}assets/Profile.png`,
   novaAvatar: `${baseUrl}assets/NovaHeadshot.png`,
   studioCard: `${baseUrl}assets/StudioCard.png`,
+  logo: `${baseUrl}assets/samuel-studio-logo.png`,
 } as const;

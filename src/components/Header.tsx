@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState, type PointerEvent } from 'react';
 import { ArrowUpRight, Menu, Moon, Sun, X } from 'lucide-react';
+import { assets } from '../data/assets';
 import { navItems } from '../data/site';
 
 type HeaderProps = {
@@ -79,9 +80,11 @@ export function Header({ activeSection, scrolled, theme, mobileOpen, onToggleMob
     <header className={scrolled ? 'header header--scrolled' : 'header'}>
       <div className="container header__inner">
         <div className="header__bar">
-          <a className="brand" href="#home" onClick={onCloseMobile}>
-            <span className="brand__name">SAMUEL</span>
-            <span className="brand__studio">STUDIO</span>
+          <a className="brand" href="#home" aria-label="Samuel Studio home" onClick={onCloseMobile}>
+            <span className="brand__mark" aria-hidden="true">
+              <img className="brand__logo" src={assets.logo} alt="" />
+            </span>
+            <span className="sr-only">Samuel Studio home</span>
           </a>
 
           <nav
