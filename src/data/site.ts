@@ -1,7 +1,7 @@
 export const intakeFormUrl =
   'https://docs.google.com/forms/d/e/1FAIpQLScCqxvBZ6NTmwh-qyphZyjKzdhz3-jouihSZjAXhRMkBaRpxw/viewform?usp=header';
 
-export const emailAddress = 'hello@samuel.studio';
+export const emailAddress = 'capture@smauel.studio';
 
 export type SiteKey = 'samuel-studio-dev' | 'samuel-studio' | 'samuel-studio-columbia';
 
@@ -83,28 +83,28 @@ const sitePresentationMap: Record<SiteKey, SitePresentation> = {
   'samuel-studio-dev': {
     key: 'samuel-studio-dev',
     label: 'Samuel Studio Dev',
-    accent: '#a855f7',
-    accentSoft: '#c084fc',
-    accentStrong: '#7c3aed',
-    assistantBubbleStart: 'rgba(168, 85, 247, 0.18)',
+    accent: '#cf5c36',
+    accentSoft: '#efc88b',
+    accentStrong: '#9e4223',
+    assistantBubbleStart: 'rgba(207, 92, 54, 0.18)',
     assistantBubbleEnd: 'rgba(255, 255, 255, 0.05)',
-    userBubbleStart: 'rgba(168, 85, 247, 0.96)',
-    userBubbleEnd: 'rgba(107, 33, 168, 0.96)',
-    border: 'rgba(192, 132, 252, 0.22)',
-    glow: 'rgba(168, 85, 247, 0.18)',
+    userBubbleStart: 'rgba(207, 92, 54, 0.96)',
+    userBubbleEnd: 'rgba(145, 61, 35, 0.96)',
+    border: 'rgba(239, 200, 139, 0.22)',
+    glow: 'rgba(207, 92, 54, 0.18)',
   },
   'samuel-studio': {
     key: 'samuel-studio',
     label: 'Samuel Studio',
-    accent: '#d0b06d',
-    accentSoft: '#f0d79b',
-    accentStrong: '#9c7b2f',
-    assistantBubbleStart: 'rgba(208, 176, 109, 0.18)',
+    accent: '#cf5c36',
+    accentSoft: '#efc88b',
+    accentStrong: '#9e4223',
+    assistantBubbleStart: 'rgba(207, 92, 54, 0.18)',
     assistantBubbleEnd: 'rgba(255, 255, 255, 0.05)',
-    userBubbleStart: 'rgba(208, 176, 109, 0.96)',
-    userBubbleEnd: 'rgba(144, 110, 39, 0.96)',
-    border: 'rgba(208, 176, 109, 0.24)',
-    glow: 'rgba(208, 176, 109, 0.18)',
+    userBubbleStart: 'rgba(207, 92, 54, 0.96)',
+    userBubbleEnd: 'rgba(145, 61, 35, 0.96)',
+    border: 'rgba(239, 200, 139, 0.24)',
+    glow: 'rgba(207, 92, 54, 0.18)',
   },
   'samuel-studio-columbia': {
     key: 'samuel-studio-columbia',

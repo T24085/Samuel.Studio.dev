@@ -389,7 +389,7 @@ export function DnaGallery() {
       <div className="dna-scroll-gallery__shell">
         <div className="dna-scroll-gallery__intro" data-reveal>
           <span className="section-label">Website Mockups</span>
-          <h2>Mockups that set the tone.</h2>
+          <h2>Designs That Set The Tone.</h2>
           <p>Preview the visual direction, spacing, and atmosphere before the build starts.</p>
         </div>
 

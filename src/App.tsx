@@ -19,19 +19,9 @@ type Theme = 'dark' | 'light';
 export default function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [pricingOpen, setPricingOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<(typeof observedSections)[number]>('home');
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window === 'undefined') {
-      return 'dark';
-    }
-
-    const savedTheme = window.localStorage.getItem(themeStorageKey);
-    if (savedTheme === 'light' || savedTheme === 'dark') {
-      return savedTheme;
-    }
-
-    return 'dark';
-  });
+  const [theme, setTheme] = useState<Theme>('light');
 
   const sectionIds = useMemo(() => observedSections, []);
 
@@ -90,6 +80,24 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    const updateScrollState = () => {
+      const scrollY = window.scrollY;
+      setIsScrolled(scrollY > 32);
+      document.documentElement.style.setProperty('--header-float-offset', `${Math.min(64, scrollY * 0.12)}px`);
+    };
+
+    updateScrollState();
+    window.addEventListener('scroll', updateScrollState, { passive: true });
+    window.addEventListener('resize', updateScrollState);
+
+    return () => {
+      window.removeEventListener('scroll', updateScrollState);
+      window.removeEventListener('resize', updateScrollState);
+      document.documentElement.style.removeProperty('--header-float-offset');
+    };
+  }, []);
+
+  useEffect(() => {
     const locked = pricingOpen || mobileOpen;
     const root = document.documentElement;
 
@@ -130,6 +138,7 @@ export default function App() {
       <div className="ambient ambient--two" aria-hidden="true" />
       <Header
         activeSection={activeSection}
+        scrolled={isScrolled}
         theme={theme}
         mobileOpen={mobileOpen}
         onToggleMobile={() => setMobileOpen((value) => !value)}

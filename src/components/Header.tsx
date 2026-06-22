@@ -4,6 +4,7 @@ import { navItems } from '../data/site';
 
 type HeaderProps = {
   activeSection: string;
+  scrolled: boolean;
   theme: 'dark' | 'light';
   mobileOpen: boolean;
   onToggleMobile: () => void;
@@ -12,7 +13,7 @@ type HeaderProps = {
   onStartClick: () => void;
 };
 
-export function Header({ activeSection, theme, mobileOpen, onToggleMobile, onCloseMobile, onToggleTheme, onStartClick }: HeaderProps) {
+export function Header({ activeSection, scrolled, theme, mobileOpen, onToggleMobile, onCloseMobile, onToggleTheme, onStartClick }: HeaderProps) {
   const navRef = useRef<HTMLElement | null>(null);
   const linkRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
   const [hoveredSection, setHoveredSection] = useState<string | null>(null);
@@ -75,7 +76,7 @@ export function Header({ activeSection, theme, mobileOpen, onToggleMobile, onClo
   }, [activeSection, pinnedSection]);
 
   return (
-    <header className="header">
+    <header className={scrolled ? 'header header--scrolled' : 'header'}>
       <div className="container header__inner">
         <div className="header__bar">
           <a className="brand" href="#home" onClick={onCloseMobile}>

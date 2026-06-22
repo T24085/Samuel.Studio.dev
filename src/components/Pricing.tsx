@@ -200,7 +200,11 @@ function AddOnCard({
       : 'Add to Project Quote';
 
   return (
-    <article className={selected ? 'upgrade-card upgrade-card--selected' : 'upgrade-card'} data-reveal>
+    <article
+      className={`${selected ? 'upgrade-card upgrade-card--selected' : 'upgrade-card'}${addon.billing === 'monthly' ? ' upgrade-card--monthly' : ''}`}
+      data-billing={addon.billing}
+      data-reveal
+    >
       <div className="upgrade-card__top">
         <div className="upgrade-card__identity">
           <span className="upgrade-card__icon">{icon}</span>
