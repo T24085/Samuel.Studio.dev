@@ -158,7 +158,7 @@ function buildFallbackReply(userText: string) {
     (['bakery', 'restaurant', 'restaurants', 'cafe', 'coffee shop', 'catering'].some((term) => query.includes(term)) && commerceSignals.some((term) => query.includes(term)))
   ) {
     return [
-      'Business Growth Website + Sell Products or Services Online. That gives your business a polished front and a clear path to sell.',
+      'Business Growth Website. Pair it with Sell Products or Services Online if you want checkout, payments, or digital delivery.',
       'If the catalog is limited, a Starter Website can open the door cleanly, with Get Found on Google and Website Copy & Content Help to support trust.',
       'What products matter most, what pages do you need, and when do you want it live?',
     ].join(' ');
@@ -231,7 +231,8 @@ function buildFallbackReply(userText: string) {
     query.includes('gyms')
   ) {
     return [
-      'Professional Website. It gives you room for services, proof, bookings, menus, locations, and a stronger contact path.',
+      'Professional Website. It gives you room for services, proof, menus, locations, and a stronger contact path.',
+      'If booking is part of the project, add Let Customers Schedule Online.',
       'If you want something leaner, the Starter Website is the simpler route.',
       'What services, pages, and launch timing should I note?',
     ].join(' ');
@@ -254,15 +255,15 @@ function buildFallbackReply(userText: string) {
   }
 
   if (query.includes('booking') || query.includes('schedule')) {
-    return 'Let Customers Schedule Online starts at $199 and lets visitors book appointments or consultations directly from the site with confirmations and reminders. What appointment types, pages, and timeline should I note?';
+    return 'Let Customers Schedule Online starts at $199 and lets visitors book appointments or consultations directly from the site with confirmations, reminders, and calendar integration. What appointment types, pages, and timeline should I note?';
   }
 
   if (query.includes('seo') || query.includes('google')) {
-    return 'Get Found on Google starts at $149 and covers keyword optimization, page titles and descriptions, indexing setup, performance improvements, local SEO, and Search Console setup. What pages, audience, and budget range should I capture?';
+    return 'Get Found on Google starts at $149 and covers page titles, descriptions, local search setup, indexing support, and search-friendly structure. What pages, audience, and budget range should I capture?';
   }
 
   if (query.includes('store') || query.includes('storefront') || query.includes('shop') || query.includes('retail') || query.includes('catalog') || query.includes('e-commerce') || query.includes('ecommerce')) {
-    return 'Sell Products or Services Online starts at $399 and includes a catalog, shopping cart, secure checkout, payment setup, inventory management, order notifications, and mobile-friendly storefront support. What product categories, pages, and launch timing should I note?';
+    return 'Sell Products or Services Online starts at $399 and includes a product catalog, shopping cart, secure checkout, payment setup, and order notifications. What product categories, pages, and launch timing should I note?';
   }
 
   if (query.includes('content') || query.includes('copy') || query.includes('writing')) {
@@ -270,7 +271,7 @@ function buildFallbackReply(userText: string) {
   }
 
   if (query.includes('care') || query.includes('support') || query.includes('maintenance') || query.includes('subscription') || query.includes('monthly')) {
-    return 'Website care plans include Keep My Website Updated at $49 per month and Priority Website Care as a separate $100 per month subscription. Both cover monitoring, security checks, backups, minor content updates, and ongoing support, with the higher tier giving you faster response and more hands-on help. What site does it support and what changes do you expect each month?';
+    return 'Website care plans include Keep My Website Updated at $49 per month and Priority Website Care as a separate $100 per month subscription. Both cover monitoring, security checks, backups, and minor content updates, with the higher tier giving you faster response and more hands-on help. What site does it support and what changes do you expect each month?';
   }
 
   if (query.includes('process') || query.includes('how does it work')) {

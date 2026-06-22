@@ -128,8 +128,8 @@ export function getSitePresentation(currentSiteKey: SiteKey = siteKey) {
 export const navItems = [
   { label: 'Home', href: '#home' },
   { label: 'Gallery', href: '#gallery' },
+  { label: 'Pricing', href: '#pricing' },
   { label: 'Work', href: '#work' },
   { label: 'Process', href: '#process' },
-  { label: 'Pricing', href: '#pricing' },
   { label: 'Contact', href: '#contact' },
 ] as const;

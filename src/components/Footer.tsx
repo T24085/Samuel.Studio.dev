@@ -3,6 +3,8 @@ import { assets } from '../data/assets';
 import { emailAddress, intakeFormUrl, navItems } from '../data/site';
 
 export function Footer() {
+  const desktopVersionUrl = typeof window !== 'undefined' ? window.location.origin : '/';
+
   return (
     <footer className="footer">
       <div className="container footer__grid" data-reveal>
@@ -55,6 +57,10 @@ export function Footer() {
           <a className="button button--primary button--full" href={intakeFormUrl} target="_blank" rel="noreferrer">
             Start Your Website
             <ArrowUpRight size={16} />
+          </a>
+          <a className="footer__desktopLink" href={desktopVersionUrl} target="_blank" rel="noreferrer">
+            View desktop version
+            <ArrowUpRight size={14} />
           </a>
         </div>
       </div>

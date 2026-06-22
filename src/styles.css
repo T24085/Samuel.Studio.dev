@@ -2287,6 +2287,25 @@ img {
   color: var(--text);
 }
 
+.footer__desktopLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  justify-self: start;
+  margin-top: -0.15rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color 180ms ease, transform 180ms ease;
+}
+
+.footer__desktopLink:hover {
+  color: var(--text);
+  transform: translateY(-1px);
+}
+
 .footer__bottom {
   display: flex;
   justify-content: space-between;
