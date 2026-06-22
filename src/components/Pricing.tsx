@@ -98,7 +98,7 @@ function PackageCard({
       data-reveal
     >
       {pkg.featured ? <span className="package-card__badge">Most Popular</span> : null}
-      {selected ? <span className="package-card__selectedTag">Added to Cart</span> : null}
+      {selected ? <span className="package-card__selectedTag">Selected</span> : null}
 
       <div className="package-card__top">
         <div>
@@ -153,7 +153,7 @@ function PackageCard({
         onClick={() => onSelect(pkg)}
         aria-pressed={selected}
       >
-        {selected ? 'Added to Cart' : pkg.cta}
+        {selected ? 'Selected' : pkg.cta}
         <ArrowUpRight size={16} />
       </button>
     </article>
@@ -188,10 +188,10 @@ function AddOnCard({
   const actionLabel = selected
     ? addon.billing === 'monthly'
       ? 'Subscription Added'
-      : 'Added to Cart'
+      : 'Selected'
     : addon.billing === 'monthly'
       ? 'Add Subscription'
-      : 'Add to Cart';
+      : 'Pay with PayPal';
 
   return (
     <article

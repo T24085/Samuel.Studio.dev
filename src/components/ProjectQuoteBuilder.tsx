@@ -1,7 +1,6 @@
 import { ArrowUpRight, Check, FileText, Lock, Plus, X } from 'lucide-react';
 import { type AddOn, type Package } from '../data/pricing';
 import { intakeFormUrl } from '../data/site';
-import { PayPalSubscriptionButton } from './PayPalSubscriptionButton';
 
 type ProjectQuoteBuilderProps = {
   selectedPackage: Package | null;
@@ -123,8 +122,6 @@ export function ProjectQuoteBuilder({ selectedPackage, selectedAddOns, onChangeP
                         Add subscription
                         <ArrowUpRight size={16} />
                       </a>
-                    ) : addon.paypalPlanId ? (
-                      <PayPalSubscriptionButton planId={addon.paypalPlanId} label="Add subscription" variant="secondary" />
                     ) : (
                       <a className="button button--secondary button--full" href={intakeFormUrl} target="_blank" rel="noreferrer">
                         Request Subscription Setup

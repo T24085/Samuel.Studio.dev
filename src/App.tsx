@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { FeaturedWork } from './components/FeaturedWork';
 import { Footer } from './components/Footer';
-import { FloatingCartButton } from './components/FloatingCartButton';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { DnaGallery } from './components/DnaGallery';
@@ -155,7 +154,6 @@ export default function App() {
         <IntakeCTA />
       </main>
       <Footer />
-      <FloatingCartButton />
       <ChatAssistant />
       <PricingModal open={pricingOpen} onClose={() => setPricingOpen(false)} />
     </div>

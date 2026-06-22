@@ -192,6 +192,6 @@ export const addOns: AddOn[] = [
     includes: ['Website monitoring', 'Security checks', 'Backups', 'Minor content updates', 'Priority support'],
     bestFor: 'Businesses that want a more hands-on monthly support plan.',
     billing: 'monthly',
-    paypalPlanId: 'P-43R40579GM460452WNI3MFHY',
+    checkoutUrl: 'https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-43R40579GM460452WNI3MFHY',
   },
 ];
