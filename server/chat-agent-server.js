@@ -23,6 +23,13 @@ const routeHealth = '/health';
 const defaultOllamaModelCandidates = ['gemma4:12b', 'gemma3:12b', 'llama3.1:8b', 'qwen2.5:7b'];
 const defaultOwnerEmail = 'christoffersent@gmail.com';
 const moduleRootDir = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const colombiaSiteKey = 'samuel-studio-columbia';
+const colombiaIntakeFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScCqxvBZ6NTmwh-qyphZyjKzdhz3-jouihSZjAXhRMkBaRpxw/viewform?usp=header';
+const colombiaContactEmail = 'capture@smauel.studio';
+
+function isColombiaSite(siteKey) {
+  return resolveSiteKey(siteKey) === colombiaSiteKey;
+}
 
 function resolveChatAgentPaths(siteKey = '') {
   const resolvedSiteKey = resolveSiteKey(siteKey);
@@ -525,6 +532,10 @@ function missingProjectBriefFields(brief) {
 }
 
 function buildProjectIntakePrompt(transcript) {
+  if (isColombiaSite(transcript.siteKey)) {
+    return buildColombiaProjectIntakePrompt(transcript);
+  }
+
   const brief = extractProjectBrief(transcript);
   const known = describeProjectBrief(brief) || 'nothing specific yet';
   const missing = missingProjectBriefFields(brief);
@@ -538,6 +549,363 @@ function buildProjectIntakePrompt(transcript) {
     'If several are missing, combine them into one easy-to-answer sentence.',
     'Do not turn this into a long questionnaire.',
   ].join('\n');
+}
+
+function extractColombiaSessionBrief(transcript) {
+  const userText = collectUserConversationText(transcript);
+
+  const sessionTypes = extractKeywordLabels(userText, [
+    { pattern: /\b(editorial|campaign|fashion|commercial|brand shoot|brand campaign|lookbook)\b/i, label: 'Editorial & Campaign Work' },
+    { pattern: /\b(headshot|headshots|personal brand|personal branding|identity|professional portrait|profile photo)\b/i, label: 'Personal Identity' },
+    { pattern: /\b(story|documentary|visual story|story project|narrative|process|behind the scenes)\b/i, label: 'Visual Story Projects' },
+    { pattern: /\b(private portrait|portraits?|family|couple|solo portrait|studio portrait)\b/i, label: 'Private Portraits' },
+  ]);
+
+  const sessionPurpose = firstTextMatch(userText, [
+    /\b(?:for|need|looking for|want|planning)\s+([^.!?]{3,90})/i,
+    /\b(?:shoot|session|session type|project)\s*[:\-]?\s*([^.!?]{3,90})/i,
+  ]);
+
+  const shootDate = firstTextMatch(userText, [
+    /\b(?:on|for|by)\s+([^.!?]{3,40})/i,
+    /\b(?:this week|next week|next month|soon|asap|today|tomorrow)\b/i,
+  ]);
+
+  const location = firstTextMatch(userText, [
+    /\b(?:in|at|around|near)\s+([^.!?]{3,80})/i,
+    /\b(?:location|studio|outdoor|on location)\s*[:\-]?\s*([^.!?]{3,80})/i,
+  ]);
+
+  const references = uniqueStrings([
+    firstTextMatch(userText, [
+      /\b(?:like|similar to|inspired by|reference|references|moodboard)\s*:?\s*([^.!?]{3,100})/i,
+    ]),
+  ]);
+
+  const wardrobe = firstTextMatch(userText, [
+    /\b(?:wardrobe|outfit|clothes|styling)\s*[:\-]?\s*([^.!?]{3,100})/i,
+    /\b(?:wear|wearing)\s+([^.!?]{3,100})/i,
+  ]);
+
+  const usage = firstTextMatch(userText, [
+    /\b(?:for|used for|usage|usage rights?)\s*[:\-]?\s*([^.!?]{3,100})/i,
+    /\b(?:website|social|instagram|linkedin|campaign|print|portfolio|press|ad|ads)\b/i,
+  ]);
+
+  const deliverables = firstTextMatch(userText, [
+    /\b(?:deliverables?|photos?|images?|selects?|shots?)\s*[:\-]?\s*([^.!?]{3,100})/i,
+    /\b(\d+)\s+(?:photos?|images?|shots?|selects?)\b/i,
+  ]);
+
+  const budget = firstTextMatch(userText, [
+    /\$\s?\d[\d,]*(?:\s*(?:-|to|–)\s*\$\s?\d[\d,]*)?/i,
+    /\bbudget(?: range)?(?: is|:)?\s*([^.!?]{3,40})/i,
+    /\b(?:around|under|over)\s+\$?\d[\d,]*(?:\s*(?:-|to|–)\s*\$?\d[\d,]*)?/i,
+  ]);
+
+  const bookingStatus = firstTextMatch(userText, [
+    /\b(?:book|booking|reserve|reserved|available|availability)\b/i,
+  ]);
+
+  return {
+    sessionTypes,
+    sessionPurpose,
+    shootDate,
+    location,
+    references,
+    wardrobe,
+    usage,
+    deliverables,
+    budget,
+    bookingStatus,
+  };
+}
+
+function describeColombiaSessionBrief(brief) {
+  const parts = [];
+
+  if (brief.sessionTypes.length) {
+    parts.push(`session type: ${brief.sessionTypes.join(', ')}`);
+  }
+
+  if (brief.sessionPurpose) {
+    parts.push(`purpose: ${brief.sessionPurpose}`);
+  }
+
+  if (brief.shootDate) {
+    parts.push(`date: ${brief.shootDate}`);
+  }
+
+  if (brief.location) {
+    parts.push(`location: ${brief.location}`);
+  }
+
+  if (brief.references.length) {
+    parts.push(`references: ${brief.references.join(', ')}`);
+  }
+
+  if (brief.wardrobe) {
+    parts.push(`wardrobe: ${brief.wardrobe}`);
+  }
+
+  if (brief.usage) {
+    parts.push(`usage: ${brief.usage}`);
+  }
+
+  if (brief.deliverables) {
+    parts.push(`deliverables: ${brief.deliverables}`);
+  }
+
+  if (brief.budget) {
+    parts.push(`budget: ${brief.budget}`);
+  }
+
+  if (brief.bookingStatus) {
+    parts.push(`booking: ${brief.bookingStatus}`);
+  }
+
+  return parts.join(' · ');
+}
+
+function missingColombiaSessionBriefFields(brief) {
+  const missing = [];
+
+  if (!brief.sessionTypes.length) missing.push('session type');
+  if (!brief.shootDate) missing.push('date');
+  if (!brief.location) missing.push('location');
+  if (!brief.references.length) missing.push('references');
+  if (!brief.usage) missing.push('usage');
+  if (!brief.budget) missing.push('budget');
+
+  return missing;
+}
+
+function buildColombiaProjectIntakePrompt(transcript) {
+  const brief = extractColombiaSessionBrief(transcript);
+  const known = describeColombiaSessionBrief(brief) || 'nothing specific yet';
+  const missing = missingColombiaSessionBriefFields(brief);
+
+  return [
+    'Photography intake directive:',
+    `Known so far: ${known}.`,
+    `Missing: ${missing.length ? missing.join(', ') : 'none'}.`,
+    'Ask one concise follow-up question that captures the highest-value missing details.',
+    'Prefer session type, date, location, references, wardrobe, usage, deliverables, and budget.',
+    'If several are missing, combine them into one easy-to-answer sentence.',
+    'Do not turn this into a long questionnaire.',
+  ].join('\n');
+}
+
+function buildColombiaSystemPrompt() {
+  return [
+    'You are Nova, the Samuel Studio Columbia photography assistant.',
+    'Focus on photography bookings and creative sessions, not website packages.',
+    'Use the service names Editorial & Campaign Work, Personal Identity, Visual Story Projects, and Private Portraits when relevant.',
+    'Quotes are custom, so do not invent fixed pricing.',
+    'Ask for session type, date, location, references, wardrobe, usage, deliverables, and budget when details are missing.',
+    `For booking or human follow-up, point people to the intake form: ${colombiaIntakeFormUrl} and email: ${colombiaContactEmail}.`,
+    'Keep replies concise, premium, and direct.',
+    'Ask one short follow-up question only when more context is needed.',
+  ].join('\n');
+}
+
+function buildColombiaKnowledgePrompt() {
+  return [
+    'Samuel Studio Columbia knowledge base:',
+    '- Editorial & Campaign Work: art-directed shoots for campaigns, lookbooks, launches, and styled commercial imagery.',
+    '- Personal Identity: headshots, personal branding, profile imagery, and polished portrait direction.',
+    '- Visual Story Projects: narrative and documentary work for stories, process, and place.',
+    '- Private Portraits: intimate portrait sessions for individuals, couples, or families.',
+    '- Pricing is custom; ask for the session type, date, location, references, usage, wardrobe, deliverables, and budget range.',
+    `- Intake form: ${colombiaIntakeFormUrl}`,
+    `- Email: ${colombiaContactEmail}`,
+    '- If the user wants to book, direct them to the intake form or email instead of guessing availability.',
+  ].join('\n');
+}
+
+function buildColombiaIntentPrimer(userText) {
+  const query = userText.toLowerCase();
+
+  if (query.includes('editorial') || query.includes('campaign') || query.includes('fashion') || query.includes('commercial') || query.includes('lookbook') || query.includes('brand shoot')) {
+    return 'Recommendation anchor: Editorial & Campaign Work. After the recommendation, ask one short follow-up question about date, location, references, usage, wardrobe, or deliverables.';
+  }
+
+  if (query.includes('headshot') || query.includes('headshots') || query.includes('personal brand') || query.includes('personal branding') || query.includes('identity') || query.includes('profile photo') || query.includes('portrait')) {
+    return 'Recommendation anchor: Personal Identity. After the recommendation, ask one short follow-up question about date, location, references, wardrobe, usage, or deliverables.';
+  }
+
+  if (query.includes('story') || query.includes('documentary') || query.includes('visual story') || query.includes('narrative') || query.includes('process') || query.includes('behind the scenes')) {
+    return 'Recommendation anchor: Visual Story Projects. After the recommendation, ask one short follow-up question about date, location, references, usage, or deliverables.';
+  }
+
+  if (query.includes('private portrait') || query.includes('family') || query.includes('couple') || query.includes('solo portrait') || query.includes('studio portrait') || query.includes('portrait')) {
+    return 'Recommendation anchor: Private Portraits. After the recommendation, ask one short follow-up question about date, location, references, wardrobe, or deliverables.';
+  }
+
+  if (query.includes('price') || query.includes('pricing') || query.includes('cost') || query.includes('budget')) {
+    return 'Pricing answer: explain that quotes are custom and ask for the session type, date, location, references, usage, and budget range.';
+  }
+
+  if (query.includes('book') || query.includes('booking') || query.includes('schedule') || query.includes('available') || query.includes('availability') || query.includes('contact')) {
+    return 'Booking answer: point people to the intake form and email, then ask for the session type, date, and location.';
+  }
+
+  return '';
+}
+
+function buildColombiaIntentDirective(userText) {
+  const query = userText.toLowerCase();
+
+  if (query.includes('editorial') || query.includes('campaign') || query.includes('fashion') || query.includes('commercial') || query.includes('lookbook') || query.includes('brand shoot')) {
+    return [
+      'Intent directive:',
+      'The user is asking about an editorial or campaign shoot.',
+      'Answer with Editorial & Campaign Work as the recommendation.',
+      'Do not mention fixed pricing.',
+      'Keep the reply direct and under 3 sentences.',
+      'Then ask one short follow-up question that gathers the biggest missing session detail.',
+    ].join('\n');
+  }
+
+  if (query.includes('headshot') || query.includes('headshots') || query.includes('personal brand') || query.includes('personal branding') || query.includes('identity') || query.includes('profile photo') || query.includes('portrait')) {
+    return [
+      'Intent directive:',
+      'The user is asking for a personal identity or portrait session.',
+      'Answer with Personal Identity as the recommendation.',
+      'Do not mention fixed pricing.',
+      'Keep the reply direct and under 3 sentences.',
+      'Then ask one short follow-up question that gathers the biggest missing session detail.',
+    ].join('\n');
+  }
+
+  if (query.includes('story') || query.includes('documentary') || query.includes('visual story') || query.includes('narrative') || query.includes('process') || query.includes('behind the scenes')) {
+    return [
+      'Intent directive:',
+      'The user is asking about a narrative or documentary-led project.',
+      'Answer with Visual Story Projects as the recommendation.',
+      'Do not mention fixed pricing.',
+      'Keep the reply direct and under 3 sentences.',
+      'Then ask one short follow-up question that gathers the biggest missing session detail.',
+    ].join('\n');
+  }
+
+  if (query.includes('private portrait') || query.includes('family') || query.includes('couple') || query.includes('solo portrait') || query.includes('studio portrait') || query.includes('portrait')) {
+    return [
+      'Intent directive:',
+      'The user is asking for a private portrait session.',
+      'Answer with Private Portraits as the recommendation.',
+      'Do not mention fixed pricing.',
+      'Keep the reply direct and under 3 sentences.',
+      'Then ask one short follow-up question that gathers the biggest missing session detail.',
+    ].join('\n');
+  }
+
+  if (query.includes('price') || query.includes('pricing') || query.includes('cost') || query.includes('budget')) {
+    return [
+      'Intent directive:',
+      'The user is asking about pricing.',
+      'Explain that Samuel Studio Columbia uses custom quotes.',
+      `Point them to the intake form (${colombiaIntakeFormUrl}) and email (${colombiaContactEmail}).`,
+      'Keep the reply direct and under 3 sentences.',
+      'Then ask one short follow-up question that gathers the biggest missing session detail.',
+    ].join('\n');
+  }
+
+  if (query.includes('book') || query.includes('booking') || query.includes('schedule') || query.includes('available') || query.includes('availability') || query.includes('contact')) {
+    return [
+      'Intent directive:',
+      'The user wants to book or contact the studio.',
+      `Point them to the intake form (${colombiaIntakeFormUrl}) and email (${colombiaContactEmail}).`,
+      'Keep the reply direct and under 3 sentences.',
+      'Then ask one short follow-up question that gathers the biggest missing session detail.',
+    ].join('\n');
+  }
+
+  return '';
+}
+
+function normalizeColombiaIntentResponse(userText, responseText) {
+  const query = userText.toLowerCase();
+
+  if (query.includes('editorial') || query.includes('campaign') || query.includes('fashion') || query.includes('commercial') || query.includes('lookbook') || query.includes('brand shoot')) {
+    return buildBrandedRecommendationResponse(
+      'Editorial & Campaign Work.',
+      'That is the right fit for art-directed campaigns, styled imagery, and launch material. Quotes are custom, so I need the session date, location, references, usage, wardrobe, and deliverables.',
+      'What date, location, and reference direction should I note?',
+    );
+  }
+
+  if (query.includes('headshot') || query.includes('headshots') || query.includes('personal brand') || query.includes('personal branding') || query.includes('identity') || query.includes('profile photo') || query.includes('portrait')) {
+    return buildBrandedRecommendationResponse(
+      'Personal Identity.',
+      'That works well for headshots, personal branding, and polished portrait direction. Quotes are custom, so I need the date, location, wardrobe, usage, and deliverables.',
+      'What should I capture for the session?',
+    );
+  }
+
+  if (query.includes('story') || query.includes('documentary') || query.includes('visual story') || query.includes('narrative') || query.includes('process') || query.includes('behind the scenes')) {
+    return buildBrandedRecommendationResponse(
+      'Visual Story Projects.',
+      'That fits narrative work where the images need to feel lived-in and intentional. Quotes are custom, so I need the date, location, references, usage, and deliverables.',
+      'What story or project should I capture?',
+    );
+  }
+
+  if (query.includes('private portrait') || query.includes('family') || query.includes('couple') || query.includes('solo portrait') || query.includes('studio portrait') || query.includes('portrait')) {
+    return buildBrandedRecommendationResponse(
+      'Private Portraits.',
+      'That is a good fit for individual, couple, or family portrait sessions. Quotes are custom, so I need the date, location, references, wardrobe, and deliverables.',
+      'What kind of portrait session are you planning?',
+    );
+  }
+
+  if (query.includes('price') || query.includes('pricing') || query.includes('cost') || query.includes('budget')) {
+    return buildBrandedRecommendationResponse(
+      'Custom quotes only.',
+      `Samuel Studio Columbia does not publish fixed pricing. Send the session type, date, location, references, usage, and budget range through the intake form or email ${colombiaContactEmail}.`,
+      `You can also start here: ${colombiaIntakeFormUrl}.`,
+    );
+  }
+
+  if (query.includes('book') || query.includes('booking') || query.includes('schedule') || query.includes('available') || query.includes('availability') || query.includes('contact')) {
+    return buildBrandedRecommendationResponse(
+      'Book through intake.',
+      `Use the intake form or email ${colombiaContactEmail} to start the booking process.`,
+      `Intake form: ${colombiaIntakeFormUrl}. What session type, date, and location should I capture?`,
+    );
+  }
+
+  return responseText.trim();
+}
+
+function buildColombiaFallbackReply(userText) {
+  const query = userText.toLowerCase();
+
+  if (query.includes('editorial') || query.includes('campaign') || query.includes('fashion') || query.includes('commercial') || query.includes('lookbook') || query.includes('brand shoot')) {
+    return 'Editorial & Campaign Work. That is the right fit for art-directed campaigns, styled imagery, and launch material. Quotes are custom, so I need the session date, location, references, usage, wardrobe, and deliverables. What date, location, and reference direction should I note?';
+  }
+
+  if (query.includes('headshot') || query.includes('headshots') || query.includes('personal brand') || query.includes('personal branding') || query.includes('identity') || query.includes('profile photo') || query.includes('portrait')) {
+    return 'Personal Identity. That works well for headshots, personal branding, and polished portrait direction. Quotes are custom, so I need the date, location, wardrobe, usage, and deliverables. What should I capture for the session?';
+  }
+
+  if (query.includes('story') || query.includes('documentary') || query.includes('visual story') || query.includes('narrative') || query.includes('process') || query.includes('behind the scenes')) {
+    return 'Visual Story Projects. That fits narrative work where the images need to feel lived-in and intentional. Quotes are custom, so I need the date, location, references, usage, and deliverables. What story or project should I capture?';
+  }
+
+  if (query.includes('private portrait') || query.includes('family') || query.includes('couple') || query.includes('solo portrait') || query.includes('studio portrait') || query.includes('portrait')) {
+    return 'Private Portraits. That is a good fit for individual, couple, or family portrait sessions. Quotes are custom, so I need the date, location, references, wardrobe, and deliverables. What kind of portrait session are you planning?';
+  }
+
+  if (query.includes('price') || query.includes('pricing') || query.includes('cost') || query.includes('budget')) {
+    return `Samuel Studio Columbia uses custom quotes, not fixed pricing. Send the session type, date, location, references, usage, and budget range through the intake form or email ${colombiaContactEmail}. You can also start here: ${colombiaIntakeFormUrl}.`;
+  }
+
+  if (query.includes('book') || query.includes('booking') || query.includes('schedule') || query.includes('available') || query.includes('availability') || query.includes('contact')) {
+    return `Use the intake form or email ${colombiaContactEmail} to start the booking process. Intake form: ${colombiaIntakeFormUrl}. What session type, date, and location should I capture?`;
+  }
+
+  return `Tell me what kind of session you want, what it should communicate, and when you need it. If you are ready to book, use the intake form: ${colombiaIntakeFormUrl} or email ${colombiaContactEmail}.`;
 }
 
 function analyzeLead(transcript) {
@@ -917,6 +1285,26 @@ function buildCrmEmailBody(transcript, lead, quality, calendarSync) {
 }
 
 function buildSessionMemoryPrompt(transcript) {
+  if (isColombiaSite(transcript.siteKey)) {
+    const brief = extractColombiaSessionBrief(transcript);
+    const briefSummary = describeColombiaSessionBrief(brief) || 'nothing specific yet';
+    const missingBriefDetails = missingColombiaSessionBriefFields(brief);
+
+    return [
+      'Client profile context:',
+      `- Name: ${transcript.clientProfile.name}`,
+      `- Email: ${transcript.clientProfile.email}`,
+      `- Phone: ${transcript.clientProfile.phone}`,
+      'Use the profile only as supporting context.',
+      `Session brief so far: ${briefSummary}.`,
+      `Still missing: ${missingBriefDetails.length ? missingBriefDetails.join(', ') : 'none'}.`,
+      'Ask for missing session details before wrapping up the conversation.',
+      'Answer the latest user question directly with a specific Colombia service recommendation or a direct studio fact.',
+      'Do not default to generic website packages.',
+      'Keep the tone premium, concise, and studio-led.',
+    ].join('\n');
+  }
+
   const projectBrief = extractProjectBrief(transcript);
   const projectBriefSummary = describeProjectBrief(projectBrief) || 'nothing specific yet';
   const missingProjectDetails = missingProjectBriefFields(projectBrief);
@@ -936,7 +1324,11 @@ function buildSessionMemoryPrompt(transcript) {
   ].join('\n');
 }
 
-function buildWebsiteKnowledgePrompt() {
+function buildWebsiteKnowledgePrompt(siteKey) {
+  if (isColombiaSite(siteKey)) {
+    return buildColombiaKnowledgePrompt();
+  }
+
   return [
     'Samuel Studio knowledge base:',
     '- Samuel Studio builds custom websites for businesses, brands, creators, churches, ministries, and product-based companies.',
@@ -964,7 +1356,11 @@ function buildConversationMessages(transcript) {
     }));
 }
 
-function buildIntentPrimer(userText) {
+function buildIntentPrimer(siteKey, userText) {
+  if (isColombiaSite(siteKey)) {
+    return buildColombiaIntentPrimer(userText);
+  }
+
   if (isProductIntent(userText)) {
     return 'Recommendation anchor: Business Growth Website. Mention Sell Products or Services Online when checkout, payments, or digital delivery are needed. After the recommendation, ask one short follow-up question about goals, pages, timeline, budget, audience, or features that are still missing.';
   }
@@ -980,7 +1376,11 @@ function buildIntentPrimer(userText) {
   return '';
 }
 
-function buildIntentDirective(userText) {
+function buildIntentDirective(siteKey, userText) {
+  if (isColombiaSite(siteKey)) {
+    return buildColombiaIntentDirective(userText);
+  }
+
   if (isProductIntent(userText)) {
     return [
       'Intent directive:',
@@ -1133,7 +1533,11 @@ function buildBrandedRecommendationResponse(packageLine, detailLine, questionLin
   return [packageLine, detailLine, questionLine].filter(Boolean).join(' ');
 }
 
-function normalizeIntentResponse(userText, responseText) {
+function normalizeIntentResponse(siteKey, userText, responseText) {
+  if (isColombiaSite(siteKey)) {
+    return normalizeColombiaIntentResponse(userText, responseText);
+  }
+
   if (isProductIntent(userText)) {
     return buildBrandedRecommendationResponse(
       'Business Growth Website.',
@@ -1181,7 +1585,11 @@ async function writeTranscript(transcript) {
   }
 }
 
-function buildFallbackReply(userText) {
+function buildFallbackReply(siteKey, userText) {
+  if (isColombiaSite(siteKey)) {
+    return buildColombiaFallbackReply(userText);
+  }
+
   const query = userText.toLowerCase();
 
   if (query.includes('nutrition') || query.includes('supplement') || query.includes('supplements') || query.includes('product') || query.includes('products') || query.includes('store') || query.includes('storefront') || query.includes('shop') || query.includes('retail') || query.includes('catalog') || query.includes('e-commerce') || query.includes('ecommerce')) {
@@ -1416,11 +1824,13 @@ async function persistCrmLead(transcript) {
 async function callOllama(model, systemPrompt, transcript) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 60000);
+  const siteKey = transcript.siteKey;
   const latestUserMessage = [...transcript.messages].reverse().find((message) => message.role === 'user');
-  const intentPrimer = latestUserMessage ? buildIntentPrimer(latestUserMessage.content) : '';
-  const intentDirective = latestUserMessage ? buildIntentDirective(latestUserMessage.content) : '';
-  const knowledgePrompt = buildWebsiteKnowledgePrompt();
+  const intentPrimer = latestUserMessage ? buildIntentPrimer(siteKey, latestUserMessage.content) : '';
+  const intentDirective = latestUserMessage ? buildIntentDirective(siteKey, latestUserMessage.content) : '';
+  const knowledgePrompt = buildWebsiteKnowledgePrompt(siteKey);
   const projectIntakePrompt = buildProjectIntakePrompt(transcript);
+  const effectiveSystemPrompt = isColombiaSite(siteKey) ? buildColombiaSystemPrompt() : systemPrompt;
 
   try {
     const response = await fetch(ollamaChatUrl, {
@@ -1432,7 +1842,7 @@ async function callOllama(model, systemPrompt, transcript) {
       body: JSON.stringify({
         model,
         messages: [
-          { role: 'system', content: systemPrompt },
+          { role: 'system', content: effectiveSystemPrompt },
           { role: 'system', content: buildSessionMemoryPrompt(transcript) },
           { role: 'system', content: knowledgePrompt },
           { role: 'system', content: projectIntakePrompt },
@@ -1503,7 +1913,9 @@ async function handleAssistantChat(req, res) {
 
   const latestUserMessage = [...transcript.messages].reverse().find((message) => message.role === 'user');
   const requestText = latestUserMessage?.content || '';
-  const systemPrompt = typeof payload.systemPrompt === 'string' && payload.systemPrompt.trim() ? payload.systemPrompt.trim() : 'You are Nova, the Samuel Studio assistant.';
+  const systemPrompt = isColombiaSite(transcript.siteKey)
+    ? buildColombiaSystemPrompt()
+    : (typeof payload.systemPrompt === 'string' && payload.systemPrompt.trim() ? payload.systemPrompt.trim() : 'You are Nova, the Samuel Studio assistant.');
   const installedModels = await fetchInstalledOllamaModels();
   const modelCandidates = buildModelCandidates(payload.modelCandidates, transcript.model, installedModels);
 
@@ -1520,13 +1932,13 @@ async function handleAssistantChat(req, res) {
 
   if (!reply) {
     reply = {
-      content: buildFallbackReply(requestText),
+      content: buildFallbackReply(transcript.siteKey, requestText),
       model: modelCandidates[0] || transcript.model,
       usedFallback: true,
     };
   }
 
-  reply.content = normalizeIntentResponse(requestText, reply.content);
+  reply.content = normalizeIntentResponse(transcript.siteKey, requestText, reply.content);
 
   const assistantMessage = {
     id: `assistant_${Date.now()}`,
