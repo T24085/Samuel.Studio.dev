@@ -62,12 +62,6 @@ function splitPriceLabel(price: string) {
   return { label: 'Starting at', value: price };
 }
 
-function scrollToProjectBuilder() {
-  window.setTimeout(() => {
-    document.getElementById('project-builder')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 0);
-}
-
 function PackageCard({
   pkg,
   selected,
@@ -75,7 +69,7 @@ function PackageCard({
 }: {
   pkg: Package;
   selected: boolean;
-  onSelect: (pkg: Package, options?: { scroll?: boolean }) => void;
+  onSelect: (pkg: Package) => void;
 }) {
   const priceParts = splitPriceLabel(pkg.price);
   const packageIcon =
@@ -104,7 +98,7 @@ function PackageCard({
       data-reveal
     >
       {pkg.featured ? <span className="package-card__badge">Most Popular</span> : null}
-      {selected ? <span className="package-card__selectedTag">Selected</span> : null}
+      {selected ? <span className="package-card__selectedTag">Added to Cart</span> : null}
 
       <div className="package-card__top">
         <div>
@@ -159,7 +153,7 @@ function PackageCard({
         onClick={() => onSelect(pkg)}
         aria-pressed={selected}
       >
-        {selected ? 'Selected' : pkg.cta}
+        {selected ? 'Added to Cart' : pkg.cta}
         <ArrowUpRight size={16} />
       </button>
     </article>
@@ -194,10 +188,10 @@ function AddOnCard({
   const actionLabel = selected
     ? addon.billing === 'monthly'
       ? 'Subscription Added'
-      : 'Added to Quote'
+      : 'Added to Cart'
     : addon.billing === 'monthly'
       ? 'Add Subscription'
-      : 'Add to Project Quote';
+      : 'Add to Cart';
 
   return (
     <article
@@ -261,13 +255,9 @@ export function Pricing() {
     window.dispatchEvent(new Event('samuel-studio-project-quote-changed'));
   }, [selectedPackage, selectedAddOns]);
 
-  const handleSelectPackage = (pkg: Package, options?: { scroll?: boolean }) => {
+  const handleSelectPackage = (pkg: Package) => {
     setSelectedPackageId(pkg.id);
     setVisualSelectedPackageId(pkg.id);
-
-    if (options?.scroll !== false) {
-      scrollToProjectBuilder();
-    }
   };
 
   const handleToggleAddon = (addon: AddOn) => {
