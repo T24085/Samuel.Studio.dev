@@ -12,11 +12,8 @@ import {
   Rocket,
   BarChart3,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
 import { addOns, packages, type AddOn, type Package } from '../data/pricing';
-import { buildStoredQuote, loadStoredQuote, projectQuoteStorageKey } from '../data/projectQuote';
 import { intakeFormUrl } from '../data/site';
-import { ProjectQuoteBuilder } from './ProjectQuoteBuilder';
 
 const faqItems = [
   {
@@ -64,12 +61,8 @@ function splitPriceLabel(price: string) {
 
 function PackageCard({
   pkg,
-  selected,
-  onSelect,
 }: {
   pkg: Package;
-  selected: boolean;
-  onSelect: (pkg: Package) => void;
 }) {
   const priceParts = splitPriceLabel(pkg.price);
   const packageIcon =
@@ -83,22 +76,11 @@ function PackageCard({
 
   return (
     <article
-      className={
-        selected
-          ? pkg.id === 'custom'
-            ? 'package-card package-card--custom package-card--featured package-card--selected'
-            : 'package-card package-card--featured package-card--selected'
-          : pkg.featured
-            ? pkg.id === 'custom'
-              ? 'package-card package-card--custom package-card--featured'
-              : 'package-card package-card--featured'
-            : 'package-card'
-      }
+      className={pkg.featured ? (pkg.id === 'custom' ? 'package-card package-card--custom package-card--featured' : 'package-card package-card--featured') : 'package-card'}
       key={pkg.id}
       data-reveal
     >
       {pkg.featured ? <span className="package-card__badge">Most Popular</span> : null}
-      {selected ? <span className="package-card__selectedTag">Selected</span> : null}
 
       <div className="package-card__top">
         <div>
@@ -147,27 +129,23 @@ function PackageCard({
         )}
       </div>
 
-      <button
-        className={selected || pkg.featured ? 'button button--primary button--full' : 'button button--secondary button--full'}
-        type="button"
-        onClick={() => onSelect(pkg)}
-        aria-pressed={selected}
+      <a
+        className={pkg.featured ? 'button button--primary button--full' : 'button button--secondary button--full'}
+        href={pkg.checkoutUrl ?? intakeFormUrl}
+        target="_blank"
+        rel="noreferrer"
       >
-        {selected ? 'Selected' : pkg.cta}
+        {pkg.id === 'custom' ? 'Request a Custom Quote' : pkg.cta}
         <ArrowUpRight size={16} />
-      </button>
+      </a>
     </article>
   );
 }
 
 function AddOnCard({
   addon,
-  selected,
-  onToggle,
 }: {
   addon: AddOn;
-  selected: boolean;
-  onToggle: (addon: AddOn) => void;
 }) {
   const priceParts = splitPriceLabel(addon.price);
   const icon =
@@ -185,17 +163,9 @@ function AddOnCard({
       <ShieldCheck size={18} />
     );
 
-  const actionLabel = selected
-    ? addon.billing === 'monthly'
-      ? 'Subscription Added'
-      : 'Selected'
-    : addon.billing === 'monthly'
-      ? 'Add Subscription'
-      : 'Pay with PayPal';
-
   return (
     <article
-      className={`${selected ? 'upgrade-card upgrade-card--selected' : 'upgrade-card'}${addon.billing === 'monthly' ? ' upgrade-card--monthly' : ''}`}
+      className={`${'upgrade-card'}${addon.billing === 'monthly' ? ' upgrade-card--monthly' : ''}`}
       data-billing={addon.billing}
       data-reveal
     >
@@ -215,64 +185,16 @@ function AddOnCard({
 
       <p className="upgrade-card__description">{addon.description}</p>
 
-      {addon.checkoutUrl ? (
-        <a
-          className={selected ? 'button button--primary button--full' : 'button button--secondary button--full'}
-          href={addon.checkoutUrl}
-          target="_blank"
-          rel="noreferrer"
-          onClick={() => onToggle(addon)}
-        >
-          {actionLabel}
-          <ArrowUpRight size={16} />
-        </a>
-      ) : (
-        <button className={selected ? 'button button--primary button--full' : 'button button--secondary button--full'} type="button" onClick={() => onToggle(addon)}>
-          {actionLabel}
-          <ArrowUpRight size={16} />
-        </button>
-      )}
+      <a className="button button--secondary button--full" href={addon.checkoutUrl ?? intakeFormUrl} target="_blank" rel="noreferrer">
+        {addon.billing === 'monthly' ? 'Subscribe with PayPal' : 'Pay with PayPal'}
+        <ArrowUpRight size={16} />
+      </a>
     </article>
   );
 }
 
 export function Pricing() {
-  const initialQuote = loadStoredQuote();
-  const [selectedPackageId, setSelectedPackageId] = useState<string | null>(initialQuote.selectedPackageId);
-  const [visualSelectedPackageId, setVisualSelectedPackageId] = useState<string | null>(initialQuote.visualSelectedPackageId);
-  const [selectedAddonIds, setSelectedAddonIds] = useState<string[]>(initialQuote.selectedAddonIds);
-
-  const selectedPackage = packages.find((pkg) => pkg.id === selectedPackageId) ?? null;
   const visiblePackages = packages.filter((pkg) => pkg.id !== 'custom');
-  const selectedAddOns = addOns.filter((addon) => selectedAddonIds.includes(addon.id));
-
-  useEffect(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    window.localStorage.setItem(projectQuoteStorageKey, JSON.stringify(buildStoredQuote(selectedPackage, selectedAddOns)));
-    window.dispatchEvent(new Event('samuel-studio-project-quote-changed'));
-  }, [selectedPackage, selectedAddOns]);
-
-  const handleSelectPackage = (pkg: Package) => {
-    setSelectedPackageId(pkg.id);
-    setVisualSelectedPackageId(pkg.id);
-  };
-
-  const handleToggleAddon = (addon: AddOn) => {
-    setSelectedAddonIds((current) => {
-      if (current.includes(addon.id)) {
-        return current.filter((id) => id !== addon.id);
-      }
-
-      return [...current, addon.id];
-    });
-  };
-
-  const handleRemoveAddon = (addonId: string) => {
-    setSelectedAddonIds((current) => current.filter((id) => id !== addonId));
-  };
 
   return (
     <section className="section pricing-section" id="pricing">
@@ -290,7 +212,7 @@ export function Pricing() {
           <div className="pricing-section__block" id="pricing-packages" data-reveal>
             <div className="packages-grid">
               {visiblePackages.map((pkg) => (
-                <PackageCard key={pkg.id} pkg={pkg} selected={pkg.id === visualSelectedPackageId} onSelect={handleSelectPackage} />
+                <PackageCard key={pkg.id} pkg={pkg} />
               ))}
             </div>
           </div>
@@ -321,7 +243,7 @@ export function Pricing() {
 
             <div className="upgrade-grid">
               {addOns.map((addon) => (
-                <AddOnCard key={addon.id} addon={addon} selected={selectedAddonIds.includes(addon.id)} onToggle={handleToggleAddon} />
+                <AddOnCard key={addon.id} addon={addon} />
               ))}
             </div>
           </div>
@@ -342,15 +264,6 @@ export function Pricing() {
             </div>
           </div>
         </div>
-
-        <ProjectQuoteBuilder
-          selectedPackage={selectedPackage}
-          selectedAddOns={selectedAddOns}
-          onChangePackage={() => {
-            document.getElementById('pricing-packages')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }}
-          onRemoveAddOn={handleRemoveAddon}
-        />
       </div>
     </section>
   );

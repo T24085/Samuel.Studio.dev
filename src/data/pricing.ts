@@ -25,7 +25,6 @@ export type AddOn = {
   bestFor: string;
   billing: 'one-time' | 'monthly';
   checkoutUrl?: string;
-  paypalPlanId?: string;
 };
 
 export const packages: Package[] = [
