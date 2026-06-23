@@ -1064,6 +1064,11 @@ img {
 
 .project-card__preview-image {
   display: none;
+  width: 100%;
+  height: calc(100% - 1.7rem);
+  object-fit: cover;
+  object-position: center top;
+  background: var(--surface-image-shell);
 }
 
 .project-card__live-label {
@@ -1155,9 +1160,9 @@ img {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--text);
-  font-size: 0.95rem;
-  font-weight: 600;
+  min-width: 9.75rem;
+  justify-content: center;
+  padding-inline: 1rem;
 }
 
 .project-link--subtle {
@@ -3206,6 +3211,14 @@ img {
   .project-card__live-label {
     left: 0.9rem;
     bottom: 0.9rem;
+  }
+
+  .project-card__actions {
+    display: grid;
+  }
+
+  .project-card__actions .button {
+    width: 100%;
   }
 
   .styles-deck__rail {

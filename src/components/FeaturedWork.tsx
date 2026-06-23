@@ -22,6 +22,13 @@ export function FeaturedWork() {
                       <span />
                       <span />
                     </div>
+                    <img
+                      className="project-card__preview-image"
+                      src={project.previewImage}
+                      alt={`${project.title} screenshot preview`}
+                      loading="lazy"
+                      decoding="async"
+                    />
                     <iframe
                       title={`${project.title} live preview`}
                       src={project.url}
@@ -43,11 +50,11 @@ export function FeaturedWork() {
                   {index === 0 ? <span className="project-card__featured-tag">Featured</span> : null}
                   <p>{project.description}</p>
                   <div className="project-card__actions">
-                    <a className="project-link" href={project.url} target="_blank" rel="noreferrer">
+                    <a className="button button--secondary button--small project-link" href={project.url} target="_blank" rel="noreferrer">
                       Visit Site
                       <ExternalLink size={15} />
                     </a>
-                    <a className="project-link project-link--subtle" href={project.url} target="_blank" rel="noreferrer">
+                    <a className="button button--ghost button--small project-link project-link--subtle" href={project.url} target="_blank" rel="noreferrer">
                       View Case Study
                       <ArrowUpRight size={15} />
                     </a>

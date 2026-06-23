@@ -3,7 +3,22 @@ import { assets } from '../data/assets';
 import { emailAddress, intakeFormUrl, navItems } from '../data/site';
 
 export function Footer() {
-  const desktopVersionUrl = typeof window !== 'undefined' ? window.location.origin : '/';
+  const currentUrl = typeof window !== 'undefined' ? new URL(window.location.href) : null;
+  const desktopViewActive = currentUrl?.searchParams.get('view') === 'desktop';
+  const desktopVersionUrl = currentUrl
+    ? (() => {
+        const nextUrl = new URL(currentUrl.href);
+        nextUrl.searchParams.delete('view');
+
+        if (!desktopViewActive) {
+          nextUrl.searchParams.set('view', 'desktop');
+        }
+
+        nextUrl.hash = '';
+        return nextUrl.toString();
+      })()
+    : '/';
+  const desktopVersionLabel = desktopViewActive ? 'View mobile version' : 'View desktop version';
 
   return (
     <footer className="footer">
@@ -58,8 +73,8 @@ export function Footer() {
             Start Your Website
             <ArrowUpRight size={16} />
           </a>
-          <a className="footer__desktopLink" href={desktopVersionUrl} target="_blank" rel="noreferrer">
-            View desktop version
+          <a className="footer__desktopLink" href={desktopVersionUrl}>
+            {desktopVersionLabel}
             <ArrowUpRight size={14} />
           </a>
         </div>

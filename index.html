@@ -21,13 +21,25 @@
         try {
           const storageKey = 'nova-studio-theme';
           const savedTheme = localStorage.getItem(storageKey);
+          const viewParam = new URLSearchParams(window.location.search).get('view');
           const theme =
             savedTheme === 'light' || savedTheme === 'dark'
               ? savedTheme
               : 'dark';
+          const desktopView = viewParam === 'desktop';
 
           document.documentElement.dataset.theme = theme;
           document.documentElement.style.colorScheme = theme;
+
+          if (desktopView) {
+            const viewport = document.querySelector('meta[name="viewport"]');
+
+            if (viewport) {
+              const desktopWidth = 1440;
+              const scale = Math.min(window.innerWidth / desktopWidth, 1);
+              viewport.content = `width=${desktopWidth}, initial-scale=${scale}`;
+            }
+          }
 
           const meta = document.querySelector('meta[name="theme-color"]');
           if (meta) {
