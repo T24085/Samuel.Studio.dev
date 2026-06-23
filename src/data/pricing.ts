@@ -56,7 +56,7 @@ export const packages: Package[] = [
     description: 'A full business website built to show your services, build trust, and turn visitors into customers.',
     bestFor: ['Service Businesses', 'Retail & Local', 'Creators'],
     includes: [
-      'Up to 8-10 pages',
+      '4-7 pages',
       'Custom homepage',
       'Services pages',
       'About page',
