@@ -3017,9 +3017,43 @@
       background: var(--cell-bg-strong);
     }
 
+    .day--engaged {
+      box-shadow: inset 0 0 0 1px rgba(74, 222, 128, 0.34);
+    }
+
     .day__num {
       font-size: 12px;
       color: var(--muted);
+    }
+
+    .day__presence {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(14, 31, 18, 0.76);
+      border: 1px solid rgba(74, 222, 128, 0.26);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+      color: #bff4cf;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .day__presenceDot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #4ade80;
+      box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.16);
+      flex: 0 0 auto;
     }
 
     .day__events {
@@ -5072,6 +5106,38 @@
       return `${year}-${month}-${day}`;
     }
 
+    function getChatAgentEngagement(data) {
+      if (!data || data.siteKey !== 'emmanuel-church') {
+        return null;
+      }
+
+      const status = data.chatAgentStatus;
+      const activeStatuses = Array.isArray(status?.statuses)
+        ? status.statuses.filter((item) => item && item.hasRecentActivity)
+        : [];
+      const activeCount = activeStatuses.length || Number(status?.activeCount) || 0;
+      if (activeCount <= 0) {
+        return null;
+      }
+
+      const latest = activeStatuses[0] || status?.latest || null;
+      const latestAt = latest?.lastMessageAt || latest?.receivedAt || '';
+      if (!latestAt) {
+        return null;
+      }
+
+      const timestamp = new Date(latestAt);
+      if (Number.isNaN(timestamp.getTime())) {
+        return null;
+      }
+
+      return {
+        dateKey: formatDateKey(timestamp),
+        label: 'Nova active',
+        title: `Nova active ${formatRelativeMinutes(latestAt)}`,
+      };
+    }
+
     function formatDetailValue(value, fallback = 'Not listed') {
       if (Array.isArray(value)) {
         const items = value
@@ -7083,6 +7149,7 @@
       const orderedBubbleItems = [...visibleBubbleItems].sort(sortCalendarItems);
       const grouped = groupedEvents(orderedBubbleItems);
       const todayKey = formatDateKey(new Date());
+      const engagement = getChatAgentEngagement(data);
 
       els.monthLabel.textContent = formatMonthLabel(baseDate);
       els.calendarCount.textContent = `${orderedBubbleItems.length} calendar item${orderedBubbleItems.length === 1 ? '' : 's'}`;
@@ -7112,10 +7179,17 @@
         const previewItems = isExpanded ? items : items.slice(0, DAY_PREVIEW_LIMIT);
         const hiddenCount = Math.max(items.length - DAY_PREVIEW_LIMIT, 0);
         const hasOverflow = items.length > DAY_PREVIEW_LIMIT;
+        const isEngagedDay = engagement && engagement.dateKey === key;
 
         return `
-          <div class="day ${isToday ? 'day--today' : ''} ${isExpanded ? 'day--expanded' : ''}" data-date="${key}">
+          <div class="day ${isToday ? 'day--today' : ''} ${isEngagedDay ? 'day--engaged' : ''} ${isExpanded ? 'day--expanded' : ''}" data-date="${key}">
             <div class="day__num">${day.getDate()}</div>
+            ${isEngagedDay ? `
+              <div class="day__presence" title="${escapeHtml(engagement.title)}" aria-label="${escapeHtml(engagement.title)}">
+                <span class="day__presenceDot" aria-hidden="true"></span>
+                <span>${escapeHtml(engagement.label)}</span>
+              </div>
+            ` : ''}
             <div class="day__events ${isExpanded ? 'day__events--expanded' : ''}">
               ${previewItems.map((item) => renderCalendarDayEventMarkup(item, { compact: true })).join('')}
               ${hasOverflow ? `
