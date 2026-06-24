@@ -5,6 +5,7 @@ import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 import {
   buildLocalLeadRecord,
+  loadLocalCalendarState,
   persistLocalLeadAction,
   persistLocalCalendarEvent,
   persistLocalLeadInbox,
@@ -2325,17 +2326,23 @@ async function handleAssistantChat(req, res) {
   const modelCandidates = buildModelCandidates(payload.modelCandidates, transcript.model, installedModels);
 
   let reply = null;
+  const requestLogPrefix = `[assistant-chat:${transcript.siteKey || 'unknown'}:${transcript.sessionId || 'no-session'}]`;
 
   for (const model of modelCandidates) {
     try {
+      console.log(`${requestLogPrefix} trying model ${model}`);
       reply = await callOllama(model, systemPrompt, transcript);
+      console.log(`${requestLogPrefix} model ${model} returned ${reply.usedFallback ? 'fallback' : 'live'} response`);
       break;
-    } catch {
+    } catch (error) {
+      const reason = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+      console.warn(`${requestLogPrefix} model ${model} failed: ${reason}`);
       reply = null;
     }
   }
 
   if (churchSite && (!reply || reply.usedFallback)) {
+    console.log(`${requestLogPrefix} retrying Emmanuel Church with simplified transcript`);
     const simplifiedTranscript = {
       ...transcript,
       messages: latestUserMessage ? [latestUserMessage] : [],
@@ -2346,15 +2353,19 @@ async function handleAssistantChat(req, res) {
         const simplifiedReply = await callOllama(model, systemPrompt, simplifiedTranscript);
         if (simplifiedReply && !simplifiedReply.usedFallback && simplifiedReply.content) {
           reply = simplifiedReply;
+          console.log(`${requestLogPrefix} simplified retry succeeded with model ${model}`);
           break;
         }
-      } catch {
+      } catch (error) {
+        const reason = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+        console.warn(`${requestLogPrefix} simplified retry failed for model ${model}: ${reason}`);
         // Keep the original reply if the stripped-down retry also fails.
       }
     }
   }
 
   if (!reply) {
+    console.warn(`${requestLogPrefix} falling back to static reply for request: ${requestText}`);
     reply = {
       content: buildFallbackReply(transcript.siteKey, requestText),
       model: modelCandidates[0] || transcript.model,
