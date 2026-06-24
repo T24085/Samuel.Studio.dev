@@ -677,15 +677,9 @@ img {
 .hero__copy h1 .hero__headlineAccent {
   color: #cf5c36;
   padding-left: 0;
-  text-shadow:
-    0 0 10px rgba(239, 200, 139, 0.22),
-    0 0 24px rgba(207, 92, 54, 0.18);
-  animation: hero-accent-glow 7.5s ease-in-out infinite;
-  will-change: transform, background-position, text-shadow;
-}
-
-.hero__copy h1 .hero__headlineAccent:nth-of-type(2) {
-  animation-delay: 900ms;
+  text-shadow: none;
+  animation: none;
+  will-change: auto;
 }
 
 .hero__lede {
@@ -3004,23 +2998,6 @@ img {
 
   to {
     transform: translate3d(0, -1.25%, 0) scale(1.06);
-  }
-}
-
-@keyframes hero-accent-glow {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-    text-shadow:
-      0 0 10px rgba(239, 200, 139, 0.22),
-      0 0 24px rgba(207, 92, 54, 0.18);
-  }
-
-  50% {
-    transform: translate3d(0, -1px, 0) scale(1.01);
-    text-shadow:
-      0 0 12px rgba(239, 200, 139, 0.3),
-      0 0 28px rgba(207, 92, 54, 0.24);
   }
 }
 

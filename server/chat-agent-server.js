@@ -1,5 +1,5 @@
 import { createServer } from 'node:http';
-import { appendFile, mkdir, writeFile } from 'node:fs/promises';
+import { appendFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
@@ -11,7 +11,7 @@ import {
   syncLocalCalendarBackup,
 } from './local-calendar-store.js';
 import { resolveWritableRuntimeDir } from './runtime-paths.js';
-import { getSiteLabel, resolveSiteKey } from './site-registry.js';
+import { getSiteLabel, listSiteDefinitions, resolveSiteKey } from './site-registry.js';
 
 const host = process.env.CHAT_AGENT_HOST || '127.0.0.1';
 const port = Number(process.env.CHAT_AGENT_PORT || 8787);
@@ -19,16 +19,110 @@ const ollamaChatUrl = process.env.OLLAMA_CHAT_URL || 'http://127.0.0.1:11434/api
 const ollamaTagsUrl = process.env.OLLAMA_TAGS_URL || ollamaChatUrl.replace(/\/api\/chat\/?$/, '/api/tags');
 const routeAssistantChat = '/api/assistant-chat';
 const routeChatLog = '/api/chat-log';
+const routeStatus = '/api/status';
 const routeHealth = '/health';
+const defaultActivityWindowMs = Number(process.env.CHAT_AGENT_ACTIVE_WINDOW_MS || 5 * 60 * 1000);
 const defaultOllamaModelCandidates = ['gemma4:12b', 'gemma3:12b', 'llama3.1:8b', 'qwen2.5:7b'];
 const defaultOwnerEmail = 'christoffersent@gmail.com';
 const moduleRootDir = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const colombiaSiteKey = 'samuel-studio-columbia';
+const emmanuelChurchSiteKey = 'emmanuel-church';
 const colombiaIntakeFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScCqxvBZ6NTmwh-qyphZyjKzdhz3-jouihSZjAXhRMkBaRpxw/viewform?usp=header';
 const colombiaContactEmail = 'capture@smauel.studio';
+const emmanuelChurchAddress = '1300 N. Vine Street, Abilene, KS 67410';
+const emmanuelChurchPhone = '(785) 263-3342';
+const emmanuelChurchCalendarUrl = 'https://emmanuel.fellowshiponego.com/calendar/calendar_public/embeded/45cbaa3ef777e9a92378912fec818fa8#month';
+const emmanuelChurchEmail = 'mriegel@ecabilene.org';
+const emmanuelChurchKnowledgeTimeZone = 'America/Chicago';
 
 function isColombiaSite(siteKey) {
   return resolveSiteKey(siteKey) === colombiaSiteKey;
+}
+
+function isEmmanuelChurchSite(siteKey) {
+  return resolveSiteKey(siteKey) === emmanuelChurchSiteKey;
+}
+
+function formatChurchEventDateTime(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return '';
+  }
+
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone: emmanuelChurchKnowledgeTimeZone,
+    dateStyle: 'full',
+    timeStyle: 'short',
+  }).format(date);
+}
+
+function buildChurchEventSummary(event) {
+  const rawTitle = cleanText(event?.title, cleanText(event?.projectConsideration, cleanText(event?.customerName, 'Church event')));
+  const rawSummary = cleanText(event?.summary, cleanText(event?.nextStep, ''));
+  const rawWhen = cleanText(event?.startIso, cleanText(event?.createdAt, ''));
+  const formattedWhen = formatChurchEventDateTime(rawWhen);
+  const details = rawSummary && rawSummary !== rawTitle ? ` - ${rawSummary}` : '';
+
+  if (!formattedWhen) {
+    return rawTitle ? `- ${rawTitle}${details}` : '';
+  }
+
+  return `- ${formattedWhen}: ${rawTitle}${details}`;
+}
+
+async function buildChurchUpcomingEventsPrompt(siteKey) {
+  const state = await loadLocalCalendarState(siteKey);
+  const now = Date.now();
+  const upcomingEvents = (Array.isArray(state.events) ? state.events : [])
+    .filter((event) => {
+      const when = new Date(event?.startIso || event?.createdAt || '');
+      return Number.isFinite(when.getTime()) && when.getTime() >= now - 60 * 60 * 1000;
+    })
+    .sort((left, right) => new Date(left.startIso || left.createdAt || 0).getTime() - new Date(right.startIso || right.createdAt || 0).getTime())
+    .slice(0, 6);
+
+  if (!upcomingEvents.length) {
+    return [
+      'Upcoming church events:',
+      '- No future events are currently recorded in the Emmanuel Church calendar.',
+      `- Public calendar: ${emmanuelChurchCalendarUrl}`,
+    ].join('\n');
+  }
+
+  return [
+    'Upcoming church events:',
+    ...upcomingEvents.map((event) => buildChurchEventSummary(event)).filter(Boolean),
+    `- Public calendar: ${emmanuelChurchCalendarUrl}`,
+  ].join('\n');
+}
+
+function buildChurchKnowledgePrompt() {
+  return [
+    'Emmanuel Church knowledge base:',
+    '- Emmanuel Church is a gospel-centered church in Abilene, Kansas, for Abilene.',
+    '- Mission: to see people transformed and families strengthened through the love, grace, worship, and truth of Jesus Christ.',
+    `- Address: ${emmanuelChurchAddress}`,
+    `- Phone: ${emmanuelChurchPhone}`,
+    `- Primary email: ${emmanuelChurchEmail}`,
+    '- Sunday rhythms: First Service at 8:45am, Discipleship Hour at 10:00am - 10:45am, and Second Service at 11:00am.',
+    '- Family care: Nursing Mothers Room 210, nursery support, and stream access for young families.',
+    '- Ministries: Emmanuel Preschool, Emmanuel Kids, Momentum Youth, Adult Discipleship Groups, Wednesday Night B.L.A.S.T., and Worship Arts Ministry.',
+    '- Core values: Love, Grace, Worship, and Truth.',
+    '- Public calendar embed: ' + emmanuelChurchCalendarUrl,
+  ].join('\n');
+}
+
+function buildChurchSystemPrompt() {
+  return [
+    'You are the website assistant for Emmanuel Church.',
+    'Answer questions about Emmanuel Church clearly and warmly.',
+    'Do not mention Samuel Studio packages, pricing, or project intake.',
+    'Use the provided church knowledge base and upcoming events list as the source of truth.',
+    'If asked about an upcoming event, answer from the event list first and mention the public calendar if helpful.',
+    'If a requested event is not listed, say it is not currently shown in the public calendar.',
+    'Keep replies concise, specific, and welcoming.',
+    'When the question is about visiting, prioritize service times, address, and next steps.',
+  ].join('\n');
 }
 
 function resolveChatAgentPaths(siteKey = '') {
@@ -52,6 +146,93 @@ function resolveChatAgentPaths(siteKey = '') {
     sessionDirPath: resolve(rootDir, 'chat-sessions'),
     crmReportDirPath: resolve(rootDir, 'crm-reports'),
     crmLeadLogPath: resolve(rootDir, 'crm-leads.ndjson'),
+  };
+}
+
+function parseNdjsonLines(rawText) {
+  return rawText
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      try {
+        return JSON.parse(line);
+      } catch {
+        return null;
+      }
+    })
+    .filter(Boolean);
+}
+
+async function readLatestTranscriptSummary(siteKey) {
+  const chatPaths = resolveChatAgentPaths(siteKey);
+
+  try {
+    const raw = await readFile(chatPaths.logFilePath, 'utf8');
+    const entries = parseNdjsonLines(raw);
+
+    if (!entries.length) {
+      return null;
+    }
+
+    const transcript = [...entries].reverse().find((entry) => entry && typeof entry === 'object') || null;
+    if (!transcript) {
+      return null;
+    }
+
+    const receivedAt = typeof transcript.receivedAt === 'string' ? transcript.receivedAt : '';
+    const receivedAtMs = receivedAt ? new Date(receivedAt).getTime() : NaN;
+    const lastMessageAt = Array.isArray(transcript.messages) && transcript.messages.length
+      ? transcript.messages.reduce((latest, message) => Math.max(latest, typeof message?.createdAt === 'number' ? message.createdAt : 0), 0)
+      : 0;
+    const updatedAtMs = Number.isFinite(receivedAtMs) ? receivedAtMs : lastMessageAt;
+    const hasRecentActivity = Number.isFinite(updatedAtMs) && updatedAtMs > 0 && (Date.now() - updatedAtMs) <= defaultActivityWindowMs;
+    const latestUserMessage = Array.isArray(transcript.messages)
+      ? [...transcript.messages].reverse().find((message) => message?.role === 'user' && typeof message.content === 'string')
+      : null;
+
+    return {
+      siteKey: chatPaths.siteKey,
+      siteName: chatPaths.siteName,
+      sessionId: typeof transcript.sessionId === 'string' ? transcript.sessionId : '',
+      pageUrl: typeof transcript.pageUrl === 'string' ? transcript.pageUrl : '',
+      model: typeof transcript.model === 'string' ? transcript.model : '',
+      receivedAt: receivedAt || (Number.isFinite(updatedAtMs) ? new Date(updatedAtMs).toISOString() : ''),
+      lastMessageAt: Number.isFinite(lastMessageAt) ? new Date(lastMessageAt).toISOString() : '',
+      hasRecentActivity,
+      messageCount: Array.isArray(transcript.messages) ? transcript.messages.length : 0,
+      latestUserMessage: latestUserMessage ? {
+        content: latestUserMessage.content,
+        createdAt: typeof latestUserMessage.createdAt === 'number' ? latestUserMessage.createdAt : null,
+      } : null,
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function buildChatAgentStatusPayload(siteKey = '') {
+  const requestedKey = cleanText(siteKey, '');
+  const siteDefinitions = listSiteDefinitions();
+  const targetSites = requestedKey && requestedKey !== 'all'
+    ? siteDefinitions.filter((site) => site.key === resolveSiteKey(requestedKey))
+    : siteDefinitions;
+
+  const statuses = (await Promise.all(targetSites.map((site) => readLatestTranscriptSummary(site.key)))).filter(Boolean);
+  const activeStatuses = statuses.filter((status) => status.hasRecentActivity);
+  const latest = [...statuses]
+    .filter(Boolean)
+    .sort((left, right) => new Date(right.receivedAt || right.lastMessageAt || 0).getTime() - new Date(left.receivedAt || left.lastMessageAt || 0).getTime())[0] || null;
+
+  return {
+    ok: true,
+    activeWindowMs: defaultActivityWindowMs,
+    siteKey: requestedKey || 'all',
+    siteName: requestedKey && requestedKey !== 'all' ? getSiteLabel(resolveSiteKey(requestedKey)) : 'All Sites',
+    active: activeStatuses.length > 0,
+    activeCount: activeStatuses.length,
+    latest,
+    statuses,
   };
 }
 
@@ -283,7 +464,37 @@ function splitLeadFragments(value) {
     .filter(Boolean);
 }
 
-function inferProjectConsiderationFromText(userText) {
+function inferProjectConsiderationFromText(userText, siteKey = '') {
+  if (isColombiaSite(siteKey)) {
+    const query = userText.toLowerCase();
+
+    if (query.includes('editorial') || query.includes('campaign') || query.includes('fashion') || query.includes('commercial') || query.includes('lookbook') || query.includes('brand shoot')) {
+      return 'Editorial & Campaign Work';
+    }
+
+    if (query.includes('headshot') || query.includes('headshots') || query.includes('personal brand') || query.includes('personal branding') || query.includes('identity') || query.includes('profile photo') || query.includes('portrait')) {
+      return 'Personal Identity';
+    }
+
+    if (query.includes('story') || query.includes('documentary') || query.includes('visual story') || query.includes('narrative') || query.includes('process') || query.includes('behind the scenes')) {
+      return 'Visual Story Projects';
+    }
+
+    if (query.includes('private portrait') || query.includes('family') || query.includes('couple') || query.includes('solo portrait') || query.includes('studio portrait') || query.includes('portrait')) {
+      return 'Private Portraits';
+    }
+
+    if (query.includes('price') || query.includes('pricing') || query.includes('cost') || query.includes('budget')) {
+      return 'Custom quotes';
+    }
+
+    if (query.includes('book') || query.includes('booking') || query.includes('schedule') || query.includes('available') || query.includes('availability') || query.includes('contact')) {
+      return 'Book through intake';
+    }
+
+    return '';
+  }
+
   if (isProductIntent(userText)) {
     return 'Business Growth Website + Sell Products or Services Online';
   }
@@ -700,6 +911,8 @@ function buildColombiaSystemPrompt() {
   return [
     'You are Nova, the Samuel Studio Columbia photography assistant.',
     'Focus on photography bookings and creative sessions, not website packages.',
+    'Do not describe Samuel Studio Columbia as a web design business.',
+    'Do not say photography is unavailable or redirect to another Samuel Studio website.',
     'Use the service names Editorial & Campaign Work, Personal Identity, Visual Story Projects, and Private Portraits when relevant.',
     'Quotes are custom, so do not invent fixed pricing.',
     'Ask for session type, date, location, references, wardrobe, usage, deliverables, and budget when details are missing.',
@@ -712,6 +925,7 @@ function buildColombiaSystemPrompt() {
 function buildColombiaKnowledgePrompt() {
   return [
     'Samuel Studio Columbia knowledge base:',
+    '- This branch is photography-first. Do not answer with website packages or web design positioning.',
     '- Editorial & Campaign Work: art-directed shoots for campaigns, lookbooks, launches, and styled commercial imagery.',
     '- Personal Identity: headshots, personal branding, profile imagery, and polished portrait direction.',
     '- Visual Story Projects: narrative and documentary work for stories, process, and place.',
@@ -826,6 +1040,11 @@ function buildColombiaIntentDirective(userText) {
 
 function normalizeColombiaIntentResponse(userText, responseText) {
   const query = userText.toLowerCase();
+  const cleanedResponse = cleanText(responseText, '');
+
+  if (cleanedResponse && isGenericColombiaWebsiteResponse(cleanedResponse)) {
+    return buildColombiaFallbackReply(userText);
+  }
 
   if (query.includes('editorial') || query.includes('campaign') || query.includes('fashion') || query.includes('commercial') || query.includes('lookbook') || query.includes('brand shoot')) {
     return buildBrandedRecommendationResponse(
@@ -875,7 +1094,7 @@ function normalizeColombiaIntentResponse(userText, responseText) {
     );
   }
 
-  return responseText.trim();
+  return cleanedResponse || buildColombiaFallbackReply(userText);
 }
 
 function buildColombiaFallbackReply(userText) {
@@ -908,6 +1127,27 @@ function buildColombiaFallbackReply(userText) {
   return `Tell me what kind of session you want, what it should communicate, and when you need it. If you are ready to book, use the intake form: ${colombiaIntakeFormUrl} or email ${colombiaContactEmail}.`;
 }
 
+function isGenericColombiaWebsiteResponse(responseText) {
+  const lower = responseText.toLowerCase();
+
+  return [
+    'web design',
+    'website packages',
+    'website package',
+    'starter website',
+    'professional website',
+    'business growth website',
+    'digital growth',
+    'lead capture',
+    'website builder',
+    'website development',
+    'we do not offer photography services',
+    'photography services are not',
+    'photography is unavailable',
+    'online presence',
+  ].some((phrase) => lower.includes(phrase));
+}
+
 function analyzeLead(transcript) {
   const conversationMessages = getConversationMessages(transcript);
   const latestUserMessage = getLatestUserMessage(transcript);
@@ -921,7 +1161,7 @@ function analyzeLead(transcript) {
       continue;
     }
 
-    const inferredProject = inferProjectConsiderationFromText(message.content);
+    const inferredProject = inferProjectConsiderationFromText(message.content, transcript.siteKey);
     if (inferredProject) {
       projectConsideration = inferredProject;
       break;
@@ -976,6 +1216,7 @@ function assessLeadQuality(transcript, lead) {
   const latestUserText = lead.latestUserMessage.toLowerCase();
   const reasons = [];
   let score = 0;
+  const isColombiaLead = isColombiaSite(transcript.siteKey);
 
   if (lead.customerName !== 'Unknown' && lead.customerEmail !== 'Unknown' && lead.customerPhone !== 'Unknown') {
     score += 25;
@@ -1040,6 +1281,65 @@ function assessLeadQuality(transcript, lead) {
   if (lead.projectBrief.pageCount) {
     score += 2;
     reasons.push(`page count mentioned: ${lead.projectBrief.pageCount}`);
+  }
+
+  if (isColombiaLead) {
+    const colombiaBrief = extractColombiaSessionBrief(transcript);
+
+    if (lead.projectConsideration !== 'Needs follow-up') {
+      score += 15;
+      reasons.push(`session identified: ${lead.projectConsideration}`);
+    }
+
+    if (colombiaBrief.sessionTypes.length > 0) {
+      score += 10;
+      reasons.push(`session type mentioned: ${colombiaBrief.sessionTypes.join(', ')}`);
+    }
+
+    if (colombiaBrief.shootDate) {
+      score += 5;
+      reasons.push(`date mentioned: ${colombiaBrief.shootDate}`);
+    }
+
+    if (colombiaBrief.location) {
+      score += 5;
+      reasons.push(`location mentioned: ${colombiaBrief.location}`);
+    }
+
+    if (colombiaBrief.references.length > 0) {
+      score += 5;
+      reasons.push(`references mentioned: ${colombiaBrief.references.join(', ')}`);
+    }
+
+    if (colombiaBrief.wardrobe) {
+      score += 3;
+      reasons.push(`wardrobe mentioned: ${colombiaBrief.wardrobe}`);
+    }
+
+    if (colombiaBrief.usage) {
+      score += 5;
+      reasons.push(`usage mentioned: ${colombiaBrief.usage}`);
+    }
+
+    if (colombiaBrief.deliverables) {
+      score += 5;
+      reasons.push(`deliverables mentioned: ${colombiaBrief.deliverables}`);
+    }
+
+    if (colombiaBrief.budget) {
+      score += 5;
+      reasons.push(`budget mentioned: ${colombiaBrief.budget}`);
+    }
+
+    if (colombiaBrief.bookingStatus) {
+      score += 10;
+      reasons.push('booking intent present');
+    }
+
+    if (latestUserText.includes('session') || latestUserText.includes('shoot')) {
+      score += 5;
+      reasons.push('session intent present');
+    }
   }
 
   if (userMessages.length >= 2) {
@@ -1324,9 +1624,18 @@ function buildSessionMemoryPrompt(transcript) {
   ].join('\n');
 }
 
-function buildWebsiteKnowledgePrompt(siteKey) {
+async function buildWebsiteKnowledgePrompt(siteKey) {
   if (isColombiaSite(siteKey)) {
     return buildColombiaKnowledgePrompt();
+  }
+
+  if (isEmmanuelChurchSite(siteKey)) {
+    const churchEventsPrompt = await buildChurchUpcomingEventsPrompt(siteKey);
+
+    return [
+      buildChurchKnowledgePrompt(),
+      churchEventsPrompt,
+    ].join('\n');
   }
 
   return [
@@ -1361,6 +1670,10 @@ function buildIntentPrimer(siteKey, userText) {
     return buildColombiaIntentPrimer(userText);
   }
 
+  if (isEmmanuelChurchSite(siteKey)) {
+    return '';
+  }
+
   if (isProductIntent(userText)) {
     return 'Recommendation anchor: Business Growth Website. Mention Sell Products or Services Online when checkout, payments, or digital delivery are needed. After the recommendation, ask one short follow-up question about goals, pages, timeline, budget, audience, or features that are still missing.';
   }
@@ -1379,6 +1692,10 @@ function buildIntentPrimer(siteKey, userText) {
 function buildIntentDirective(siteKey, userText) {
   if (isColombiaSite(siteKey)) {
     return buildColombiaIntentDirective(userText);
+  }
+
+  if (isEmmanuelChurchSite(siteKey)) {
+    return '';
   }
 
   if (isProductIntent(userText)) {
@@ -1538,6 +1855,10 @@ function normalizeIntentResponse(siteKey, userText, responseText) {
     return normalizeColombiaIntentResponse(userText, responseText);
   }
 
+  if (isEmmanuelChurchSite(siteKey)) {
+    return responseText.trim() || buildFallbackReply(siteKey, userText);
+  }
+
   if (isProductIntent(userText)) {
     return buildBrandedRecommendationResponse(
       'Business Growth Website.',
@@ -1588,6 +1909,20 @@ async function writeTranscript(transcript) {
 function buildFallbackReply(siteKey, userText) {
   if (isColombiaSite(siteKey)) {
     return buildColombiaFallbackReply(userText);
+  }
+
+  if (isEmmanuelChurchSite(siteKey)) {
+    const query = userText.toLowerCase();
+
+    if (query.includes('event') || query.includes('calendar') || query.includes('upcoming')) {
+      return `The Emmanuel Church public calendar is the best place to confirm upcoming events. I can also answer from the current church calendar if you ask about a specific date or ministry.`;
+    }
+
+    if (query.includes('service') || query.includes('time') || query.includes('when')) {
+      return `Emmanuel Church meets at 8:45am and 11:00am on Sundays, with Discipleship Hour from 10:00am to 10:45am. The church is at ${emmanuelChurchAddress}.`;
+    }
+
+    return `Emmanuel Church is at ${emmanuelChurchAddress} and you can view the public calendar for upcoming events here: ${emmanuelChurchCalendarUrl}.`;
   }
 
   const query = userText.toLowerCase();
@@ -1826,13 +2161,28 @@ async function callOllama(model, systemPrompt, transcript) {
   const timeoutId = setTimeout(() => controller.abort(), 60000);
   const siteKey = transcript.siteKey;
   const latestUserMessage = [...transcript.messages].reverse().find((message) => message.role === 'user');
-  const intentPrimer = latestUserMessage ? buildIntentPrimer(siteKey, latestUserMessage.content) : '';
-  const intentDirective = latestUserMessage ? buildIntentDirective(siteKey, latestUserMessage.content) : '';
-  const knowledgePrompt = buildWebsiteKnowledgePrompt(siteKey);
-  const projectIntakePrompt = buildProjectIntakePrompt(transcript);
-  const effectiveSystemPrompt = isColombiaSite(siteKey) ? buildColombiaSystemPrompt() : systemPrompt;
+  const isChurchSite = isEmmanuelChurchSite(siteKey);
+  const intentPrimer = latestUserMessage && !isChurchSite ? buildIntentPrimer(siteKey, latestUserMessage.content) : '';
+  const intentDirective = latestUserMessage && !isChurchSite ? buildIntentDirective(siteKey, latestUserMessage.content) : '';
+  const knowledgePrompt = await buildWebsiteKnowledgePrompt(siteKey);
+  const projectIntakePrompt = !isChurchSite ? buildProjectIntakePrompt(transcript) : '';
+  const effectiveSystemPrompt = isColombiaSite(siteKey)
+    ? buildColombiaSystemPrompt()
+    : isChurchSite
+      ? buildChurchSystemPrompt()
+      : systemPrompt;
 
   try {
+    const messages = [
+      { role: 'system', content: effectiveSystemPrompt },
+      ...(isChurchSite ? [] : [{ role: 'system', content: buildSessionMemoryPrompt(transcript) }]),
+      { role: 'system', content: knowledgePrompt },
+      ...(projectIntakePrompt ? [{ role: 'system', content: projectIntakePrompt }] : []),
+      ...(intentDirective ? [{ role: 'system', content: intentDirective }] : []),
+      ...(intentPrimer ? [{ role: 'system', content: intentPrimer }] : []),
+      ...buildConversationMessages(transcript),
+    ];
+
     const response = await fetch(ollamaChatUrl, {
       method: 'POST',
       headers: {
@@ -1841,15 +2191,7 @@ async function callOllama(model, systemPrompt, transcript) {
       signal: controller.signal,
       body: JSON.stringify({
         model,
-        messages: [
-          { role: 'system', content: effectiveSystemPrompt },
-          { role: 'system', content: buildSessionMemoryPrompt(transcript) },
-          { role: 'system', content: knowledgePrompt },
-          { role: 'system', content: projectIntakePrompt },
-          ...(intentDirective ? [{ role: 'system', content: intentDirective }] : []),
-          ...(intentPrimer ? [{ role: 'system', content: intentPrimer }] : []),
-          ...buildConversationMessages(transcript),
-        ],
+        messages,
         stream: false,
         think: false,
         options: {
@@ -1900,7 +2242,8 @@ async function handleAssistantChat(req, res) {
 
   const payload = await readJsonBody(req);
   const transcript = normalizeTranscript(payload);
-  const hasIntake = transcript.clientProfile.name !== 'Unknown' && transcript.clientProfile.email !== 'Unknown' && transcript.clientProfile.phone !== 'Unknown';
+  const churchSite = isEmmanuelChurchSite(transcript.siteKey);
+  const hasIntake = churchSite || (transcript.clientProfile.name !== 'Unknown' && transcript.clientProfile.email !== 'Unknown' && transcript.clientProfile.phone !== 'Unknown');
 
   if (!hasIntake) {
     jsonResponse(res, 400, {
@@ -1915,6 +2258,8 @@ async function handleAssistantChat(req, res) {
   const requestText = latestUserMessage?.content || '';
   const systemPrompt = isColombiaSite(transcript.siteKey)
     ? buildColombiaSystemPrompt()
+    : churchSite
+      ? buildChurchSystemPrompt()
     : (typeof payload.systemPrompt === 'string' && payload.systemPrompt.trim() ? payload.systemPrompt.trim() : 'You are Nova, the Samuel Studio assistant.');
   const installedModels = await fetchInstalledOllamaModels();
   const modelCandidates = buildModelCandidates(payload.modelCandidates, transcript.model, installedModels);
@@ -1954,6 +2299,27 @@ async function handleAssistantChat(req, res) {
     model: reply.model,
     messages: [...transcript.messages, assistantMessage],
   };
+
+  if (churchSite) {
+    await writeTranscript(nextTranscript);
+
+    jsonResponse(res, 200, {
+      ok: true,
+      content: reply.content,
+      model: reply.model,
+      usedFallback: reply.usedFallback,
+      assistant: transcript.assistant,
+      siteKey: transcript.siteKey,
+      siteName: transcript.siteName,
+      loggedAt: transcript.loggedAt,
+      email: {
+        emailed: false,
+        reason: 'Church site chats are logged locally without CRM email.',
+      },
+      crm: null,
+    });
+    return;
+  }
 
   const crmResult = await persistCrmLead(nextTranscript);
 
@@ -2000,6 +2366,27 @@ async function handleChatLog(req, res) {
   });
 }
 
+async function handleStatusRequest(req, res) {
+  if (req.method === 'OPTIONS') {
+    res.statusCode = 204;
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.end();
+    return;
+  }
+
+  if (req.method !== 'GET') {
+    textResponse(res, 405, 'Method Not Allowed');
+    return;
+  }
+
+  const url = req.url ? new URL(req.url, `http://${host}:${port}`) : null;
+  const payload = await buildChatAgentStatusPayload(url?.searchParams.get('site') || '');
+
+  jsonResponse(res, 200, payload);
+}
+
 const server = createServer(async (req, res) => {
   try {
     const url = req.url ? new URL(req.url, `http://${host}:${port}`) : null;
@@ -2021,6 +2408,11 @@ const server = createServer(async (req, res) => {
 
     if (url.pathname === routeChatLog) {
       await handleChatLog(req, res);
+      return;
+    }
+
+    if (url.pathname === routeStatus) {
+      await handleStatusRequest(req, res);
       return;
     }
 
