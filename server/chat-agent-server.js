@@ -8,6 +8,7 @@ import {
   persistLocalLeadAction,
   persistLocalCalendarEvent,
   persistLocalLeadInbox,
+  persistLocalTeamChatMessage,
   syncLocalCalendarBackup,
 } from './local-calendar-store.js';
 import { resolveWritableRuntimeDir } from './runtime-paths.js';
@@ -345,10 +346,10 @@ async function fetchInstalledOllamaModels() {
 function buildModelCandidates(payloadCandidates, transcriptModel, installedModels) {
   return uniqueStrings([
     ...(Array.isArray(payloadCandidates) ? payloadCandidates : []),
-    transcriptModel,
     ...installedModels,
     ...defaultOllamaModelCandidates,
-  ]);
+    transcriptModel,
+  ]).filter((model) => model && model !== 'unknown-model');
 }
 
 function sanitizeSessionId(sessionId) {
@@ -1906,6 +1907,64 @@ async function writeTranscript(transcript) {
   }
 }
 
+async function persistChurchChatConversation(transcript, assistantMessage) {
+  const latestUserMessage = getLatestUserMessage(transcript);
+  const visitorName = cleanText(transcript.clientProfile?.name, '') !== 'Unknown'
+    ? cleanText(transcript.clientProfile?.name, 'Website Visitor')
+    : 'Website Visitor';
+  const siteThreadId = `site:${transcript.siteKey}`;
+  const siteThreadName = `${transcript.siteName || 'Emmanuel Church'} Website Chat`;
+  const userMessage = latestUserMessage && typeof latestUserMessage.content === 'string' && latestUserMessage.content.trim()
+    ? {
+        id: `chat_${transcript.sessionId}_user_${latestUserMessage.createdAt || Date.now()}`,
+        threadId: siteThreadId,
+        threadName: siteThreadName,
+        siteKey: transcript.siteKey,
+        siteName: transcript.siteName,
+        profileId: '',
+        authorName: visitorName,
+        avatarDataUrl: '',
+        avatarColor: '',
+        message: latestUserMessage.content.trim(),
+        leadId: '',
+        leadName: '',
+        authorUserId: '',
+        authorUsername: '',
+        authorDisplayName: visitorName,
+        source: 'church-chat',
+        createdAt: formatTimestamp(latestUserMessage.createdAt || Date.now()),
+        updatedAt: formatTimestamp(latestUserMessage.createdAt || Date.now()),
+      }
+    : null;
+
+  const assistantChatMessage = assistantMessage && typeof assistantMessage.content === 'string' && assistantMessage.content.trim()
+    ? {
+        id: `chat_${transcript.sessionId}_assistant_${assistantMessage.createdAt || Date.now()}`,
+        threadId: siteThreadId,
+        threadName: siteThreadName,
+        siteKey: transcript.siteKey,
+        siteName: transcript.siteName,
+        profileId: '',
+        authorName: transcript.assistant || 'Nova',
+        avatarDataUrl: '',
+        avatarColor: '',
+        message: assistantMessage.content.trim(),
+        leadId: '',
+        leadName: '',
+        authorUserId: '',
+        authorUsername: '',
+        authorDisplayName: transcript.assistant || 'Nova',
+        source: 'church-chat',
+        createdAt: formatTimestamp(assistantMessage.createdAt || Date.now()),
+        updatedAt: formatTimestamp(assistantMessage.createdAt || Date.now()),
+      }
+    : null;
+
+  for (const message of [userMessage, assistantChatMessage].filter(Boolean)) {
+    await persistLocalTeamChatMessage(message);
+  }
+}
+
 function buildFallbackReply(siteKey, userText) {
   if (isColombiaSite(siteKey)) {
     return buildColombiaFallbackReply(userText);
@@ -2158,7 +2217,7 @@ async function persistCrmLead(transcript) {
 
 async function callOllama(model, systemPrompt, transcript) {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 60000);
+  const timeoutId = setTimeout(() => controller.abort(), 180000);
   const siteKey = transcript.siteKey;
   const latestUserMessage = [...transcript.messages].reverse().find((message) => message.role === 'user');
   const isChurchSite = isEmmanuelChurchSite(siteKey);
@@ -2194,6 +2253,7 @@ async function callOllama(model, systemPrompt, transcript) {
         messages,
         stream: false,
         think: false,
+        keep_alive: '30m',
         options: {
           temperature: 0,
           top_p: 0.9,
@@ -2275,6 +2335,25 @@ async function handleAssistantChat(req, res) {
     }
   }
 
+  if (churchSite && (!reply || reply.usedFallback)) {
+    const simplifiedTranscript = {
+      ...transcript,
+      messages: latestUserMessage ? [latestUserMessage] : [],
+    };
+
+    for (const model of modelCandidates) {
+      try {
+        const simplifiedReply = await callOllama(model, systemPrompt, simplifiedTranscript);
+        if (simplifiedReply && !simplifiedReply.usedFallback && simplifiedReply.content) {
+          reply = simplifiedReply;
+          break;
+        }
+      } catch {
+        // Keep the original reply if the stripped-down retry also fails.
+      }
+    }
+  }
+
   if (!reply) {
     reply = {
       content: buildFallbackReply(transcript.siteKey, requestText),
@@ -2301,6 +2380,7 @@ async function handleAssistantChat(req, res) {
   };
 
   if (churchSite) {
+    await persistChurchChatConversation(nextTranscript, assistantMessage);
     await writeTranscript(nextTranscript);
 
     jsonResponse(res, 200, {

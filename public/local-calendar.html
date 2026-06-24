@@ -4284,6 +4284,26 @@
             </div>
             <p class="note" id="teamChatStatus" style="padding: 0; margin: 0;">0 team chat messages loaded for this site.</p>
           </div>
+          <div class="team-chat__panel">
+            <p class="team-chat__panelTitle">Website Assistant</p>
+            <div class="team-chat__detail">
+              <span class="team-chat__detailLabel">Connection</span>
+              <strong class="team-chat__detailValue" id="assistantStatusValue">Nova idle</strong>
+            </div>
+            <div class="team-chat__detail">
+              <span class="team-chat__detailLabel">Active sites</span>
+              <strong class="team-chat__detailValue" id="assistantActiveSitesValue">0</strong>
+            </div>
+            <div class="team-chat__detail">
+              <span class="team-chat__detailLabel">Latest site</span>
+              <strong class="team-chat__detailValue" id="assistantLatestSiteValue">None yet</strong>
+            </div>
+            <div class="team-chat__detail">
+              <span class="team-chat__detailLabel">Latest reply</span>
+              <strong class="team-chat__detailValue" id="assistantLatestReplyValue">Nothing yet.</strong>
+            </div>
+            <p class="note" id="assistantStatusNote" style="padding: 0; margin: 0;">The assistant will surface here once website chats are active.</p>
+          </div>
         </aside>
       </div>
     </div>
@@ -4595,6 +4615,11 @@
       teamChatMessage: document.getElementById('teamChatMessage'),
       sendTeamChatBtn: document.getElementById('sendTeamChatBtn'),
       teamChatStatus: document.getElementById('teamChatStatus'),
+      assistantStatusValue: document.getElementById('assistantStatusValue'),
+      assistantActiveSitesValue: document.getElementById('assistantActiveSitesValue'),
+      assistantLatestSiteValue: document.getElementById('assistantLatestSiteValue'),
+      assistantLatestReplyValue: document.getElementById('assistantLatestReplyValue'),
+      assistantStatusNote: document.getElementById('assistantStatusNote'),
       teamChatComposerStatus: document.getElementById('teamChatComposerStatus'),
       teamChatLeadContext: document.getElementById('teamChatLeadContext'),
       teamChatList: document.getElementById('teamChatList'),
@@ -6193,6 +6218,41 @@
       `;
     }
 
+    function renderAssistantStatus(data) {
+      if (!els.assistantStatusValue || !els.assistantActiveSitesValue || !els.assistantLatestSiteValue || !els.assistantLatestReplyValue || !els.assistantStatusNote) {
+        return;
+      }
+
+      const status = state.chatAgentStatus;
+      const activeStatuses = Array.isArray(status?.statuses)
+        ? status.statuses.filter((item) => item && item.hasRecentActivity)
+        : [];
+      const activeCount = activeStatuses.length || Number(status?.activeCount) || 0;
+      const latest = activeStatuses[0] || status?.latest || null;
+      const latestSiteName = latest?.siteName || data?.siteName || data?.siteKey || 'this site';
+      const latestAt = latest?.receivedAt || latest?.lastMessageAt || '';
+      const latestUserMessage = String(latest?.latestUserMessage?.content || '').trim();
+      const latestSummary = latestUserMessage
+        ? (latestUserMessage.length > 120 ? `${latestUserMessage.slice(0, 117)}...` : latestUserMessage)
+        : 'No user message captured yet.';
+      const title = activeCount > 0
+        ? (activeCount > 1 ? `Nova active on ${activeCount} sites` : `Nova active on ${latestSiteName}`)
+        : 'Nova idle';
+      const detail = activeCount > 0
+        ? (activeCount > 1
+            ? `Recent website chats are live. Last activity ${formatRelativeMinutes(latestAt)} on ${latestSiteName}.`
+            : `Website chat is engaged. Last activity ${formatRelativeMinutes(latestAt)} on ${latestSiteName}.`)
+        : (latest
+            ? `Last website chat ${formatRelativeMinutes(latestAt)} on ${latestSiteName}.`
+            : 'No website chat activity yet.');
+
+      els.assistantStatusValue.textContent = title;
+      els.assistantActiveSitesValue.textContent = String(activeCount);
+      els.assistantLatestSiteValue.textContent = latestSiteName;
+      els.assistantLatestReplyValue.textContent = latestSummary;
+      els.assistantStatusNote.textContent = detail;
+    }
+
     function renderBackupMeta() {}
 
     function renderStatusFilters(data) {
@@ -7109,6 +7169,7 @@
 
       renderWorkspaceControls();
       renderNavChatPresence();
+      renderAssistantStatus(state.data);
       renderStats(state.data);
       renderAnalytics(state.data);
       renderStatusFilters(state.data);
