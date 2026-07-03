@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { ArrowUpRight, Eye, Headphones, Sparkles, TimerReset } from 'lucide-react';
 import { assets } from '../data/assets';
 
@@ -6,10 +7,29 @@ type HeroProps = {
 };
 
 export function Hero({ intakeFormUrl }: HeroProps) {
+  const [videoReady, setVideoReady] = useState(false);
+
   return (
     <section className="section hero" id="home">
       <div className="hero__backdrop" aria-hidden="true">
-        <video className="hero__backdrop-media" autoPlay loop muted playsInline preload="metadata" poster={assets.heroBanner}>
+        {!videoReady ? (
+          <div className="hero__loading" aria-hidden="true">
+            <span className="hero__loading-label">Loading visual</span>
+            <span className="hero__loading-bar" />
+          </div>
+        ) : null}
+        <video
+          className={`hero__backdrop-media${videoReady ? ' hero__backdrop-media--loaded' : ''}`}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          poster={assets.heroBanner}
+          onLoadedData={() => setVideoReady(true)}
+          onCanPlay={() => setVideoReady(true)}
+          onError={() => setVideoReady(true)}
+        >
           <source src={assets.heroVideo} type="video/mp4" />
         </video>
         <div className="hero__backdrop-fade" />
@@ -17,14 +37,9 @@ export function Hero({ intakeFormUrl }: HeroProps) {
       <div className="container hero__grid">
         <div className="hero__copy" data-reveal>
           <p className="section-label">Premium web design & development</p>
-          <h1>
-            <span className="hero__headlineAccent">Luxury Websites</span>{' '}
-            Built to Convert{' '}
-            <span className="hero__headlineAccent">Attention</span>{' '}
-            Into Bookings.
-          </h1>
+          <h1>Premium Websites Designed to Grow Your Business.</h1>
           <p className="hero__lede">
-            Custom websites for creators, models, brands, and businesses that need a sharper presence online. Designed to look refined, load fast, and bring in the right inquiries.
+            We build high-performance websites that help businesses earn trust, generate qualified leads, and convert more visitors into paying customers.
           </p>
 
           <div className="hero__actions">
