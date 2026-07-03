@@ -8,6 +8,7 @@ import { IntakeCTA } from './components/IntakeCTA';
 import { ChatAssistant } from './components/ChatAssistant';
 import { Pricing } from './components/Pricing';
 import { PricingModal } from './components/PricingModal';
+import { ProjectsModal } from './components/ProjectsModal';
 import { Process } from './components/Process';
 import { intakeFormUrl } from './data/site';
 
@@ -18,6 +19,7 @@ type Theme = 'dark' | 'light';
 export default function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [pricingOpen, setPricingOpen] = useState(false);
+  const [projectsOpen, setProjectsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<(typeof observedSections)[number]>('home');
   const [theme, setTheme] = useState<Theme>('light');
@@ -97,7 +99,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const locked = pricingOpen || mobileOpen;
+    const locked = pricingOpen || projectsOpen || mobileOpen;
     const root = document.documentElement;
 
     root.classList.toggle('scroll-locked', Boolean(locked));
@@ -105,7 +107,7 @@ export default function App() {
     return () => {
       root.classList.remove('scroll-locked');
     };
-  }, [mobileOpen, pricingOpen]);
+  }, [mobileOpen, pricingOpen, projectsOpen]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -123,6 +125,7 @@ export default function App() {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setPricingOpen(false);
+        setProjectsOpen(false);
         setMobileOpen(false);
       }
     };
@@ -149,13 +152,14 @@ export default function App() {
         <Hero intakeFormUrl={intakeFormUrl} />
         <DnaGallery />
         <Pricing />
-        <FeaturedWork />
+        <FeaturedWork onViewAllProjects={() => setProjectsOpen(true)} />
         <Process />
         <IntakeCTA />
       </main>
       <Footer />
       <ChatAssistant />
       <PricingModal open={pricingOpen} onClose={() => setPricingOpen(false)} />
+      <ProjectsModal open={projectsOpen} onClose={() => setProjectsOpen(false)} />
     </div>
   );
 }

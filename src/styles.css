@@ -1250,6 +1250,7 @@ img {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
+  margin-top: 1.2rem;
 }
 
 .project-archive-card {
@@ -2621,6 +2622,11 @@ img {
 .modal--image {
   width: min(100%, 76rem);
   padding: 1.35rem;
+}
+
+.modal--projects {
+  width: min(100%, 76rem);
+  max-height: min(92vh, 60rem);
 }
 
 .style-image-modal__header h2 {
