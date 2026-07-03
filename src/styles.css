@@ -580,6 +580,7 @@ img {
   position: absolute;
   inset: 0;
   z-index: 0;
+  background: #050509;
   pointer-events: none;
 }
 
@@ -597,9 +598,65 @@ img {
   animation: hero-drift 18s ease-in-out infinite alternate;
 }
 
+.hero__backdrop-media--loaded {
+  opacity: 0.98;
+}
+
+.hero__loading {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  gap: 0.9rem;
+  padding: 1.5rem;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(207, 92, 54, 0.16), transparent 24%),
+    linear-gradient(180deg, rgba(5, 5, 9, 0.18) 0%, rgba(5, 5, 9, 0.5) 100%);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.hero__loading-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.55rem 0.95rem;
+  border: 1px solid rgba(239, 200, 139, 0.2);
+  border-radius: 999px;
+  background: rgba(10, 10, 14, 0.42);
+  color: var(--text);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 18px 36px rgba(0, 0, 0, 0.2);
+}
+
+.hero__loading-bar {
+  position: relative;
+  width: min(10.5rem, 42vw);
+  height: 2px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(239, 200, 139, 0.2);
+}
+
+.hero__loading-bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 38%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent, rgba(239, 200, 139, 0.95), transparent);
+  animation: hero-loading-sweep 1.25s ease-in-out infinite;
+}
+
 .hero__backdrop-fade {
   position: absolute;
   inset: 0;
+  z-index: 2;
   background:
     radial-gradient(circle at 50% 22%, rgba(207, 92, 54, 0.12), transparent 28%),
     linear-gradient(180deg, rgba(5, 5, 9, 0.1) 0%, rgba(5, 5, 9, 0.28) 58%, rgba(5, 5, 9, 0.72) 100%);
@@ -2998,6 +3055,16 @@ img {
 
   to {
     transform: translate3d(0, -1.25%, 0) scale(1.06);
+  }
+}
+
+@keyframes hero-loading-sweep {
+  0% {
+    transform: translateX(-120%);
+  }
+
+  100% {
+    transform: translateX(320%);
   }
 }
 
