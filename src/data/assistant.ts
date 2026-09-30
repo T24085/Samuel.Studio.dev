@@ -1,7 +1,7 @@
 import { emailAddress, intakeFormUrl } from './site';
 
 export const assistantName = 'Nova';
-const defaultOllamaModelCandidates = ['gemma4:12b', 'gemma3:12b', 'llama3.1:8b', 'qwen2.5:7b'] as const;
+const defaultOllamaModelCandidates = ['gemma4:e4b', 'gemma4:12b', 'gemma3:12b', 'llama3.1:8b', 'qwen2.5:7b'] as const;
 
 function normalizeModelCandidates(raw: string | undefined) {
   if (!raw) {

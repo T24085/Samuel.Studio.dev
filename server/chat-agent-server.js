@@ -19,12 +19,13 @@ const host = process.env.CHAT_AGENT_HOST || '127.0.0.1';
 const port = Number(process.env.CHAT_AGENT_PORT || 8787);
 const ollamaChatUrl = process.env.OLLAMA_CHAT_URL || 'http://127.0.0.1:11434/api/chat';
 const ollamaTagsUrl = process.env.OLLAMA_TAGS_URL || ollamaChatUrl.replace(/\/api\/chat\/?$/, '/api/tags');
+const preferredOllamaModel = process.env.NOVA_OLLAMA_MODEL || 'gemma4:e4b';
 const routeAssistantChat = '/api/assistant-chat';
 const routeChatLog = '/api/chat-log';
 const routeStatus = '/api/status';
 const routeHealth = '/health';
 const defaultActivityWindowMs = Number(process.env.CHAT_AGENT_ACTIVE_WINDOW_MS || 5 * 60 * 1000);
-const defaultOllamaModelCandidates = ['gemma4:12b', 'gemma3:12b', 'llama3.1:8b', 'qwen2.5:7b'];
+const defaultOllamaModelCandidates = ['gemma4:e4b', 'gemma4:12b', 'gemma3:12b', 'llama3.1:8b', 'qwen2.5:7b'];
 const defaultOwnerEmail = 'christoffersent@gmail.com';
 const moduleRootDir = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const colombiaSiteKey = 'samuel-studio-columbia';
@@ -346,6 +347,8 @@ async function fetchInstalledOllamaModels() {
 
 function buildModelCandidates(payloadCandidates, transcriptModel, installedModels) {
   return uniqueStrings([
+    // Keep the shared server's preferred model ahead of older deployed clients.
+    ...(installedModels.includes(preferredOllamaModel) ? [preferredOllamaModel] : []),
     ...(Array.isArray(payloadCandidates) ? payloadCandidates : []),
     ...installedModels,
     ...defaultOllamaModelCandidates,
@@ -1627,6 +1630,22 @@ function buildSessionMemoryPrompt(transcript) {
 }
 
 async function buildWebsiteKnowledgePrompt(siteKey) {
+  if (resolveSiteKey(siteKey) === 'samuel-studio') {
+    return [
+      'Samuel Studio photography knowledge base:',
+      '- This site offers photography, not website development or website packages.',
+      '- Editorial & Campaign Work: art-directed imagery for brands, designers, and launches.',
+      '- Personal Identity: portraits and personal branding for founders, creatives, speakers, and public figures.',
+      '- Visual Story Projects: narrative campaigns, artists, startups, and concept launches.',
+      '- Private Portraits: individuals, couples, families, and milestones.',
+      '- Pricing depends on scope. Do not quote website package prices or invent availability.',
+      '- Collect session type, goal, date, location, styling, image usage, deliverables, and budget.',
+      '- Booking page: https://www.samuel.studio/booking',
+      '- Contact email: studiodefiant@gmail.com',
+      '- Answer briefly and ask only one follow-up question at a time.',
+    ].join('\n');
+  }
+
   if (isColombiaSite(siteKey)) {
     return buildColombiaKnowledgePrompt();
   }
@@ -1853,6 +1872,10 @@ function buildBrandedRecommendationResponse(packageLine, detailLine, questionLin
 }
 
 function normalizeIntentResponse(siteKey, userText, responseText) {
+  if (resolveSiteKey(siteKey) === 'samuel-studio') {
+    return responseText.trim() || buildFallbackReply(siteKey, userText);
+  }
+
   if (isColombiaSite(siteKey)) {
     return normalizeColombiaIntentResponse(userText, responseText);
   }
@@ -1967,6 +1990,10 @@ async function persistChurchChatConversation(transcript, assistantMessage) {
 }
 
 function buildFallbackReply(siteKey, userText) {
+  if (resolveSiteKey(siteKey) === 'samuel-studio') {
+    return 'Samuel Studio offers Editorial & Campaign Work, Personal Identity, Visual Story Projects, and Private Portraits. For a custom quote, visit https://www.samuel.studio/booking. What kind of photography session are you planning?';
+  }
+
   if (isColombiaSite(siteKey)) {
     return buildColombiaFallbackReply(userText);
   }
@@ -2222,10 +2249,12 @@ async function callOllama(model, systemPrompt, transcript) {
   const siteKey = transcript.siteKey;
   const latestUserMessage = [...transcript.messages].reverse().find((message) => message.role === 'user');
   const isChurchSite = isEmmanuelChurchSite(siteKey);
-  const intentPrimer = latestUserMessage && !isChurchSite ? buildIntentPrimer(siteKey, latestUserMessage.content) : '';
-  const intentDirective = latestUserMessage && !isChurchSite ? buildIntentDirective(siteKey, latestUserMessage.content) : '';
+  const isMainPhotographySite = resolveSiteKey(siteKey) === 'samuel-studio';
+  const useStructuredIntake = !isChurchSite && !isMainPhotographySite;
+  const intentPrimer = latestUserMessage && useStructuredIntake ? buildIntentPrimer(siteKey, latestUserMessage.content) : '';
+  const intentDirective = latestUserMessage && useStructuredIntake ? buildIntentDirective(siteKey, latestUserMessage.content) : '';
   const knowledgePrompt = await buildWebsiteKnowledgePrompt(siteKey);
-  const projectIntakePrompt = !isChurchSite ? buildProjectIntakePrompt(transcript) : '';
+  const projectIntakePrompt = useStructuredIntake ? buildProjectIntakePrompt(transcript) : '';
   const effectiveSystemPrompt = isColombiaSite(siteKey)
     ? buildColombiaSystemPrompt()
     : isChurchSite
@@ -2235,7 +2264,7 @@ async function callOllama(model, systemPrompt, transcript) {
   try {
     const messages = [
       { role: 'system', content: effectiveSystemPrompt },
-      ...(isChurchSite ? [] : [{ role: 'system', content: buildSessionMemoryPrompt(transcript) }]),
+      ...(useStructuredIntake ? [{ role: 'system', content: buildSessionMemoryPrompt(transcript) }] : []),
       { role: 'system', content: knowledgePrompt },
       ...(projectIntakePrompt ? [{ role: 'system', content: projectIntakePrompt }] : []),
       ...(intentDirective ? [{ role: 'system', content: intentDirective }] : []),
